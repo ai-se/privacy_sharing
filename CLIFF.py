@@ -32,7 +32,22 @@ def binrange(datalist, bin_number=10):
     return boundary
 
 
-def power():
+def power(L, C, E):
+    """
+    :param L: a list of values for one attribute in the data set
+    :param C: the class corresponded to L list
+    :param E: a st of sub-range for a given attribute. specifically, it's the boundary returned from binrange()
+    :return: the power of this attribute
+    """
+    assert len(L) == len(C), "The L and C must be corresponded to eaach other"
+
+    classes = list(set(C))  # get all types of classes in the data set
+    for j in classes:
+        first = [L[i] for i in C if i == j]
+        rest = [L[i] for i in C if i != j]
+        p_first = len(first) / len(L)
+        p_rest = len(rest) / len(L)
+        # TODO ...
     return 1
 
 
