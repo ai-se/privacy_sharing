@@ -203,7 +203,7 @@ def testing():
     # pwer = power(ce,c,E)
     # pdb.set_trace()
 
-    CLIFF('ant-1.3', 20, writeout=True)
+    CLIFF('ant-1.7', 20, writeout=True)
 
 if __name__ == '__main__':
     testing()
