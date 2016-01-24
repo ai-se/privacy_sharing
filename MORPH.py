@@ -117,7 +117,7 @@ def MOROH(database, writeout=False, alpha=0.15, beta=0.35):
     # writing out and output the results
     for row_index in range(len(morphed)):
         morphed[row_index].append(classes[row_index])
-    morphed.insert(0, classes)
+    morphed.insert(0, attributes)
 
     if writeout:
         with open('MorphOut/'+database+'.csv', 'wb') as f:
@@ -134,7 +134,7 @@ def testing():
     # l2 = map(denorm_loc, l1)
     # print l1
     # print l2
-    MOROH("ant-1.3_0.2", writeout=True)
+    MOROH("ant-1.7_0.2", writeout=True)
     pdb.set_trace()
 
 
