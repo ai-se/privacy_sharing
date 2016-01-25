@@ -69,7 +69,7 @@ def _str2num(s):
     return s
 
 
-def MOROH(database, writeout=False, alpha=0.15, beta=0.35):
+def MORPH(database, writeout=False, alpha=0.15, beta=0.35):
     """
     MOPRH is a instance mutator which can shake the instance within the class boundary
     :param database: original data. fetch from the "CliffOut" folder
@@ -142,7 +142,7 @@ def testing():
     # l2 = map(denorm_loc, l1)
     # print l1
     # print l2
-    MOROH("ant-1.7_0.2", writeout=True)
+    MORPH("ant-1.7_0.2", writeout=True)
     pdb.set_trace()
 
 
