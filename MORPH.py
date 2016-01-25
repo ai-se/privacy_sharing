@@ -71,7 +71,7 @@ def _str2num(s):
 
 def MORPH(database, writeout=False, alpha=0.15, beta=0.35):
     """
-    MOPRH is a instance mutator which can shake the instance within the class boundary
+    MORPH is a instance mutator which can shake the instance within the class boundary
     :param database: original data. fetch from the "CliffOut" folder
     :param writeout: where to write the result as a csv file. Default writing out folder is "MorphOut"
     :param alpha: shake amplitude lower bound
