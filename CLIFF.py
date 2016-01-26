@@ -1,5 +1,5 @@
 from __future__ import division
-import csv, copy, re
+import csv, copy, math
 import pdb
 
 __author__ = "Jianfeng Chen"
@@ -22,7 +22,7 @@ def binrange(datalist, bin_number=10):
     :return: list of bin# e.g. {a,b,c,d,e} [a,b] (b,c] (c,d] [d,e]
     """
     l = sorted(datalist)
-    bin_size = int(len(l)/bin_number)
+    bin_size = math.ceil(len(l)/bin_number)
     #print bin_size
     boundary = [l[0]]
     for i in range(0, len(l)):
