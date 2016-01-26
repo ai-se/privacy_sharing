@@ -22,20 +22,20 @@ Software Engineering, IEEE Transactions on 39.8 (2013): 1054-1068.
 """
 
 
-class Query(Object):
+class Query(object):
     def __init__(self):
-        self.attrs = []
-        self.upper_bound = []
-        self.lower_bound = []
+        self.__attrs = []
+        self.__upper_bound = []
+        self.__lower_bound = []
 
     def add_attr(self, attribute, upper_bound, lower_bound):
-        self.atrrs.append(attribute)
-        self.upper_bound.append(upper_bound)
-        self.lower_bound.append(lower_bound)
+        self.__attrs.append(attribute)
+        self.__upper_bound.append(upper_bound)
+        self.__lower_bound.append(lower_bound)
 
-    def __get__(self, instance, owner):
-        i = self.attrs.index(instance)
-        return self.lower_bound[i], self.upper_bound[i]
+    def __getitem__(self, attr):
+        i = self.__attrs.index(attr)
+        return self.__lower_bound[i], self.__upper_bound[i]
 
 
 class IPR(object):
