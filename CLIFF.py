@@ -70,6 +70,15 @@ def power(L, C, Erange):
     return power
 
 
+def self_determine_bin_size(list):
+    """
+    Given the list, return the bin size automatically
+    :param list:
+    :return: bin size
+    """
+    return min(len(set(list)), 10)
+
+
 def CLIFF(database, percentage, writeout=False, record_attrs=['all_attributes'], bin_sizes=['self determine']):
     """
     Core function for CLIFF algorithm
@@ -117,7 +126,7 @@ def CLIFF(database, percentage, writeout=False, record_attrs=['all_attributes'],
         for attr in record_attrs:
             temp = original_attributes.index(attr)
             col = [original_data_row[temp] for original_data_row in alldata]
-            bin_sizes.append(min(len(set(col)), 10))
+            bin_sizes.append(self_determine_bin_size(col))
     else:
         assert len(bin_sizes) == len(record_attrs), "bin_siezes and record_attrs must have the same size when setting"
 
