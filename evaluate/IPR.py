@@ -55,6 +55,7 @@ class Query(object):
                     return False
         return True
 
+
 class IPR(object):
     def __init__(self, before_db, after_db):
         self.before_db = before_db
@@ -147,15 +148,8 @@ class IPR(object):
         queries = []
         while len(queries) < number_of_queries:
             new_query = self._query_generator(query_size)
-            # detect whether existed in the current queries
-            exist = False
-            for existed_query in queries:
-                if existed_query == new_query:
-                    exist = True
-            if not exist:
-                queries.append(new_query)
+            if new_query not in queries: queries.append(new_query)  # detect whether existed in the current queries
 
-        pdb.set_trace()
         return queries
 
 
