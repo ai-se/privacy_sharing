@@ -98,7 +98,7 @@ def CLIFF(database, percentage, writeout=False, record_attrs=['all_attributes'],
         "bin_size should be matched with the record_attrs. CANNOT set only one of them"
 
     # load the database
-    with open('Dataset/'+database+'.csv', 'r') as db:
+    with open('TrainSet/' + database+'.csv', 'r') as db:
         reader = csv.reader(db)
         original_attributes = next(reader)
         alldata = []
@@ -174,7 +174,7 @@ def CLIFF(database, percentage, writeout=False, record_attrs=['all_attributes'],
 
     # write the cliffout
     if writeout:
-        with open('CliffOut/'+database+'_'+str(percentage)+'.csv', 'wb') as f:
+        with open('CliffOut/'+database + '.csv', 'wb') as f:
             writer = csv.writer(f)
             writer.writerows(cliffout)
 
@@ -210,9 +210,8 @@ def testing():
     # c = [0,1,0,0,0,0,0,1]
     # E = binrange(ce, 2)
     # pwer = power(ce,c,E)
-    # pdb.set_trace()
+    pdb.set_trace()
 
-    CLIFF('ant-1.3', 20, writeout=True)
 
 if __name__ == '__main__':
     testing()

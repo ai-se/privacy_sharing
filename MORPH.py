@@ -79,7 +79,7 @@ def MORPH(database, writeout=False, alpha=0.15, beta=0.35):
     :return: the morphed data
     """
     # load the database
-    with open('Cliffout/'+database+'.csv', 'r') as db:
+    with open('Cliffout/' + database + '.csv', 'r') as db:
         reader = csv.reader(db)
         attributes = next(reader)  # including the last one--class tag
         dataset = []
@@ -142,7 +142,7 @@ def testing():
     # l2 = map(denorm_loc, l1)
     # print l1
     # print l2
-    MORPH("ant-1.7_0.2", writeout=True)
+    MORPH("ant-1.7", writeout=True)
     pdb.set_trace()
 
 

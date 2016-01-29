@@ -1,8 +1,10 @@
-import pdb, csv, re
-from CLIFF import *
 from MORPH import *
-import os,sys
-import glob
+from CLIFF import *
+import os
+import sys
+import pdb
+import csv
+import random
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
@@ -16,52 +18,107 @@ available argument list:
 -cls                | clear all the generated dataset by this project
 -models             | specify one or more models to test
 -CLIFF_percentage   | specify the percentage used in the CLIFF algorithm
+-testRatio          | set the ratio of test set size (for evaluate the prediction precision)
 """
 
 '''SETTING THE DEFAULT VALUE HERE.'''
 DEFAULT = {
-    'model': 'ant-1.3',
+    'model': ['ant-1.3'],
+    'test_set_ratio': 0.2,
     'CLIFF_percentage': 20,
-
+    'MORPH_alpha': 0.15,
+    'MORPH_beta': 0.35,
 }
 
 _cliff_percent = DEFAULT['CLIFF_percentage']
+_test_set_ratio = DEFAULT['test_set_ratio']
+
+
+def data_set_split(model):
+    """
+    split the data as testing set and non-testing set (training set)
+    :param model: name of the model
+    """
+    # load the original data
+    with open('Dataset/' + model + '.csv', 'r') as db:
+        reader = csv.reader(db)
+        head = next(reader)
+        all_original_data = []
+        for line in reader:
+            all_original_data.append(line)
+
+    # split the data body
+    random.shuffle(all_original_data)
+    line = int(len(all_original_data) * (1 - _test_set_ratio))
+
+    # write the train set
+    with open('TrainSet/' + model + '.csv', 'wb') as f:
+        writer = csv.writer(f)
+        writer.writerows([head])
+        writer.writerows(all_original_data[0:line])
+
+    # write the test set
+    with open('TestSet/' + model + '.csv', 'wb') as f:
+        writer = csv.writer(f)
+        writer.writerows([head])
+        writer.writerows(all_original_data[line:])
 
 
 def main_process(model):
-    print _cliff_percent
-    print model
+    data_set_split(model)
+    CLIFF(model, _cliff_percent, writeout=True)  # run CLIFF algorithm
+    MORPH(model, writeout=True, alpha=DEFAULT['MORPH_alpha'], beta=DEFAULT['MORPH_beta'])  # run morph algorithm
 
 
 if __name__ == "__main__":
     models = []
 
     for i, arg in enumerate(sys.argv):
-
-        if arg in ['-clear', '-cls']:
+        # parsing the arguments
+        if arg in ['-clear', '-cls', '-clean']:
             # delete the files generate by the project
             # will NOT delete the files in dataset
             cliffs = [f for f in os.listdir("./CliffOut") if not f.endswith('.py')]
             morphs = [f for f in os.listdir("./MorphOut") if not f.endswith('.py')]
+            tests = [f for f in os.listdir("./TestSet") if not f.endswith('.py')]
+            trains = [f for f in os.listdir("./TrainSet") if not f.endswith('.py')]
             for f in cliffs: os.remove("./CliffOut/" + f)
             for f in morphs: os.remove("./MorphOut/" + f)
+            for f in tests: os.remove("./TestSet/" + f)
+            for f in trains: os.remove("./TrainSet/" + f)
             exit()
 
-        if arg in ['-model', '-models']:
+        elif arg in ['-model', '-models']:
             # recording all the user_set_models
             for user_set_model in sys.argv[i+1:]:
                 if user_set_model[0] == '-': break
                 models.append(user_set_model)
 
-        if arg.lower().startswith('-cliff_per'):  # e.g. -CLIFF_percentage
+        elif arg.lower().startswith('-cliff_per'):  # e.g. -CLIFF_percentage
             # recording the cliff percentage
             percentage = float(sys.argv[i+1])
             percentage *= 100 if percentage <= 1 else 1
             _cliff_percent = int(percentage)
             assert _cliff_percent <= 100, sys.argv[i+1] + " is not a valid percentage."
 
+        elif arg in ['-test_ratio', '-test_set_ratio', '-testratio', '-testRatio']:
+            # recording the test set ratio
+            _test_set_ratio = float(sys.argv[i+1])
+            assert 0 < _test_set_ratio < 1, "test set ratio must be in (0,1)"
+
+        elif arg.startswith('-'):
+            # display the waring or manual information
+            if arg not in ['-help', '-h']:
+                print "ERROR: illegal option: " + arg
+            print "available argument list:\n \
+                    -cls                | clear all the generated dataset by this project\n \
+                    -models             | specify one or more models to test\n \
+                    -CLIFF_percentage   | specify the percentage used in the CLIFF algorithm\n \
+                    -testRatio          | set the ratio of test set size (for evaluate the prediction precision)"
+            exit(0)
+
     if len(models) == 0:
-        models = [DEFAULT['model']]  # by default, the small dataset. ant-1.3
+        models = DEFAULT['model']  # by default, the small dataset. ant-1.3
 
     # check the validation for the models
     existed_models = [os.path.splitext(f)[0] for f in os.listdir("./Dataset/")]
