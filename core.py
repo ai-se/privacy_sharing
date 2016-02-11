@@ -24,7 +24,7 @@ available argument list:
 '''SETTING THE DEFAULT VALUE HERE.'''
 DEFAULT = {
     'model': ['ant-1.3'],
-    'test_set_ratio': 0.2,
+    'test_set_ratio': 0.3,
     'CLIFF_percentage': 20,
     'MORPH_alpha': 0.15,
     'MORPH_beta': 0.35,
