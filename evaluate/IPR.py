@@ -2,7 +2,8 @@ import csv
 import random
 import pdb
 import sys
-sys.path.append("..")
+import os
+sys.path.append(os.path.abspath(".."))
 import CLIFF
 
 __author__ = "Jianfeng Chen"
