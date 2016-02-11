@@ -1,8 +1,8 @@
 from MORPH import *
 from CLIFF import *
+from evaluate.predict import *
 import os
 import sys
-import pdb
 import csv
 import random
 
@@ -23,7 +23,7 @@ available argument list:
 
 '''SETTING THE DEFAULT VALUE HERE.'''
 DEFAULT = {
-    'model': ['ant-1.3'],
+    'model': ['ant-1.3','ant-1.4', 'ant-1.5'],
     'test_set_ratio': 0.3,
     'CLIFF_percentage': 20,
     'MORPH_alpha': 0.15,
@@ -32,6 +32,7 @@ DEFAULT = {
 
 _cliff_percent = DEFAULT['CLIFF_percentage']
 _test_set_ratio = DEFAULT['test_set_ratio']
+models = DEFAULT['model']
 
 
 def data_set_split(model):
@@ -65,13 +66,20 @@ def data_set_split(model):
 
 
 def main_process(model):
+    """
+    split the model training set and testing set
+    do the CLIFF algorithm
+    do the MORPH algorithm
+    :param model:
+    :return:
+    """
     data_set_split(model)
     CLIFF(model, _cliff_percent, writeout=True)  # run CLIFF algorithm
     MORPH(model, writeout=True, alpha=DEFAULT['MORPH_alpha'], beta=DEFAULT['MORPH_beta'])  # run morph algorithm
 
 
-if __name__ == "__main__":
-    models = []
+def program_loading():
+    global models, _cliff_percent, _test_set_ratio
 
     for i, arg in enumerate(sys.argv):
         # parsing the arguments
@@ -125,5 +133,11 @@ if __name__ == "__main__":
     for model in models:
         assert model in existed_models, model + "does NOT in the dataset. Please check it again."
 
+
+if __name__ == '__main__':
+    program_loading()
+
     for model in models:
         main_process(model)
+
+    predict_models(models, writeReports=True)
