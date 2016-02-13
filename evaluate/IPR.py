@@ -1,10 +1,12 @@
+from __future__ import division
 import csv
 import random
-import pdb
 import sys
 import os
 sys.path.append(os.path.abspath(".."))
 import CLIFF
+import copy
+import pdb
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
@@ -26,6 +28,8 @@ Proceedings of the 14th ACM SIGKDD international conference on Knowledge discove
 Software Engineering, IEEE Transactions on 39.8 (2013): 1054-1068.
 """
 
+# TODO need to email author for the definition to breach
+
 
 class Query(object):
     def __init__(self):
@@ -35,7 +39,7 @@ class Query(object):
 
     def add_attr(self, attribute, upper_bound, lower_bound):
         """
-        attribute: (lower_bound,uppe_bound]
+        attribute: (lower_bound,upper_bound]
         """
         self.__attrs.append(attribute)
         self.__upper_bound.append(upper_bound)
@@ -55,6 +59,9 @@ class Query(object):
                 if a != c or b != d:
                     return False
         return True
+
+    def get_attrs(self):
+        return self.__attrs
 
 
 class IPR(object):
@@ -96,7 +103,6 @@ class IPR(object):
             col = [original_data_row[temp] for original_data_row in self.before_all_data]
             self.bin_ranges[attr] = CLIFF.binrange(col, bin_sizes[attr])
 
-
     @staticmethod
     def _str2num(s):
         try:
@@ -109,8 +115,7 @@ class IPR(object):
         return s
 
     def set_sensitive_attributes(self, sensitive_attribute_list):
-        self.__sensitive_attrs = sensitive_attribute_list
-        print self.__sensitive_attrs
+        self.__sensitive_attrs = copy.deepcopy(sensitive_attribute_list)
         for i in self.__sensitive_attrs:
             assert i in self.after_attrs[:-1], "Attribute " + i + " does NOT exist in the database"
 
@@ -153,12 +158,109 @@ class IPR(object):
 
         return queries
 
+    def _get_breach_from_query(self, query):
+        """
+        find the rows which match the query in original database and modified database
+        TODO confirm from the LACE2's author
+        :param query:
+        :return: true if s_max(G) == s_max(G')
+        """
+        attrs = query.get_attrs()
+        query_target_index_before = [self.before_attrs.index(attr) for attr in attrs]
+        query_target_index_after = [self.after_attrs.index(attr) for attr in attrs]
+
+        # find the data that match the query in G and G'
+        G_before = []
+        for row in self.before_all_data:
+            passed = True
+            for attr_index, attr in enumerate(attrs):
+                lower_bound, upper_bound = query[attr]
+                if not lower_bound < row[query_target_index_before[attr_index]] <= upper_bound:
+                    passed = False
+            if passed:
+                G_before.append(row)
+
+        G_after = []
+        for row in self.after_all_data:
+            passed = True
+            for attr_index, attr in enumerate(attrs):
+                lower_bound, upper_bound = query[attr]
+                if not lower_bound < row[query_target_index_after[attr_index]] <= upper_bound:
+                    passed = False
+            if passed:
+                G_after.append(row)
+
+        # case -1: no matched data in original database
+        assert len(G_before) > 0, "check the query_generator. No matched data in original database for this query!"
+
+        # case 0: no matched data in the modified database
+        if len(G_after) == 0:
+            return False
+
+        assert len(self.__sensitive_attrs) > 0, "Sensitive attributes need to be set up at " + self.before_db
+
+        for sensitive_attr in self.__sensitive_attrs[:-1]:
+            sen_before_index = self.before_attrs.index(sensitive_attr)
+            sen_after_index = self.after_attrs.index(sensitive_attr)
+
+            bin = self.bin_ranges[sensitive_attr]
+            hist_before = [0] * (len(bin) - 1)
+            hist_after = [0] * (len(bin) - 1)
+
+            for row in G_before:
+                tmp_cursor = 0
+                if row[sen_before_index] != bin[0]:
+                    while row[sen_before_index] < bin[tmp_cursor]:
+                        tmp_cursor += 1
+                    tmp_cursor -= 1
+                hist_before[tmp_cursor] += 1
+
+            for row in G_after:
+                tmp_cursor = 0
+                if row[sen_after_index] != bin[0]:
+                    while row[sen_after_index] < bin[tmp_cursor]:
+                        tmp_cursor += 1
+                    tmp_cursor -= 1
+                hist_after[tmp_cursor] += 1
+
+            max_hist_before_index = hist_before.index(max(hist_before))
+            max_hist_after_index = hist_after.index(max(hist_after))
+
+            if max_hist_before_index != max_hist_after_index:
+                return False
+
+        return True
+
+    def get_ipr(self, query_size=2, number_of_queries=1):
+        queries = self.get_queries(query_size, number_of_queries)
+
+        ipr = 0
+        for query in queries:
+            if self._get_breach_from_query(query):
+                ipr += 1
+
+        return int((1 - ipr / len(queries)) * 100)
+
+
+def report_IPR(model, org_folder, privatized_folder, sensitive_attributes, query_size=4, number_of_queries=100):
+    project_path = [p for p in sys.path if p.endswith('privacy_sharing')][0]+'/'
+
+    ipr = IPR(project_path + org_folder + '/' + model + '.csv',
+              project_path + privatized_folder + '/' + model + '.csv')
+
+    ipr.set_sensitive_attributes(sensitive_attributes)
+    result = ipr.get_ipr(query_size, number_of_queries)
+
+    with open(project_path + 'Reports/IPR_report.csv', 'a+') as f:
+        import datetime
+        now = datetime.datetime.now()
+        w = csv.writer(f, delimiter=',', lineterminator='\n')
+        w.writerow([now.strftime('%y-%m-%d %H:%M'), model, sensitive_attributes, org_folder, privatized_folder, result])
+
 
 def demo():
-    ipr = IPR('../Dataset/ant-1.3.csv', '../MorphOut/ant-1.3_0.2.csv')
-    ipr.set_sensitive_attributes(['loc', 'rfc', 'lcom', 'ca', 'ce', 'amc'])
-    ipr.get_queries(number_of_queries=20)
-    pdb.set_trace()
+    sen_list = ['loc', 'rfc', 'lcom', 'ca', 'ce', 'amc']
+    report_IPR('ant-1.7', 'DataSet', 'MorphOut', sen_list)
 
 
 if __name__ == "__main__":

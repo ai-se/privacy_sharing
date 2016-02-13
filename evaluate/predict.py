@@ -2,7 +2,6 @@ from __future__ import division
 import csv
 import os
 import sys
-import pdb
 sys.path.append(os.path.abspath(".."))
 
 
@@ -232,7 +231,8 @@ def predict_models(models, writeReports=True, showResults=False):
         # write the SVM result
         f.write("SVM,,original,morphed\n")
         for m, model in enumerate(models):
-            f.write("%s,g,%.2f,%.2f\n" % (model, precisions_org[m]['svm']['g_measure'], precisions_morphed[m]['svm']['g_measure']))
+            f.write("%s,g,%.2f,%.2f\n" % (model, precisions_org[m]['svm']['g_measure'],
+                                          precisions_morphed[m]['svm']['g_measure']))
             f.write(",pd,%.2f,%.2f\n" % (precisions_org[m]['svm']['pd'], precisions_morphed[m]['svm']['pd']))
             f.write(",pf,%.2f,%.2f\n" % (precisions_org[m]['svm']['pf'], precisions_morphed[m]['svm']['pf']))
 
@@ -240,7 +240,8 @@ def predict_models(models, writeReports=True, showResults=False):
         f.write(",,,\n")
         f.write("CART,,original,morphed\n")
         for m, model in enumerate(models):
-            f.write("%s,g,%.2f,%.2f\n" % (model, precisions_org[m]['cart']['g_measure'], precisions_morphed[m]['cart']['g_measure']))
+            f.write("%s,g,%.2f,%.2f\n" % (model, precisions_org[m]['cart']['g_measure'],
+                                          precisions_morphed[m]['cart']['g_measure']))
             f.write(",pd,%.2f,%.2f\n" % (precisions_org[m]['cart']['pd'], precisions_morphed[m]['cart']['pd']))
             f.write(",pf,%.2f,%.2f\n" % (precisions_org[m]['cart']['pf'], precisions_morphed[m]['cart']['pf']))
 
@@ -248,10 +249,10 @@ def predict_models(models, writeReports=True, showResults=False):
         f.write(",,,\n")
         f.write("NB,,original,morphed\n")
         for m, model in enumerate(models):
-            f.write("%s,g,%.2f,%.2f\n" % (model, precisions_org[m]['nb']['g_measure'], precisions_morphed[m]['nb']['g_measure']))
+            f.write("%s,g,%.2f,%.2f\n" % (model, precisions_org[m]['nb']['g_measure'],
+                                          precisions_morphed[m]['nb']['g_measure']))
             f.write(",pd,%.2f,%.2f\n" % (precisions_org[m]['nb']['pd'], precisions_morphed[m]['nb']['pd']))
             f.write(",pf,%.2f,%.2f\n" % (precisions_org[m]['nb']['pf'], precisions_morphed[m]['nb']['pf']))
-
 
         f.close()
 

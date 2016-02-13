@@ -141,3 +141,8 @@ if __name__ == '__main__':
         main_process(model)
 
     predict_models(models, writeReports=True)
+
+    from evaluate.IPR import *
+    sen_list = ['loc', 'rfc', 'lcom', 'ca', 'ce', 'amc']
+    for model in models:
+        report_IPR(model, 'DataSet', 'MorphOut', sen_list)
