@@ -38,3 +38,10 @@ report date,model,sensitive attribute list,original db,privatized db,IPR
 16-02-16 15:25,ant-1.7,"['loc', 'rfc', 'lcom', 'ca', 'ce', 'amc']",DataSet,MorphOut,100
 16-02-16 15:25,camel-1.6,"['loc', 'rfc', 'lcom', 'ca', 'ce', 'amc']",DataSet,MorphOut,97
 16-02-16 15:25,redaktor,"['loc', 'rfc', 'lcom', 'ca', 'ce', 'amc']",DataSet,MorphOut,63
+16-02-25 17:28,ant-1.3,"['loc', 'rfc', 'lcom', 'ca', 'ce', 'amc']",DataSet,MorphOut,91
+16-02-25 17:28,ant-1.4,"['loc', 'rfc', 'lcom', 'ca', 'ce', 'amc']",DataSet,MorphOut,96
+16-02-25 17:28,ant-1.5,"['loc', 'rfc', 'lcom', 'ca', 'ce', 'amc']",DataSet,MorphOut,98
+16-02-25 17:28,ant-1.6,"['loc', 'rfc', 'lcom', 'ca', 'ce', 'amc']",DataSet,MorphOut,96
+16-02-25 17:28,ant-1.7,"['loc', 'rfc', 'lcom', 'ca', 'ce', 'amc']",DataSet,MorphOut,98
+16-02-25 17:28,camel-1.6,"['loc', 'rfc', 'lcom', 'ca', 'ce', 'amc']",DataSet,MorphOut,87
+16-02-25 17:28,redaktor,"['loc', 'rfc', 'lcom', 'ca', 'ce', 'amc']",DataSet,MorphOut,74

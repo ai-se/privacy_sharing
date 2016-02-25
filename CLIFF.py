@@ -1,6 +1,7 @@
 from __future__ import division
 import csv, copy, math
 import pdb
+import csv_data_tools
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
@@ -13,23 +14,6 @@ CLIFF algorithm
 Reference: Peters, Fayola, et al. "Balancing privacy and utility in cross-company defect prediction."
 Software Engineering, IEEE Transactions on 39.8 (2013): 1054-1068.
 """
-
-
-def binrange(datalist, bin_number=10):
-    """
-    :param datalist:
-    :param bin_number:
-    :return: list of bin# e.g. {a,b,c,d,e} [a,b] (b,c] (c,d] [d,e]
-    """
-    l = sorted(datalist)
-    bin_size = math.ceil(len(l)/bin_number)
-    #print bin_size
-    boundary = [l[0]]
-    for i in range(0, len(l)):
-        if (i+1) % bin_size == 0:
-            boundary.append(l[i])
-    if l[-1] not in boundary: boundary.append(l[-1])
-    return boundary
 
 
 def power(L, C, Erange):
@@ -68,15 +52,6 @@ def power(L, C, Erange):
         power.append(round(power_table[c][e_cursor-1], 2))
 
     return power
-
-
-def self_determine_bin_size(list):
-    """
-    Given the list, return the bin size automatically
-    :param list:
-    :return: bin size
-    """
-    return min(len(set(list)), 10)
 
 
 def CLIFF(database, percentage, writeout=False, record_attrs=['all_attributes'], bin_sizes=['self determine']):
@@ -126,7 +101,7 @@ def CLIFF(database, percentage, writeout=False, record_attrs=['all_attributes'],
         for attr in record_attrs:
             temp = original_attributes.index(attr)
             col = [original_data_row[temp] for original_data_row in alldata]
-            bin_sizes.append(self_determine_bin_size(col))
+            bin_sizes.append(csv_data_tools.self_determine_bin_size(col))
     else:
         assert len(bin_sizes) == len(record_attrs), "bin_siezes and record_attrs must have the same size when setting"
 
@@ -143,7 +118,7 @@ def CLIFF(database, percentage, writeout=False, record_attrs=['all_attributes'],
         col = [i[temp] for i in alldata]
         try: col = map(int, col)
         except ValueError: col = map(float, col)
-        E = binrange(col, bin_sizes[attr_index])
+        E = csv_data_tools.binrange(col, bin_sizes[attr_index])
         all_data_power.append(power(col, classes, E))
 
     all_data_power = map(list, zip(*all_data_power))  # transpose.

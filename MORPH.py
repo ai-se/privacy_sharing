@@ -1,7 +1,7 @@
 from __future__ import division
 import csv, random, math
 import pdb
-
+import csv_data_tools
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
@@ -33,42 +33,6 @@ def eulerianDist(x, y):
     return math.sqrt(sum([(a-b)**2 for a, b in zip(x, y)]))
 
 
-def attr_norm(all_elements):
-    """
-    This is the normalization/de-normalization function generator for one kind of attribute
-    :param all_elements: all the elements for one attribute
-    :return: two functions. The first one can normalize the element; the second one is de-normalize the element
-
-    e.g.
-    loc = [100,200,100,300]
-    norm_loc, denorm_loc = attr_norm(loc)
-    l1 = map(norm_loc,loc)
-    l2 = map(denorm_loc, l1)
-    print l1 # [0.0, 0.5, 0.0, 1.0]
-    print l2 # [100.0, 200.0, 100.0, 300.0]
-    """
-    if not type(all_elements) is list: all_elements = [all_elements]
-    M = max(all_elements)
-    m = min(all_elements)
-
-    def norm(element):
-        return (element-m)/(M-m) if M != m else 1
-
-    def denorm(element):
-        s = element*(M-m)+m if M != m else m
-        return max(min(s, M), m)  # TODO has better solution for privacy preserving?
-
-    return norm, denorm
-
-
-def _str2num(s):
-    try:
-        s = int(s)
-    except ValueError:
-        s = float(s)
-    return s
-
-
 def MORPH(database, writeout=False, alpha=0.15, beta=0.35):
     """
     MORPH is a instance mutator which can shake the instance within the class boundary
@@ -85,7 +49,7 @@ def MORPH(database, writeout=False, alpha=0.15, beta=0.35):
         dataset = []
         for line in reader:
             dataset.append(line)
-    dataset = [map(_str2num, row) for row in dataset]  # str to numeric
+    dataset = [map(csv_data_tools.str2num, row) for row in dataset]  # str to numeric
     is_int = [type(i) is int for i in dataset[0]]  # save. for better representation of the output table
     classes = [row[-1] for row in dataset]  # fetch the classes
     dataset = [row[:-1] for row in dataset]  # separating the raw data and class
@@ -97,7 +61,7 @@ def MORPH(database, writeout=False, alpha=0.15, beta=0.35):
 
     # normalizing
     for attr_index, attr_elements in enumerate(dataset):  # for each attribute elements
-        f1, f2 = attr_norm(attr_elements)
+        f1, f2 = csv_data_tools.attr_norm(attr_elements)
         norm_funcs.append(f1)
         denorm_funcs.append(f2)
         dataset[attr_index] = map(f1, attr_elements)

@@ -1,7 +1,6 @@
 from CLIFF import CLIFF
 from MORPH import *
-import os
-import sys
+import sys, os
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
@@ -91,6 +90,15 @@ def program_loading():
             for f in morphs: os.remove("./MorphOut/" + f)
             for f in tests: os.remove("./TestSet/" + f)
             for f in trains: os.remove("./TrainSet/" + f)
+
+            # delete the temporary file in the project
+            import fnmatch
+            matches = []
+            for root, dirnames, filenames in os.walk('.'):
+                for filename in fnmatch.filter(filenames, '*.pyc'):
+                    matches. append(os.path.join(root,filename))
+            for f in matches: os.remove(f)
+
             exit()
 
         elif arg in ['-model', '-models']:

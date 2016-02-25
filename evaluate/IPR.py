@@ -6,6 +6,7 @@ import os
 sys.path.append(os.path.abspath(".."))
 import CLIFF
 import copy
+import csv_data_tools
 import pdb
 
 __author__ = "Jianfeng Chen"
@@ -77,7 +78,7 @@ class IPR(object):
             self.before_all_data = []
             for line in reader:
                 self.before_all_data.append(line)
-            self.before_all_data = [map(IPR._str2num, row) for row in self.before_all_data]  # str to numeric
+            self.before_all_data = [map(csv_data_tools.str2num, row) for row in self.before_all_data]  # str to numeric
 
         # load the after database
         with open(after_db, 'r') as f:
@@ -86,7 +87,7 @@ class IPR(object):
             self.after_all_data = []
             for line in reader:
                 self.after_all_data.append(line)
-            self.after_all_data = [map(IPR._str2num, row) for row in self.after_all_data]  # str to numeric
+            self.after_all_data = [map(csv_data_tools.str2num, row) for row in self.after_all_data]  # str to numeric
 
         # discrete the attributes...
         # determine the bin_sizes
@@ -94,25 +95,14 @@ class IPR(object):
         for attr in self.after_attrs[:-1]:
             temp = self.before_attrs.index(attr)
             col = [original_data_row[temp] for original_data_row in self.before_all_data]
-            bin_sizes[attr] = CLIFF.self_determine_bin_size(col)
+            bin_sizes[attr] = csv_data_tools.self_determine_bin_size(col)
 
         # determine the bin_ranges
         self.bin_ranges = dict()
         for attr in self.after_attrs[:-1]:
             temp = self.before_attrs.index(attr)
             col = [original_data_row[temp] for original_data_row in self.before_all_data]
-            self.bin_ranges[attr] = CLIFF.binrange(col, bin_sizes[attr])
-
-    @staticmethod
-    def _str2num(s):
-        try:
-            s = int(s)
-        except ValueError:
-            try:
-                s = float(s)
-            except ValueError:
-                pass
-        return s
+            self.bin_ranges[attr] = csv_data_tools.binrange(col, bin_sizes[attr])
 
     def set_sensitive_attributes(self, sensitive_attribute_list):
         self.__sensitive_attrs = copy.deepcopy(sensitive_attribute_list)
