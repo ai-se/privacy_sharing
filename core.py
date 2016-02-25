@@ -1,10 +1,7 @@
+from CLIFF import CLIFF
 from MORPH import *
-from CLIFF import *
-from evaluate.predict import *
 import os
 import sys
-import csv
-import random
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
@@ -23,7 +20,7 @@ available argument list:
 
 '''SETTING THE DEFAULT VALUE HERE.'''
 DEFAULT = {
-    'model': ['ant-1.3','ant-1.4', 'ant-1.5'],
+    'model': ['ant-1.3','ant-1.4', 'ant-1.5', 'ant-1.6', 'ant-1.7', 'camel-1.6', 'redaktor'],
     'test_set_ratio': 0.3,
     'CLIFF_percentage': 20,
     'MORPH_alpha': 0.15,
@@ -140,9 +137,11 @@ if __name__ == '__main__':
     for model in models:
         main_process(model)
 
+    from evaluate.predict import *
+    from evaluate.IPR import *
+
     predict_models(models, writeReports=True)
 
-    from evaluate.IPR import *
     sen_list = ['loc', 'rfc', 'lcom', 'ca', 'ce', 'amc']
     for model in models:
         report_IPR(model, 'DataSet', 'MorphOut', sen_list)
