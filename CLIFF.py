@@ -113,7 +113,6 @@ def CLIFF(database,
         assert len(bin_sizes) == len(record_attrs), "bin_siezes and record_attrs must have the same size when setting"
 
     # binary the classification
-    # TODO binary?!
     classes = [i[len(original_attributes)-1] for i in alldata]  # last column in the origin csv file
     classes = [int(bool(int(c))) for c in classes]
 

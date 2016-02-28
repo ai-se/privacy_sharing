@@ -29,7 +29,7 @@ Proceedings of the 14th ACM SIGKDD international conference on Knowledge discove
 Software Engineering, IEEE Transactions on 39.8 (2013): 1054-1068.
 """
 
-# TODO need to email author for the definition to breach
+# TODO according the mail: only one sensitive attribute
 
 
 class Query(object):

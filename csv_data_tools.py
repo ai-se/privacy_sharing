@@ -74,7 +74,13 @@ def attr_norm(all_elements):
 
     def denorm(element):
         s = element*(M-m)+m if M != m else m
-        return max(min(s, M), m)  # TODO has better solution for privacy preserving?
+        if m <= s <= M:
+            return s
+        elif m < s:
+            s = 2 * m - s
+        else:
+            s = 2 * M - s
+        return max(min(s, M), m)
 
     return norm, denorm
 
