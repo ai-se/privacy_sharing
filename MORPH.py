@@ -33,17 +33,18 @@ def eulerianDist(x, y):
     return math.sqrt(sum([(a-b)**2 for a, b in zip(x, y)]))
 
 
-def MORPH(database, writeout=False, alpha=0.15, beta=0.35):
+def MORPH(database, db_folder, write_out_folder=None, alpha=0.15, beta=0.35):
     """
     MORPH is a instance mutator which can shake the instance within the class boundary
-    :param database: original data. fetch from the "CliffOut" folder
-    :param writeout: where to write the result as a csv file. Default writing out folder is "MorphOut"
+    :param database: original data.
+    :param db_folder: from where database fetch
+    :param write_out_folder: specify the  writing out folder. None means no writing
     :param alpha: shake amplitude lower bound
     :param beta: shake amplitude upper bound
     :return: the morphed data
     """
     # load the database
-    with open('Cliffout/' + database + '.csv', 'r') as db:
+    with open(db_folder + '/' + database + '.csv', 'r') as db:
         reader = csv.reader(db)
         attributes = next(reader)  # including the last one--class tag
         dataset = []
@@ -91,8 +92,8 @@ def MORPH(database, writeout=False, alpha=0.15, beta=0.35):
         morphed[row_index].append(classes[row_index])
     morphed.insert(0, attributes)
 
-    if writeout:
-        with open('MorphOut/'+database+'.csv', 'wb') as f:
+    if write_out_folder:
+        with open(write_out_folder + '/'+database+'.csv', 'wb') as f:
             writer = csv.writer(f)
             writer.writerows(morphed)
 
@@ -106,7 +107,7 @@ def testing():
     # l2 = map(denorm_loc, l1)
     # print l1
     # print l2
-    MORPH("ant-1.7", writeout=True)
+    MORPH("ant-1.7", 'CliffOut', write_out_folder='MorphOut')
     pdb.set_trace()
 
 

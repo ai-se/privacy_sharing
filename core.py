@@ -70,8 +70,9 @@ def main_process(model):
     :return:
     """
     data_set_split(model)
-    CLIFF(model, _cliff_percent, writeout=True)  # run CLIFF algorithm
-    MORPH(model, writeout=True, alpha=DEFAULT['MORPH_alpha'], beta=DEFAULT['MORPH_beta'])  # run morph algorithm
+
+    from LACE1 import LACE1
+    LACE1(model, 'TrainSet', 'MorphOut', _cliff_percent, DEFAULT['MORPH_alpha'], DEFAULT['MORPH_beta'])
 
 
 def program_loading():

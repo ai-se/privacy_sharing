@@ -77,3 +77,18 @@ def attr_norm(all_elements):
         return max(min(s, M), m)  # TODO has better solution for privacy preserving?
 
     return norm, denorm
+
+
+def euclidean_dist(x, y):
+    if type(x) is not list:
+        x = [x]
+    if type(y) is not list:
+        y = [y]
+
+    assert len(x) == len(y), "the dimension of two parameters must be the same"
+
+    return sum([(i-j)**2 for i, j in zip(x, y)]) ** 0.5
+
+# x = [0,0,0]
+# y = [1,1,1]
+# print euclidean_dist(x,y)

@@ -1,5 +1,6 @@
 from __future__ import division
-import csv, copy, math
+import csv
+import copy
 import pdb
 import csv_data_tools
 
@@ -54,15 +55,21 @@ def power(L, C, Erange):
     return power
 
 
-def CLIFF(database, percentage, writeout=False, record_attrs=['all_attributes'], bin_sizes=['self determine']):
+def CLIFF(database,
+          db_folder,
+          percentage,
+          write_out_folder=None,
+          record_attrs=['all_attributes'],
+          bin_sizes=['self determine']):
     """
     Core function for CLIFF algorithm
     prune the data set according to the power
     attributes are discretized
 
     :param database: should be a csv file containing the original database
+    :param db_folder: the folder name of db
     :param percentage: the percentage of data to be return
-    :param writeout: whether to write out the generated data base into "CliffOut/***_p.csv"
+    :param write_out_folder: where to write out the generated data base into "write_out_folder/***_p.csv"
     :param record_attrs: specify the recording attributes. if not set, all numeric attributes will be considered
     :param bin_sizes: the bin_sizes for each record_attrs.
     :return: the CLIFFED database
@@ -73,7 +80,7 @@ def CLIFF(database, percentage, writeout=False, record_attrs=['all_attributes'],
         "bin_size should be matched with the record_attrs. CANNOT set only one of them"
 
     # load the database
-    with open('TrainSet/' + database+'.csv', 'r') as db:
+    with open(db_folder + '/' + database+'.csv', 'r') as db:
         reader = csv.reader(db)
         original_attributes = next(reader)
         alldata = []
@@ -148,8 +155,8 @@ def CLIFF(database, percentage, writeout=False, record_attrs=['all_attributes'],
             cliffout.append(temp_row)
 
     # write the cliffout
-    if writeout:
-        with open('CliffOut/'+database + '.csv', 'wb') as f:
+    if write_out_folder:
+        with open(write_out_folder + '/'+database + '.csv', 'wb') as f:
             writer = csv.writer(f)
             writer.writerows(cliffout)
 
