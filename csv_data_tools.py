@@ -95,6 +95,16 @@ def euclidean_dist(x, y):
 
     return sum([(i-j)**2 for i, j in zip(x, y)]) ** 0.5
 
-# x = [0,0,0]
-# y = [1,1,1]
-# print euclidean_dist(x,y)
+
+def normalize_cols_for_table(table):
+    """
+    normalize a list of list--table
+    data are grouped by cols
+    :param table:
+    :return:
+    """
+    result = []
+    for col in zip(*table):
+        f1, f2 = attr_norm(list(col))
+        result.append(map(f1, col))
+    return map(list, zip(*result))

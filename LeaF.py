@@ -23,7 +23,7 @@ Proceedings of the 37th International Conference on Software Engineering-Volume 
 
 def find_distinct_distance(normalized_data_set):
     """
-    find the average of distance which can distinguish the data.
+    find the median of distance which can distinguish the data.
     :param normalized_data_set: dataset to calculate. The dataset must be normalized
     :return: float-distance
     """
@@ -32,19 +32,21 @@ def find_distinct_distance(normalized_data_set):
 
     # find out all kinds of classes in the dataset
     classes = list(set([i[-1]for i in normalized_data_set]))
+    assert len(classes) > 1, "unfortunately all data selected are in same class."
     classes_index = dict()
     for c in classes:
         classes_index[c] = [index for index, i in enumerate(normalized_data_set) if i[-1] == c]
 
-    accumulate_dist = 0
+    distances = []
     for data in normalized_data_set:
         c = data[-1]
         diff_class_data_indices = [index for index in range(n) if index not in classes_index[c]]
-        accumulate_dist += min([csv_data_tools.euclidean_dist(data, normalized_data_set[index])
-                                for index in diff_class_data_indices])
-
-    logging.debug("The distinguish distance is %f" % (accumulate_dist/n))
-    return accumulate_dist / n
+        distances.append(min([csv_data_tools.euclidean_dist(data, normalized_data_set[index])
+                              for index in diff_class_data_indices]))
+    import numpy
+    median_dist = numpy.median(numpy.array(distances))
+    logging.debug("The distinguish distance is %f" % median_dist)
+    return median_dist
 
 
 def whether_add_to_private_cache(data_instance, existed_cache, distinguish_distance):
