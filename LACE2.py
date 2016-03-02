@@ -119,7 +119,6 @@ def LACE2(model, original_data_folder, final_out_put_folder, holder_number,
             init_submit = Cliff_simplified(holder_data, cliff_percent)
             init_submit = MORPH(init_submit, alpha=morph_alpha, beta=morph_beta, db_has_normalized=True)
             CACHE.extend(init_submit)
-            # TODO bug unbalance classe
             pdb.set_trace()
         else:  # something exist in the cache
             # TODO addd
@@ -130,4 +129,4 @@ def LACE2(model, original_data_folder, final_out_put_folder, holder_number,
 
 
 logging.basicConfig(level=logging.DEBUG, format="%(filename)s@L%(lineno)d:: %(message)s")
-LACE2("xalan-2.7", 'TrainSet', 'final_folder', 5)
+LACE2("camel-1.6", 'TrainSet', 'final_folder', 5)

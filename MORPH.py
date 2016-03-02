@@ -99,6 +99,8 @@ def MORPH(database, db_folder=['not_from_csv_file'], write_out_folder=None,
             writer = csv.writer(f)
             writer.writerows(morphed)
 
+    if db_has_normalized:
+        morphed = morphed[:-2]
     return morphed
 
 
