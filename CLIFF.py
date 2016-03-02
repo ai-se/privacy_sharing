@@ -1,6 +1,8 @@
 from __future__ import division
 import csv
 import copy
+import logging
+import random
 import pdb
 import csv_data_tools
 
@@ -158,6 +160,58 @@ def CLIFF(database,
         with open(write_out_folder + '/'+database + '.csv', 'wb') as f:
             writer = csv.writer(f)
             writer.writerows(cliffout)
+
+    return cliffout
+
+
+def Cliff_simplified(dataset, percentage):
+    """
+    simplified version of CLIFF.
+    RESTRICTED USED:
+    ALL ATTRIBUTE EXCEPT LAST ONE SHOULD BE RECORDED
+    :param dataset:
+    :param percentage:
+    :return: CLIFFed dataset
+    """
+    if len(dataset) < 50:
+        logging.debug("no enough data to cliff. return the whole dataset")
+        return dataset
+
+    percentage /= 100 if percentage > 1 else 1
+
+    # binary the classification
+    classes = [row[-1] for row in dataset]  # the last column in dataset
+    classes = [int(bool(int(c))) for c in classes]
+    if len(set(classes)) == 1:
+        return random.sample(dataset, int(len(dataset)*percentage))
+
+    # determine the bin_size
+    # get the power for each attribute
+    # store them in a final table
+    attrs_num = len(dataset[0])
+    bin_sizes = []
+    all_data_power = []
+    for attr_index in range(attrs_num-1):
+        col = [row[attr_index] for row in dataset]
+        bin_sizes.append(csv_data_tools.self_determine_bin_size(col))
+        e = csv_data_tools.binrange(col, bin_sizes[attr_index])
+        all_data_power.append(power(col, classes, e))
+    all_data_power = map(list, zip(*all_data_power))  # transpose
+
+    cliffout = []
+    row_sum = [sum(row) for row in all_data_power]
+
+    for cls in set(classes):
+        row_sum_sub = [sum(row) for row_index, row in enumerate(all_data_power) if classes[row_index] == cls]
+        minimum = sorted(row_sum_sub, reverse=True)[int(len(row_sum_sub) * percentage)]
+
+        # create the cliffout
+        for row_index in range(len(dataset)):
+            if classes[row_index] != cls:
+                continue
+            if row_sum[row_index] < minimum:
+                continue  # prune due to low power
+            cliffout.append(dataset[row_index])
 
     return cliffout
 

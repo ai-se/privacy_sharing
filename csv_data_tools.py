@@ -86,6 +86,12 @@ def attr_norm(all_elements):
 
 
 def euclidean_dist(x, y):
+    """
+    the Eulerian distance between x and y
+    :param x: instance x. type--list or one number
+    :param y: instance y. type--list or one number
+    :return: the Eulerian distance between x and y
+    """
     if type(x) is not list:
         x = [x]
     if type(y) is not list:
@@ -108,3 +114,7 @@ def normalize_cols_for_table(table):
         f1, f2 = attr_norm(list(col))
         result.append(map(f1, col))
     return map(list, zip(*result))
+
+
+# import pdb
+# pdb.set_trace()

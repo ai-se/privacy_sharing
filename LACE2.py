@@ -50,16 +50,17 @@ def data_distribute_simulator(data_set, number_of_holder):
         cursor += i
 
     random.shuffle(result)
-    pdb.set_trace()
     return result
 
 
-def LACE2(model, original_data_folder, final_out_put_folder, cliff_percent, morph_alpha, morph_beta):
+def LACE2(model, original_data_folder, final_out_put_folder, holder_number,
+          cliff_percent=0.3, morph_alpha=0.15, morph_beta=0.35):
     """
 
     :param model:
     :param original_data_folder:
     :param final_out_put_folder:
+    :param holder_number:
     :param cliff_percent:
     :param morph_alpha:
     :param morph_beta:
@@ -90,14 +91,43 @@ def LACE2(model, original_data_folder, final_out_put_folder, cliff_percent, morp
     all_data = copy.deepcopy(tmp_all_data)
     logging.debug("loading the whole database and col selection done.")
 
-    # get the important Leaf Distance
+    # get the **important** Leaf Distance
     fetch_num = min(len(all_data), 100)
     tmp_all_data_table = random.sample(all_data, fetch_num)
     tmp_all_data_table = csv_data_tools.normalize_cols_for_table([row[:-1] for row in tmp_all_data_table])
-    print find_distinct_distance(tmp_all_data_table)
+    inter_class_dist = find_distinct_distance(tmp_all_data_table)
+
+    # normalize the dataset
+    norm_funcs = []
+    denorm_funcs = []
+
+    all_data = map(list, zip(*all_data))
+    for attr_index, attr_elements in enumerate(all_data[:-1]):
+        f1, f2 = csv_data_tools.attr_norm(attr_elements)
+        norm_funcs.append(f1)
+        denorm_funcs.append(f2)
+        all_data[attr_index] = map(f1, attr_elements)
+    all_data = map(list, zip(*all_data))
+
+    # simulate generate the holders
+    holder_datas = data_distribute_simulator(all_data, holder_number)
+
+    # passing the cache between the holders
+    CACHE = []
+    for holder_data in holder_datas:
+        if len(CACHE) == 0:  # the first holder
+            init_submit = Cliff_simplified(holder_data, cliff_percent)
+            init_submit = MORPH(init_submit, alpha=morph_alpha, beta=morph_beta, db_has_normalized=True)
+            CACHE.extend(init_submit)
+            # TODO bug unbalance classe
+            pdb.set_trace()
+        else:  # something exist in the cache
+            # TODO addd
+            pass
+
 
     pdb.set_trace()
 
 
 logging.basicConfig(level=logging.DEBUG, format="%(filename)s@L%(lineno)d:: %(message)s")
-LACE2('xalan-2.7', 'TrainSet', 0, 0, 0, 0)
+LACE2("xalan-2.7", 'TrainSet', 'final_folder', 5)
