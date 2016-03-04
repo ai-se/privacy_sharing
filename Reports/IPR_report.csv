@@ -67,3 +67,4 @@ report date,model,sensitive attribute list,original db,privatized db,IPR
 16-03-01 14:53,camel-1.6,"['loc', 'rfc', 'lcom', 'ca', 'ce', 'amc']",DataSet,MorphOut,83
 16-03-01 14:53,redaktor,"['loc', 'rfc', 'lcom', 'ca', 'ce', 'amc']",DataSet,MorphOut,88
 16-03-01 14:53,xalan-2.7,"['loc', 'rfc', 'lcom', 'ca', 'ce', 'amc']",DataSet,MorphOut,92
+16-03-03 22:58,camel-1.6,"['loc', 'rfc', 'lcom', 'ca', 'ce', 'amc']",DataSet,Lace1Out,76

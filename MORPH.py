@@ -1,6 +1,10 @@
 from __future__ import division
-import csv, random, math
+import copy
+import csv
+import random
+import math
 import pdb
+import copy
 import csv_data_tools
 
 __author__ = "Jianfeng Chen"
@@ -19,8 +23,8 @@ Software Engineering, IEEE Transactions on 39.8 (2013): 1054-1068.
 """
 
 
-def MORPH(database, db_folder=['not_from_csv_file'], write_out_folder=None,
-          alpha=0.15, beta=0.35, db_has_normalized=False):
+def MORPH(database, db_folder='not_from_csv_file', write_out_folder=None,
+          alpha=0.15, beta=0.35, db_has_normalized=False, effect_scope=[0, -1]):
     """
     MORPH is a instance mutator which can shake the instance within the class boundary
     :param database: original data.
@@ -29,10 +33,11 @@ def MORPH(database, db_folder=['not_from_csv_file'], write_out_folder=None,
     :param alpha: shake amplitude lower bound
     :param beta: shake amplitude upper bound
     :param db_has_normalized: whether the database has been normalized
+    :param effect_scope: specify the scope in the database to be morphed. Any data beyond the scope will remain the same
     :return: the morphed data
     """
     # load the database
-    if db_folder != ['not_from_csv_file']:
+    if db_folder != 'not_from_csv_file':
         with open(db_folder + '/' + database + '.csv', 'r') as db:
             reader = csv.reader(db)
             attributes = next(reader)  # including the last one--class tag
@@ -43,6 +48,11 @@ def MORPH(database, db_folder=['not_from_csv_file'], write_out_folder=None,
     else:
         dataset = database
         attributes = ['foo'] * len(dataset[0])
+
+    # backup the no-need-to-morphed data
+    if effect_scope[1] < 0:
+        effect_scope[1] += len(dataset)+1
+    backup_data_set = copy.deepcopy(dataset[effect_scope[0]:effect_scope[1]])
 
     if db_has_normalized:
         #  adding two instance (all zeros and all ones) so that the normalization and de-normalization process
@@ -91,7 +101,7 @@ def MORPH(database, db_folder=['not_from_csv_file'], write_out_folder=None,
     # writing out and output the results
     for row_index in range(len(morphed)):
         morphed[row_index].append(classes[row_index])
-    if db_folder != ['not_from_csv_file']:
+    if db_folder != 'not_from_csv_file':
         morphed.insert(0, attributes)
 
     if write_out_folder:
@@ -101,6 +111,11 @@ def MORPH(database, db_folder=['not_from_csv_file'], write_out_folder=None,
 
     if db_has_normalized:
         morphed = morphed[:-2]
+
+    # recover the unmorphed data
+    for backup, row_index in zip(backup_data_set, range(effect_scope[0], effect_scope[1])):
+        morphed[row_index] = backup
+
     return morphed
 
 
@@ -111,7 +126,7 @@ def testing():
     # l2 = map(denorm_loc, l1)
     # print l1
     # print l2
-    MORPH("ant-1.7", 'CliffOut', write_out_folder='MorphOut')
+    MORPH("ant-1.7", 'CliffOut', write_out_folder='Lace1Out')
     pdb.set_trace()
 
 

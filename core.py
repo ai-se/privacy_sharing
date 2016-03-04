@@ -72,7 +72,7 @@ def main_process(model):
     data_set_split(model)
 
     from LACE1 import LACE1
-    LACE1(model, 'TrainSet', 'MorphOut', _cliff_percent, DEFAULT['MORPH_alpha'], DEFAULT['MORPH_beta'])
+    LACE1(model, 'TrainSet', 'Lace1Out', _cliff_percent, DEFAULT['MORPH_alpha'], DEFAULT['MORPH_beta'])
 
 
 def program_loading():
@@ -84,11 +84,13 @@ def program_loading():
             # delete the files generate by the project
             # will NOT delete the files in dataset
             cliffs = [f for f in os.listdir("./CliffOut") if not f.endswith('.py')]
-            morphs = [f for f in os.listdir("./MorphOut") if not f.endswith('.py')]
+            lace1s = [f for f in os.listdir("./Lace1Out") if not f.endswith('.py')]
+            lace2s = [f for f in os.listdir("./Lace2Out") if not f.endswith('.py')]
             tests = [f for f in os.listdir("./TestSet") if not f.endswith('.py')]
             trains = [f for f in os.listdir("./TrainSet") if not f.endswith('.py')]
             for f in cliffs: os.remove("./CliffOut/" + f)
-            for f in morphs: os.remove("./MorphOut/" + f)
+            for f in lace1s: os.remove("./Lace1Out/" + f)
+            for f in lace1s: os.remove("./Lace2Out/" + f)
             for f in tests: os.remove("./TestSet/" + f)
             for f in trains: os.remove("./TrainSet/" + f)
 
@@ -103,6 +105,7 @@ def program_loading():
             exit()
 
         elif arg in ['-model', '-models']:
+            models = []
             # recording all the user_set_models
             for user_set_model in sys.argv[i+1:]:
                 if user_set_model[0] == '-': break
@@ -149,8 +152,8 @@ if __name__ == '__main__':
     from evaluate.predict import *
     from evaluate.IPR import *
 
-    predict_models(models, writeReports=True)
+    predict_models(models, 'Lace1Out', writeReports=True)
 
     sen_list = ['loc', 'rfc', 'lcom', 'ca', 'ce', 'amc']
     for model in models:
-        report_IPR(model, 'DataSet', 'MorphOut', sen_list)
+        report_IPR(model, 'DataSet', 'Lace1Out', sen_list)

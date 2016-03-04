@@ -2,6 +2,7 @@ from __future__ import division
 from CLIFF import *
 from MORPH import *
 from LeaF import *
+import sys, traceback
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
@@ -53,7 +54,7 @@ def data_distribute_simulator(data_set, number_of_holder):
     return result
 
 
-def LACE2(model, original_data_folder, final_out_put_folder, holder_number,
+def LACE2(model, original_data_folder, final_out_put_folder, holder_number=5,
           cliff_percent=0.3, morph_alpha=0.15, morph_beta=0.35):
     """
 
@@ -102,7 +103,15 @@ def LACE2(model, original_data_folder, final_out_put_folder, holder_number,
     denorm_funcs = []
 
     all_data = map(list, zip(*all_data))
+    is_int = [True]*len(all_data)  # save. for better representation of the output table
+
     for attr_index, attr_elements in enumerate(all_data[:-1]):
+        # save is_int. for better representation of the output table
+        for i in attr_elements:
+            if type(i) is not int:
+                is_int[attr_index] = False
+                break
+
         f1, f2 = csv_data_tools.attr_norm(attr_elements)
         norm_funcs.append(f1)
         denorm_funcs.append(f2)
@@ -119,14 +128,44 @@ def LACE2(model, original_data_folder, final_out_put_folder, holder_number,
             init_submit = Cliff_simplified(holder_data, cliff_percent)
             init_submit = MORPH(init_submit, alpha=morph_alpha, beta=morph_beta, db_has_normalized=True)
             CACHE.extend(init_submit)
-            pdb.set_trace()
         else:  # something exist in the cache
-            # TODO addd
-            pass
+            to_submits = Cliff_simplified(holder_data, cliff_percent)
+            cache_cursor = len(CACHE)
+            # do the Leaf
+            for to_submit in to_submits:
+                if whether_add_to_private_cache(to_submit, CACHE, inter_class_dist):
+                    CACHE.append(to_submit)
+            # morph
+            CACHE = MORPH(CACHE, alpha=morph_alpha, beta=morph_beta,
+                          db_has_normalized=True, effect_scope=[cache_cursor, -1])
+
+            # TODO checking the holder privacy criterion met?
+
+    # denormalize the result
+    CACHE = map(list, zip(*CACHE))
+    for attr_index, attr_elements in enumerate(CACHE[:-1]):
+        CACHE[attr_index] = map(denorm_funcs[attr_index], attr_elements)
+        if is_int[attr_index]:
+            CACHE[attr_index] = map(int, CACHE[attr_index])
+    CACHE = map(list, zip(*CACHE))
+
+    CACHE.insert(0, original_attributes)
+    if final_out_put_folder:
+        with open(final_out_put_folder+'/'+model+'.csv', 'wb') as f:
+            writer = csv.writer(f)
+            writer.writerows(CACHE)
+
+    return CACHE
 
 
-    pdb.set_trace()
+def test():
+    LACE2("camel-1.6", 'TrainSet', 'Lace2Out')
 
-
-logging.basicConfig(level=logging.DEBUG, format="%(filename)s@L%(lineno)d:: %(message)s")
-LACE2("camel-1.6", 'TrainSet', 'final_folder', 5)
+if __name__ == '__main__':
+    try:
+        logging.basicConfig(level=logging.INFO, format='Line %(lineno)d at %(filename)s:\t %(message)s')
+        test()
+    except:
+        type, value, tb = sys.exc_info()
+        traceback.print_exc()
+        # pdb.post_mortem(tb)

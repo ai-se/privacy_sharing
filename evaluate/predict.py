@@ -28,12 +28,12 @@ Main function: predict_models
 project_path = [p for p in sys.path if p.endswith('privacy_sharing')][0]+'/'
 recorded_attrs = []
 _original_recored_index = []
-
+privatized_set_folder = ''
 
 
 def _get_original_recorded_index(model):
     # load the recorded attributes
-    with open(project_path + 'MorphOut/' + model + '.csv', 'r') as f:
+    with open(project_path + privatized_set_folder + '/' + model + '.csv', 'r') as f:
         reader = csv.reader(f)
         global recorded_attrs
         recorded_attrs = next(reader)
@@ -70,7 +70,7 @@ def get_original_train(model):
 
 def get_moprhed_train(model):
     all_trains = []
-    with open(project_path + 'MorphOut/' + model + '.csv', 'r') as f:
+    with open(project_path + privatized_set_folder + '/' + model + '.csv', 'r') as f:
         reader = csv.reader(f)
         next(reader)  # pass the first line (csv header)
         for line in reader:
@@ -146,12 +146,13 @@ def predict_by_sklearn_er(fetch_train_func, model, clf_instance):
     return get_error_measure(actual, predict)
 
 
-def predict_models(models, writeReports=True, showResults=False):
+def predict_models(models, privatized_folder, writeReports=True, showResults=False):
     """
     Func: given the models list, return the prediction precision.
     Learners: SVM, CART, Naive Bayes
-    Require: TrainSet, TestSet, MoprphOut
+    Require: TrainSet, TestSet, privatized_set_folder
     :param models:
+    :param privatized_folder:
     :param writeReports:
     :param showResults:
     :return: no explicit returns. depending on whether to show or write the results...
@@ -162,6 +163,9 @@ def predict_models(models, writeReports=True, showResults=False):
 
     if not type(models) is list:
         models = [models]
+
+    global privatized_set_folder
+    privatized_set_folder = privatized_folder
 
     global recorded_attrs
     global _original_recored_index
