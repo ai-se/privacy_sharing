@@ -1,4 +1,5 @@
 from __future__ import division
+from collections import defaultdict
 import csv
 import csv_data_tools
 import os
@@ -146,13 +147,13 @@ def predict_by_sklearn_er(fetch_train_func, model, clf_instance):
     return get_error_measure(actual, predict)
 
 
-def predict_models(models, privatized_folder, writeReports=True, showResults=False):
+def predict_models(models, to_test_folders, writeReports=True, showResults=False):
     """
     Func: given the models list, return the prediction precision.
     Learners: SVM, CART, Naive Bayes
     Require: TrainSet, TestSet, privatized_set_folder
     :param models:
-    :param privatized_folder:
+    :param to_test_folders: from which folders material to predict
     :param writeReports:
     :param showResults:
     :return: no explicit returns. depending on whether to show or write the results...
@@ -164,11 +165,14 @@ def predict_models(models, privatized_folder, writeReports=True, showResults=Fal
     if not type(models) is list:
         models = [models]
 
-    global privatized_set_folder
-    privatized_set_folder = privatized_folder
+    if not type(to_test_folders) is list:
+        to_test_folders = [to_test_folders]
+
 
     global recorded_attrs
     global _original_recored_index
+    global privatized_set_folder
+    privatized_set_folder = to_test_folders[0]
 
     # generate all sklearer clf instances
     from sklearn import svm, tree
@@ -178,24 +182,28 @@ def predict_models(models, privatized_folder, writeReports=True, showResults=Fal
     gnb = GaussianNB()
 
     precisions_org = []
-    precisions_morphed = []
-    for m in models:
+    precisions_privatized = defaultdict(dict)
+    for model in models:
         recorded_attrs = []
         _original_recored_index = []
 
         precision_dict = dict()
-        precision_dict['svm'] = predict_by_sklearn_er(get_original_train, m, svm_learner)
-        precision_dict['cart'] = predict_by_sklearn_er(get_original_train, m, cart_learner)
-        precision_dict['nb'] = predict_by_sklearn_er(get_original_train, m, gnb)
+        precision_dict['svm'] = predict_by_sklearn_er(get_original_train, model, svm_learner)
+        precision_dict['cart'] = predict_by_sklearn_er(get_original_train, model, cart_learner)
+        precision_dict['nb'] = predict_by_sklearn_er(get_original_train, model, gnb)
 
         precisions_org.append(precision_dict)
 
-        precision_dict = dict()
-        precision_dict['svm'] = predict_by_sklearn_er(get_moprhed_train, m, svm_learner)
-        precision_dict['cart'] = predict_by_sklearn_er(get_moprhed_train, m, cart_learner)
-        precision_dict['nb'] = predict_by_sklearn_er(get_moprhed_train, m, gnb)
+        for predict_material in to_test_folders:
+            global privatized_set_folder
+            privatized_set_folder = predict_material
 
-        precisions_morphed.append(precision_dict)
+            precision_dict = dict()
+            precision_dict['svm'] = predict_by_sklearn_er(get_moprhed_train, model, svm_learner)
+            precision_dict['cart'] = predict_by_sklearn_er(get_moprhed_train, model, cart_learner)
+            precision_dict['nb'] = predict_by_sklearn_er(get_moprhed_train, model, gnb)
+
+            precisions_privatized[model][predict_material] = precision_dict
 
     # show the results
     if showResults:
@@ -204,15 +212,18 @@ def predict_models(models, privatized_folder, writeReports=True, showResults=Fal
             print '-' * 5
 
             print 'SVM from ORGI:     ', str(precisions_org[m]['svm'])
-            print 'SVM after MOPRHED: ', str(precisions_morphed[m]['svm'])
+            for material in to_test_folders:
+                print 'SVM after %s: %s' % (material, str(precisions_privatized[model][material]['svm']))
             print '-' * 5
 
             print 'CART from ORGI:    ', str(precisions_org[m]['cart'])
-            print 'CART after MOPRHED:', str(precisions_morphed[m]['cart'])
+            for material in to_test_folders:
+                print 'SVM after %s: %s' % (material, str(precisions_privatized[model][material]['cart']))
             print '-' * 5
 
             print 'NB from ORGI:      ', str(precisions_org[m]['nb'])
-            print 'NB after MOPRHED:  ', str(precisions_morphed[m]['nb'])
+            for material in to_test_folders:
+                print 'SVM after %s: %s' % (material, str(precisions_privatized[model][material]['nb']))
             print '-' * 5
 
             print '\n\n'
@@ -222,35 +233,41 @@ def predict_models(models, privatized_folder, writeReports=True, showResults=Fal
         import datetime
         now = datetime.datetime.now()
         report_output_file_name = project_path + 'Reports/' + 'prediction_measure_'\
-            + now.strftime('%y-%m-%d-%Hh') + '.csv'
+            + now.strftime('%y-%m-%d-%H') + '.csv'
 
         f = open(report_output_file_name, 'w+')
 
+        def look_up_precision_dict(model, learner, measure):
+            ff = []
+            for material in to_test_folders:
+                ff.append(str(round(precisions_privatized[model][material][learner][measure], 2)))
+            return ','.join(ff)
+
         # write the SVM result
-        f.write("SVM,,original,morphed\n")
-        for m, model in enumerate(models):
-            f.write("%s,g,%.2f,%.2f\n" % (model, precisions_org[m]['svm']['g_measure'],
-                                          precisions_morphed[m]['svm']['g_measure']))
-            f.write(",pd,%.2f,%.2f\n" % (precisions_org[m]['svm']['pd'], precisions_morphed[m]['svm']['pd']))
-            f.write(",pf,%.2f,%.2f\n" % (precisions_org[m]['svm']['pf'], precisions_morphed[m]['svm']['pf']))
+        f.write("SVM,,original,"+','.join(to_test_folders)+"\n")
+        for model in models:
+            f.write("%s,g,%.2f,%s\n" % (model, precisions_org[m]['svm']['g_measure'],
+                                        look_up_precision_dict(model, 'svm', 'g_measure')))
+            f.write(",pd,%.2f,%s\n" % (precisions_org[m]['svm']['pd'], look_up_precision_dict(model, 'svm', 'pd')))
+            f.write(",pf,%.2f,%s\n" % (precisions_org[m]['svm']['pf'], look_up_precision_dict(model, 'svm', 'pf')))
 
         # write the CART result
-        f.write(",,,\n")
-        f.write("CART,,original,morphed\n")
-        for m, model in enumerate(models):
-            f.write("%s,g,%.2f,%.2f\n" % (model, precisions_org[m]['cart']['g_measure'],
-                                          precisions_morphed[m]['cart']['g_measure']))
-            f.write(",pd,%.2f,%.2f\n" % (precisions_org[m]['cart']['pd'], precisions_morphed[m]['cart']['pd']))
-            f.write(",pf,%.2f,%.2f\n" % (precisions_org[m]['cart']['pf'], precisions_morphed[m]['cart']['pf']))
+        f.write(','.join(['***']*(len(to_test_folders)+3))+"\n")
+        f.write("CART,,original,"+','.join(to_test_folders)+"\n")
+        for model in models:
+            f.write("%s,g,%.2f,%s\n" % (model, precisions_org[m]['cart']['g_measure'],
+                                        look_up_precision_dict(model, 'cart', 'g_measure')))
+            f.write(",pd,%.2f,%s\n" % (precisions_org[m]['cart']['pd'], look_up_precision_dict(model, 'cart', 'pd')))
+            f.write(",pf,%.2f,%s\n" % (precisions_org[m]['cart']['pf'], look_up_precision_dict(model, 'cart', 'pf')))
 
         # write the NB result
-        f.write(",,,\n")
-        f.write("NB,,original,morphed\n")
-        for m, model in enumerate(models):
-            f.write("%s,g,%.2f,%.2f\n" % (model, precisions_org[m]['nb']['g_measure'],
-                                          precisions_morphed[m]['nb']['g_measure']))
-            f.write(",pd,%.2f,%.2f\n" % (precisions_org[m]['nb']['pd'], precisions_morphed[m]['nb']['pd']))
-            f.write(",pf,%.2f,%.2f\n" % (precisions_org[m]['nb']['pf'], precisions_morphed[m]['nb']['pf']))
+        f.write(','.join(['***']*(len(to_test_folders)+3))+"\n")
+        f.write("NB,,original,"+','.join(to_test_folders)+"\n")
+        for model in models:
+            f.write("%s,g,%.2f,%s\n" % (model, precisions_org[m]['nb']['g_measure'],
+                                        look_up_precision_dict(model, 'nb', 'g_measure')))
+            f.write(",pd,%.2f,%s\n" % (precisions_org[m]['nb']['pd'], look_up_precision_dict(model, 'nb', 'pd')))
+            f.write(",pf,%.2f,%s\n" % (precisions_org[m]['nb']['pf'], look_up_precision_dict(model, 'nb', 'pf')))
 
         f.close()
 

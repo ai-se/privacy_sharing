@@ -1,0 +1,14 @@
+SVM,,original,morphed
+camel-1.6,g,0.00,0.00
+,pd,0.00,0.00
+,pf,0.00,0.00
+,,,
+CART,,original,morphed
+camel-1.6,g,0.40,0.51
+,pd,0.26,0.38
+,pf,0.16,0.22
+,,,
+NB,,original,morphed
+camel-1.6,g,0.47,0.00
+,pd,0.31,0.00
+,pf,0.06,0.00

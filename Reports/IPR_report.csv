@@ -68,3 +68,28 @@ report date,model,sensitive attribute list,original db,privatized db,IPR
 16-03-01 14:53,redaktor,"['loc', 'rfc', 'lcom', 'ca', 'ce', 'amc']",DataSet,MorphOut,88
 16-03-01 14:53,xalan-2.7,"['loc', 'rfc', 'lcom', 'ca', 'ce', 'amc']",DataSet,MorphOut,92
 16-03-03 22:58,camel-1.6,"['loc', 'rfc', 'lcom', 'ca', 'ce', 'amc']",DataSet,Lace1Out,76
+16-03-04 15:30,camel-1.6,"['loc', 'rfc', 'lcom', 'ca', 'ce', 'amc']",DataSet,Lace1Out,73
+16-03-04 15:42,camel-1.6,"['loc', 'rfc']",DataSet,Lace1Out,78
+16-03-04 15:42,camel-1.6,"['loc', 'rfc']",DataSet,Lace2Out,83
+16-03-04 15:44,camel-1.6,"['loc', 'rfc']",DataSet,Lace1Out,85
+16-03-04 15:44,camel-1.6,"['loc', 'rfc']",DataSet,Lace2Out,84
+16-03-04 16:10,camel-1.6,"['loc', 'rfc']",DataSet,Lace1Out,83
+16-03-04 16:10,camel-1.6,"['loc', 'rfc']",DataSet,Lace2Out,79
+16-03-04 16:25,camel-1.6,"['loc', 'rfc']",DataSet,Lace1Out,79
+16-03-04 16:25,camel-1.6,"['loc', 'rfc']",DataSet,Lace2Out,70
+16-03-04 16:28,camel-1.6,"['loc', 'rfc']",DataSet,Lace1Out,81
+16-03-04 16:28,camel-1.6,"['loc', 'rfc']",DataSet,Lace2Out,82
+16-03-04 16:28,camel-1.6,"['loc', 'rfc']",DataSet,Lace1Out,88
+16-03-04 16:28,camel-1.6,"['loc', 'rfc']",DataSet,Lace2Out,89
+16-03-04 16:32,camel-1.6,"['loc', 'rfc']",DataSet,Lace1Out,79
+16-03-04 16:32,camel-1.6,"['loc', 'rfc']",DataSet,Lace2Out,78
+16-03-04 16:32,camel-1.6,"['loc', 'rfc']",DataSet,Lace1Out,88
+16-03-04 16:32,camel-1.6,"['loc', 'rfc']",DataSet,Lace2Out,84
+16-03-04 16:32,ant-1.7,"['loc', 'rfc']",DataSet,Lace1Out,90
+16-03-04 16:32,ant-1.7,"['loc', 'rfc']",DataSet,Lace2Out,82
+16-03-04 16:37,camel-1.6,"['loc', 'rfc', 'amc']",DataSet,Lace1Out,85
+16-03-04 16:37,camel-1.6,"['loc', 'rfc', 'amc']",DataSet,Lace2Out,89
+16-03-04 16:37,xerces-1.4,"['loc', 'rfc', 'amc']",DataSet,Lace1Out,84
+16-03-04 16:37,xerces-1.4,"['loc', 'rfc', 'amc']",DataSet,Lace2Out,69
+16-03-04 16:37,ant-1.7,"['loc', 'rfc', 'amc']",DataSet,Lace1Out,94
+16-03-04 16:37,ant-1.7,"['loc', 'rfc', 'amc']",DataSet,Lace2Out,92

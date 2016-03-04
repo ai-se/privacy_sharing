@@ -19,9 +19,10 @@ available argument list:
 
 '''SETTING THE DEFAULT VALUE HERE.'''
 DEFAULT = {
-    'model': ['ant-1.3','ant-1.4', 'ant-1.5', 'ant-1.6', 'ant-1.7', 'camel-1.6', 'redaktor'],
-    'test_set_ratio': 0.3,
+    'model': ['camel-1.6', 'xerces-1.4', 'ant-1.7'],
+    'test_set_ratio': 0.2,
     'CLIFF_percentage': 20,
+    'Lace2_holder_number': 5,
     'MORPH_alpha': 0.15,
     'MORPH_beta': 0.35,
 }
@@ -74,6 +75,10 @@ def main_process(model):
     from LACE1 import LACE1
     LACE1(model, 'TrainSet', 'Lace1Out', _cliff_percent, DEFAULT['MORPH_alpha'], DEFAULT['MORPH_beta'])
 
+    from LACE2 import LACE2
+    LACE2(model, 'TrainSet', 'Lace2Out', DEFAULT['Lace2_holder_number'],
+          _cliff_percent, DEFAULT['MORPH_alpha'], DEFAULT['MORPH_beta'])
+
 
 def program_loading():
     global models, _cliff_percent, _test_set_ratio
@@ -90,7 +95,7 @@ def program_loading():
             trains = [f for f in os.listdir("./TrainSet") if not f.endswith('.py')]
             for f in cliffs: os.remove("./CliffOut/" + f)
             for f in lace1s: os.remove("./Lace1Out/" + f)
-            for f in lace1s: os.remove("./Lace2Out/" + f)
+            for f in lace2s: os.remove("./Lace2Out/" + f)
             for f in tests: os.remove("./TestSet/" + f)
             for f in trains: os.remove("./TrainSet/" + f)
 
@@ -152,8 +157,9 @@ if __name__ == '__main__':
     from evaluate.predict import *
     from evaluate.IPR import *
 
-    predict_models(models, 'Lace1Out', writeReports=True)
+    predict_models(models, ['Lace1Out','Lace2Out'], writeReports=True)
 
-    sen_list = ['loc', 'rfc', 'lcom', 'ca', 'ce', 'amc']
+    sen_list = ['loc', 'rfc', 'amc']
     for model in models:
         report_IPR(model, 'DataSet', 'Lace1Out', sen_list)
+        report_IPR(model, 'DataSet', 'Lace2Out', sen_list)
