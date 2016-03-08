@@ -116,5 +116,28 @@ def normalize_cols_for_table(table):
     return map(list, zip(*result))
 
 
+def delete_col_in_table(list_of_list, col_index):
+    """
+    delete one column or multiple columns in the table (list of list)
+    :param list_of_list: data table
+    :param col_index: index of the col. can be single number or a list. can be negative
+    :return: new alloc pruned table
+    """
+
+    if type(col_index) is not list:
+        col_index = [col_index]
+    for i in range(len(col_index)):
+        if col_index[i] < 0:
+            col_index[i] += len(list_of_list)
+
+    list_of_list = map(list, zip(*list_of_list))
+    return_table = []
+    for index, col in enumerate(list_of_list):
+        if index not in col_index:
+            return_table.append(col)
+
+    return map(list, zip(*return_table))
+
+
 # import pdb
 # pdb.set_trace()
