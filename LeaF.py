@@ -1,5 +1,5 @@
 from __future__ import division
-import csv_data_tools
+import data_tools
 import logging
 import pdb
 
@@ -41,7 +41,7 @@ def find_distinct_distance(normalized_data_set):
     for data in normalized_data_set:
         c = data[-1]
         diff_class_data_indices = [index for index in range(n) if index not in classes_index[c]]
-        distances.append(min([csv_data_tools.euclidean_dist(data, normalized_data_set[index])
+        distances.append(min([data_tools.euclidean_dist(data, normalized_data_set[index])
                               for index in diff_class_data_indices]))
     import numpy
     median_dist = numpy.median(numpy.array(distances))
@@ -59,7 +59,7 @@ def whether_add_to_private_cache(data_instance, existed_cache, distinguish_dista
     """
     # TODO whether need to check the class?!
     for data in existed_cache:
-        if csv_data_tools.euclidean_dist(data_instance, data) <= distinguish_distance:
+        if data_tools.euclidean_dist(data_instance, data) <= distinguish_distance:
             return False
 
     return True

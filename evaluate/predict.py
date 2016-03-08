@@ -1,7 +1,7 @@
 from __future__ import division
 from collections import defaultdict
 import csv
-import csv_data_tools
+import data_tools
 import os
 import sys
 sys.path.append(os.path.abspath(".."))
@@ -58,7 +58,7 @@ def get_original_train(model):
         next(reader)  # pass the first line (csv header)
         for line in reader:
             record_row = [line[i] for i in _original_recored_index]
-            record_row = map(csv_data_tools.str2num, record_row)
+            record_row = map(data_tools.str2num, record_row)
             if record_row[-1] > 0:
                 record_row[-1] = 1  # setting the result as binary
             all_trains.append(record_row)
@@ -75,7 +75,7 @@ def get_moprhed_train(model):
         reader = csv.reader(f)
         next(reader)  # pass the first line (csv header)
         for line in reader:
-            record_row = map(csv_data_tools.str2num, line)
+            record_row = map(data_tools.str2num, line)
             if record_row[-1] > 0:
                 record_row[-1] = 1  # setting the result as binary
             all_trains.append(record_row)
@@ -96,7 +96,7 @@ def get_test(model):
         next(reader)  # pass the first line (csv header)
         for line in reader:
             record_row = [line[i] for i in _original_recored_index]
-            record_row = map(csv_data_tools.str2num, record_row)
+            record_row = map(data_tools.str2num, record_row)
             if record_row[-1] > 0:
                 record_row[-1] = 1  # setting the result as binary
             all_trains.append(record_row)

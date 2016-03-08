@@ -190,5 +190,6 @@ if __name__ == "__main__":
     minConfidence = options.minC
 
     items, rules = runApriori(inFile, minSupport, minConfidence)
-
+    import pdb
+    pdb.set_trace()
     printResults(items, rules)

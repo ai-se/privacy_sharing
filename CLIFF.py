@@ -4,7 +4,7 @@ import copy
 import logging
 import random
 import pdb
-import csv_data_tools
+import data_tools
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
@@ -110,7 +110,7 @@ def CLIFF(database,
         for attr in record_attrs:
             temp = original_attributes.index(attr)
             col = [original_data_row[temp] for original_data_row in alldata]
-            bin_sizes.append(csv_data_tools.self_determine_bin_size(col))
+            bin_sizes.append(data_tools.self_determine_bin_size(col))
     else:
         assert len(bin_sizes) == len(record_attrs), "bin_siezes and record_attrs must have the same size when setting"
 
@@ -126,7 +126,7 @@ def CLIFF(database,
         col = [i[temp] for i in alldata]
         try: col = map(int, col)
         except ValueError: col = map(float, col)
-        E = csv_data_tools.binrange(col, bin_sizes[attr_index])
+        E = data_tools.binrange(col, bin_sizes[attr_index])
         all_data_power.append(power(col, classes, E))
 
     all_data_power = map(list, zip(*all_data_power))  # transpose.
@@ -193,8 +193,8 @@ def Cliff_simplified(dataset, percentage):
     all_data_power = []
     for attr_index in range(attrs_num-1):
         col = [row[attr_index] for row in dataset]
-        bin_sizes.append(csv_data_tools.self_determine_bin_size(col))
-        e = csv_data_tools.binrange(col, bin_sizes[attr_index])
+        bin_sizes.append(data_tools.self_determine_bin_size(col))
+        e = data_tools.binrange(col, bin_sizes[attr_index])
         all_data_power.append(power(col, classes, e))
     all_data_power = map(list, zip(*all_data_power))  # transpose
 

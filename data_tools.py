@@ -24,13 +24,13 @@ def str2num(s):
     return s
 
 
-def binrange(datalist, bin_number=10):
+def binrange(data_list, bin_number=10):
     """
-    :param datalist:
+    :param data_list:
     :param bin_number:
     :return: list of bin# e.g. {a,b,c,d,e} [a,b] (b,c] (c,d] [d,e]
     """
-    l = sorted(datalist)
+    l = sorted(data_list)
     bin_size = math.ceil(len(l)/bin_number)
     # print bin_size
     boundary = [l[0]]
@@ -45,7 +45,7 @@ def binrange(datalist, bin_number=10):
 def self_determine_bin_size(list_of_data):
     """
     Given the list, return the bin size automatically
-    :param list:
+    :param list_of_data:
     :return: bin size
     """
     return min(len(set(list_of_data)), 10)
@@ -116,7 +116,7 @@ def normalize_cols_for_table(table):
     return map(list, zip(*result))
 
 
-def delete_col_in_table(list_of_list, col_index):
+def del_col_in_table(list_of_list, col_index):
     """
     delete one column or multiple columns in the table (list of list)
     :param list_of_list: data table

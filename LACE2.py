@@ -73,7 +73,7 @@ def LACE2(model, original_data_folder, final_out_put_folder, holder_number=5,
         original_attributes = next(reader)
         all_data = []
         for line in reader:
-            line = map(csv_data_tools.str2num, line)
+            line = map(data_tools.str2num, line)
             all_data.append(line)
 
     # TODO user-given record attributes
@@ -95,7 +95,7 @@ def LACE2(model, original_data_folder, final_out_put_folder, holder_number=5,
     # get the **important** Leaf Distance
     fetch_num = min(len(all_data), 100)
     tmp_all_data_table = random.sample(all_data, fetch_num)
-    tmp_all_data_table = csv_data_tools.normalize_cols_for_table([row[:-1] for row in tmp_all_data_table])
+    tmp_all_data_table = data_tools.normalize_cols_for_table([row[:-1] for row in tmp_all_data_table])
     inter_class_dist = find_distinct_distance(tmp_all_data_table)
 
     # normalize the dataset
@@ -112,7 +112,7 @@ def LACE2(model, original_data_folder, final_out_put_folder, holder_number=5,
                 is_int[attr_index] = False
                 break
 
-        f1, f2 = csv_data_tools.attr_norm(attr_elements)
+        f1, f2 = data_tools.attr_norm(attr_elements)
         norm_funcs.append(f1)
         denorm_funcs.append(f2)
         all_data[attr_index] = map(f1, attr_elements)

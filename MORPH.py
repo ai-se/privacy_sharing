@@ -5,7 +5,7 @@ import random
 import math
 import pdb
 import copy
-import csv_data_tools
+import data_tools
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
@@ -44,7 +44,7 @@ def MORPH(database, db_folder='not_from_csv_file', write_out_folder=None,
             dataset = []
             for line in reader:
                 dataset.append(line)
-        dataset = [map(csv_data_tools.str2num, row) for row in dataset]  # str to numeric
+        dataset = [map(data_tools.str2num, row) for row in dataset]  # str to numeric
     else:
         dataset = database
         attributes = ['foo'] * len(dataset[0])
@@ -72,7 +72,7 @@ def MORPH(database, db_folder='not_from_csv_file', write_out_folder=None,
     # normalizing
 
     for attr_index, attr_elements in enumerate(dataset):  # for each attribute elements
-        f1, f2 = csv_data_tools.attr_norm(attr_elements)
+        f1, f2 = data_tools.attr_norm(attr_elements)
         norm_funcs.append(f1)
         denorm_funcs.append(f2)
         dataset[attr_index] = map(f1, attr_elements)
@@ -82,7 +82,7 @@ def MORPH(database, db_folder='not_from_csv_file', write_out_folder=None,
 
     for row_index, row in enumerate(dataset):  # for each row
         heterogeneous_index = [i for i in range(len(classes)) if classes[i] != classes[row_index]]
-        boundary_dist = min([csv_data_tools.euclidean_dist(row, dataset[heg]) for heg in heterogeneous_index])
+        boundary_dist = min([data_tools.euclidean_dist(row, dataset[heg]) for heg in heterogeneous_index])
         boundary_dist /= math.sqrt(len(attributes)-1)
         for i in range(len(row)):
             dataset[row_index][i] += boundary_dist*random.uniform(alpha, beta)*random.choice([1, -1])  # shake
