@@ -33,6 +33,7 @@ Usage:
 """
 
 import sys
+import pdb
 
 from itertools import chain, combinations
 from collections import defaultdict
@@ -138,14 +139,22 @@ def runApriori(data_iter, minSupport, minConfidence):
     return toRetItems, toRetRules
 
 
-def printResults(items, rules):
+def printResults(items, rules, print_result=True):
     """prints the generated itemsets sorted by support and the confidence rules sorted by confidence"""
+    result_string = ''
     for item, support in sorted(items, key=lambda (item, support): support):
-        print "item: %s , %.3f" % (str(item), support)
-    print "\n------------------------ RULES:"
+        result_string += "item: %s , %.3f\n" % (str(item), support)
+
+    result_string += "\n------------------------ RULES:\n"
+
     for rule, confidence in sorted(rules, key=lambda (rule, confidence): confidence):
         pre, post = rule
-        print "Rule: %s ==> %s , %.3f" % (str(pre), str(post), confidence)
+        result_string += "Rule: %s ==> %s , %.3f\n" % (str(pre), str(post), confidence)
+
+    if print_result:
+        print result_string
+
+    return result_string
 
 
 def dataFromFile(fname):
@@ -188,8 +197,6 @@ if __name__ == "__main__":
 
     minSupport = options.minS
     minConfidence = options.minC
-
     items, rules = runApriori(inFile, minSupport, minConfidence)
-    import pdb
-    pdb.set_trace()
     printResults(items, rules)
+    pdb.set_trace()
