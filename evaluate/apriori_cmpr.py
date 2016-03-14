@@ -3,6 +3,8 @@ import pdb
 import logging
 import csv
 import datetime
+import itertools
+from scipy.spatial.distance import cosine
 from os import sys, path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 project_path = [i for i in sys.path if i.endswith('privacy_sharing')][0]
@@ -143,6 +145,41 @@ def apriori_cmpr(model, org_folder, privatized_folder, min_support=0.15, min_con
     return items_org, items_privatized, rules_org, rules_privatized
 
 
+def item_set_similarity(item1, item2):
+    """
+    If two frequent item sets does not have the same attribute, return 0
+    Otherwise, return the cosin distance of frequent item sets.
+    :param item1: e.g. set(['ic:0', 'cbm:0', 'moa:0', 'noc:0'])
+    :param item2:
+    :return:
+    """
+    attr1 = dict()
+    attr2 = dict()
+
+    for item in item1:
+        tmp = item.split(':')
+        attr1[tmp[0]] = int(tmp[1])
+
+    for item in item2:
+        tmp = item.split(':')
+        attr2[tmp[0]] = int(tmp[1])
+
+    if set(attr1.keys()) != set(attr2.keys()):
+        return "not same attributes"
+
+    if attr1 == attr2:
+        return 1
+
+    # TODO need to normalize?!
+    value_vector1 = []
+    value_vector2 = []
+    for key in attr1.keys():
+        value_vector1.append(attr1[key])
+        value_vector2.append(attr2[key])
+
+    return 1 - cosine(value_vector1, value_vector2)  # TODO divide by zero error
+
+
 def apriori_report(model, org_folder, privatized_folder, min_support=0.15, min_confidence=0.6):
     items_org, items_privatized, rules_org, rules_privatized = \
         apriori_cmpr(model, org_folder, privatized_folder, min_support, min_confidence)
@@ -156,11 +193,6 @@ def apriori_report(model, org_folder, privatized_folder, min_support=0.15, min_c
     itemsets_org = [set(items[0]) for items in items_org]
     itemsets_privatized = [set(items[0]) for items in items_privatized]
 
-    for i in itemsets_org:
-        if i in itemsets_privatized:
-            print i
-
-    pdb.set_trace()
     # writing the report
 
     org_details = printResults(items_org, rules_org, print_result=False)
@@ -174,6 +206,9 @@ def apriori_report(model, org_folder, privatized_folder, min_support=0.15, min_c
     out_file.write('\n' + '*' * 20)
 
     out_file.close()
+
+    for itemset_org, itemset_privatized in itertools.product(itemsets_org, itemsets_privatized):
+        print item_set_similarity(itemset_org, itemset_privatized)
 
     pdb.set_trace()
 
