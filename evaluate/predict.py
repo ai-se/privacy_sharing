@@ -1,16 +1,15 @@
 from __future__ import division
 from collections import defaultdict
 import csv
-import data_tools
 import os
 import sys
 sys.path.append(os.path.abspath(".."))
-
+import data_tools
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
 __license__ = "MIT"
-__version__ = "1.0"
+__version__ = "1.3"
 __email__ = "jchen37@ncsu.edu"
 
 """
@@ -139,7 +138,7 @@ def get_error_measure(actual, predict):
     return error
 
 
-def predict_by_sklearn_er(fetch_train_func, model, clf_instance):
+def predicting(fetch_train_func, model, clf_instance):
     x, y = fetch_train_func(model)
     clf_instance.fit(x, y)
     x, actual = get_test(model)
@@ -181,29 +180,29 @@ def predict_models(models, to_test_folders, writeReports=True, showResults=False
     cart_learner = tree.DecisionTreeClassifier()
     gnb = GaussianNB()
 
-    precisions_org = []
-    precisions_privatized = defaultdict(dict)
+    precs_org = []
+    precs_prtz = defaultdict(dict)
     for model in models:
         recorded_attrs = []
         _original_recored_index = []
 
-        precision_dict = dict()
-        precision_dict['svm'] = predict_by_sklearn_er(get_original_train, model, svm_learner)
-        precision_dict['cart'] = predict_by_sklearn_er(get_original_train, model, cart_learner)
-        precision_dict['nb'] = predict_by_sklearn_er(get_original_train, model, gnb)
+        prec_di = dict()
+        prec_di['svm'] = predicting(get_original_train, model, svm_learner)
+        prec_di['cart'] = predicting(get_original_train, model, cart_learner)
+        prec_di['nb'] = predicting(get_original_train, model, gnb)
 
-        precisions_org.append(precision_dict)
+        precs_org.append(prec_di)
 
         for predict_material in to_test_folders:
             global privatized_set_folder
             privatized_set_folder = predict_material
 
-            precision_dict = dict()
-            precision_dict['svm'] = predict_by_sklearn_er(get_moprhed_train, model, svm_learner)
-            precision_dict['cart'] = predict_by_sklearn_er(get_moprhed_train, model, cart_learner)
-            precision_dict['nb'] = predict_by_sklearn_er(get_moprhed_train, model, gnb)
+            prec_di = dict()
+            prec_di['svm'] = predicting(get_moprhed_train, model, svm_learner)
+            prec_di['cart'] = predicting(get_moprhed_train, model, cart_learner)
+            prec_di['nb'] = predicting(get_moprhed_train, model, gnb)
 
-            precisions_privatized[model][predict_material] = precision_dict
+            precs_prtz[model][predict_material] = prec_di
 
     # show the results
     if showResults:
@@ -211,19 +210,19 @@ def predict_models(models, to_test_folders, writeReports=True, showResults=False
             print 'MODEL : ', model
             print '-' * 5
 
-            print 'SVM from ORGI:     ', str(precisions_org[m]['svm'])
+            print 'SVM from ORGI:     ', str(precs_org[m]['svm'])
             for material in to_test_folders:
-                print 'SVM after %s: %s' % (material, str(precisions_privatized[model][material]['svm']))
+                print 'SVM after %s: %s' % (material, str(precs_prtz[model][material]['svm']))
             print '-' * 5
 
-            print 'CART from ORGI:    ', str(precisions_org[m]['cart'])
+            print 'CART from ORGI:    ', str(precs_org[m]['cart'])
             for material in to_test_folders:
-                print 'SVM after %s: %s' % (material, str(precisions_privatized[model][material]['cart']))
+                print 'SVM after %s: %s' % (material, str(precs_prtz[model][material]['cart']))
             print '-' * 5
 
-            print 'NB from ORGI:      ', str(precisions_org[m]['nb'])
+            print 'NB from ORGI:      ', str(precs_org[m]['nb'])
             for material in to_test_folders:
-                print 'SVM after %s: %s' % (material, str(precisions_privatized[model][material]['nb']))
+                print 'SVM after %s: %s' % (material, str(precs_prtz[model][material]['nb']))
             print '-' * 5
 
             print '\n\n'
@@ -237,42 +236,42 @@ def predict_models(models, to_test_folders, writeReports=True, showResults=False
 
         f = open(report_output_file_name, 'w+')
 
-        def look_up_precision_dict(model, learner, measure):
+        def check_prtz_prec(model, learner, measure):
             ff = []
             for material in to_test_folders:
-                ff.append(str(round(precisions_privatized[model][material][learner][measure], 2)))
+                ff.append(str(round(precs_prtz[model][material][learner][measure], 2)))
             return ','.join(ff)
 
         # write the SVM result
         f.write("SVM,,original,"+','.join(to_test_folders)+"\n")
-        for model in models:
-            f.write("%s,g,%.2f,%s\n" % (model, precisions_org[m]['svm']['g_measure'],
-                                        look_up_precision_dict(model, 'svm', 'g_measure')))
-            f.write(",pd,%.2f,%s\n" % (precisions_org[m]['svm']['pd'], look_up_precision_dict(model, 'svm', 'pd')))
-            f.write(",pf,%.2f,%s\n" % (precisions_org[m]['svm']['pf'], look_up_precision_dict(model, 'svm', 'pf')))
+        for m, model in enumerate(models):
+            f.write("%s,g,%.2f,%s\n" % (model, precs_org[m]['svm']['g_measure'],
+                                        check_prtz_prec(model, 'svm', 'g_measure')))
+            f.write(",pd,%.2f,%s\n" % (precs_org[m]['svm']['pd'], check_prtz_prec(model, 'svm', 'pd')))
+            f.write(",pf,%.2f,%s\n" % (precs_org[m]['svm']['pf'], check_prtz_prec(model, 'svm', 'pf')))
 
         # write the CART result
         f.write(','.join(['***']*(len(to_test_folders)+3))+"\n")
         f.write("CART,,original,"+','.join(to_test_folders)+"\n")
-        for model in models:
-            f.write("%s,g,%.2f,%s\n" % (model, precisions_org[m]['cart']['g_measure'],
-                                        look_up_precision_dict(model, 'cart', 'g_measure')))
-            f.write(",pd,%.2f,%s\n" % (precisions_org[m]['cart']['pd'], look_up_precision_dict(model, 'cart', 'pd')))
-            f.write(",pf,%.2f,%s\n" % (precisions_org[m]['cart']['pf'], look_up_precision_dict(model, 'cart', 'pf')))
+        for m, model in enumerate(models):
+            f.write("%s,g,%.2f,%s\n" % (model, precs_org[m]['cart']['g_measure'],
+                                        check_prtz_prec(model, 'cart', 'g_measure')))
+            f.write(",pd,%.2f,%s\n" % (precs_org[m]['cart']['pd'], check_prtz_prec(model, 'cart', 'pd')))
+            f.write(",pf,%.2f,%s\n" % (precs_org[m]['cart']['pf'], check_prtz_prec(model, 'cart', 'pf')))
 
         # write the NB result
         f.write(','.join(['***']*(len(to_test_folders)+3))+"\n")
         f.write("NB,,original,"+','.join(to_test_folders)+"\n")
-        for model in models:
-            f.write("%s,g,%.2f,%s\n" % (model, precisions_org[m]['nb']['g_measure'],
-                                        look_up_precision_dict(model, 'nb', 'g_measure')))
-            f.write(",pd,%.2f,%s\n" % (precisions_org[m]['nb']['pd'], look_up_precision_dict(model, 'nb', 'pd')))
-            f.write(",pf,%.2f,%s\n" % (precisions_org[m]['nb']['pf'], look_up_precision_dict(model, 'nb', 'pf')))
+        for m, model in enumerate(models):
+            f.write("%s,g,%.2f,%s\n" % (model, precs_org[m]['nb']['g_measure'],
+                                        check_prtz_prec(model, 'nb', 'g_measure')))
+            f.write(",pd,%.2f,%s\n" % (precs_org[m]['nb']['pd'], check_prtz_prec(model, 'nb', 'pd')))
+            f.write(",pf,%.2f,%s\n" % (precs_org[m]['nb']['pf'], check_prtz_prec(model, 'nb', 'pf')))
 
         f.close()
 
 
 if __name__ == '__main__':
-    get_moprhed_train('ant-1.3')
-    predict_models(['ant-1.3', 'ant-1.6', 'ant-1.7'], writeReports=True, showResults=True)
+    predict_models(['ant-1.7', 'camel-1.6'], to_test_folders=['Lace1Out', 'Lace2Out'],
+                   writeReports=True, showResults=True)
 

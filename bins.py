@@ -1,12 +1,11 @@
 from __future__ import division
 from copy import deepcopy
 from collections import namedtuple
-import pdb
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
 __license__ = "WTFPL"
-__version__ = "1.0"
+__version__ = "1.3"
 __email__ = "jchen37@ncsu.edu"
 
 """
@@ -37,7 +36,8 @@ def num1(z, stat):
     stat.mu += delta / stat.n
     stat.m2 += delta * (z - stat.mu)
 
-    if abs(stat.m2) < 1e-4:
+    if stat.m2 < 0:
+        assert abs(stat.m2) < 0.01, "unmum function wrong! m2 < -0.01"
         stat.m2 = 0
 
     return stat
@@ -53,7 +53,8 @@ def unnum(z, stat):  # opposite to num1
     stat.mu -= delta / stat.n
     stat.m2 -= delta * (z - stat.mu)
 
-    if abs(stat.m2) < 1e-4:
+    if stat.m2 < 0:
+        assert abs(stat.m2) < 0.01, "unmum function wrong! m2 < -0.01"
         stat.m2 = 0
 
     return stat
@@ -91,19 +92,19 @@ def bins1(i, nums, all, lvl):
     if stop - start >= i.small:
         lhs, rhs = num0(), deepcopy(all)
         score, score1 = sd(rhs), None
-        old = None
+        # old = None
         for j, new in enumerate(nums):
             num1(new, lhs)
             unnum(new, rhs)
             score1 = (lhs.n * sd(lhs) + rhs.n * sd(rhs)) / n
-            if new != old and lhs.n >= i.enough and rhs.n >= i.enough and \
+            if new != nums[min(j+1, n-1)] and lhs.n >= i.enough and rhs.n >= i.enough and \
                     new - start >= i.small and score1 * i.trivial < score:
-                cut, score, lo, hi = j, score1, deepcopy(lhs), deepcopy(rhs)
-            old = new
+                cut, score, lo, hi = j+1, score1, deepcopy(lhs), deepcopy(rhs)
+            # old = new
 
         if cut != -1:
-            bins1(i, nums[:cut+1], lo, lvl+1)
-            bins1(i, nums[cut+1:], hi, lvl+1)
+            bins1(i, nums[:cut], lo, lvl+1)
+            bins1(i, nums[cut:], hi, lvl+1)
         else:  # we've found a leaf range
             global ranges
             ranges.append(Range(lo=start, also=None, n=len(nums), up=stop))
@@ -115,18 +116,21 @@ def bins(t, enough=None, cohen=0.2, maxBins=16, minBin=4, small=None, verbose=Fa
     enough = enough or max(minBin, all.n/maxBins)
     small = small or sd(all) * cohen
     i = BinInfo(enough, cohen, maxBins, minBin, small, verbose, trivial)
+    global ranges
+    ranges = []
     bins1(i, nums, all, 1)
     return ranges
 
 
 # def test():
 #     import random
-#     nums = [1, 24, 17, 21, 17, 18, 11, 25, 18, 5, 19, 17, 7, 11, 26, 11, 21, 6, 13, 3]
+#     nums = [random.randint(1,20) for _ in range(500)]
 #     print sorted(nums)
 #     ranges = bins(nums, maxBins=4, verbose=False)
 #     for r in ranges:
 #         print r
 #
+#     pdb.set_trace()
 #
 # if __name__ == '__main__':
 #     import sys, traceback

@@ -61,8 +61,7 @@ def CLIFF(database,
           db_folder,
           percentage,
           write_out_folder=None,
-          record_attrs=['all_attributes'],
-          bin_sizes=['self determine']):
+          record_attrs=['all_attributes']):
     """
     Core function for CLIFF algorithm
     prune the data set according to the power
@@ -73,66 +72,52 @@ def CLIFF(database,
     :param percentage: the percentage of data to be return
     :param write_out_folder: where to write out the generated data base into "write_out_folder/***_p.csv"
     :param record_attrs: specify the recording attributes. if not set, all numeric attributes will be considered
-    :param bin_sizes: the bin_sizes for each record_attrs.
     :return: the CLIFFED database
     """
     percentage /= 100 if percentage > 1 else 1
 
-    assert len(record_attrs) == len(bin_sizes), \
-        "bin_size should be matched with the record_attrs. CANNOT set only one of them"
-
     # load the database
     with open(db_folder + '/' + database+'.csv', 'r') as db:
         reader = csv.reader(db)
-        original_attributes = next(reader)
+        ori_attrs = next(reader)
         alldata = []
         for line in reader:
             alldata.append(line)
 
-    # determine which original_attributes to the record, as well as the perfect bin size
+    # determine which ori_attrs to the record, as well as the perfect bin size
     if 'all_attributes' in record_attrs:
-        record_attrs=[]
-        for attr in range(len(original_attributes)-1):  # the last attr is the CLASS
-            col = [original_data_row[attr] for original_data_row in alldata]  # get the col in this attribute
+        record_attrs = list()
+        for attr in range(len(ori_attrs)-1):  # the last attr is the CLASS
+            col = [or_data_r[attr] for or_data_r in alldata]  # get the col in this attribute
             if len(set(col)) == 1: continue  # all rows are the same in this attr. Not informative. Ignore it
             try:
                 float(col[0])  # numeric? testing
-                record_attrs.append(original_attributes[attr])
+                record_attrs.append(ori_attrs[attr])
             except ValueError:
                 continue
     else:
         for ra in record_attrs:
-            assert ra in original_attributes, "record_attrs must be in the database"
-
-    # determine the best bin size
-    if 'self determine' in bin_sizes:
-        bin_sizes = []
-        for attr in record_attrs:
-            temp = original_attributes.index(attr)
-            col = [original_data_row[temp] for original_data_row in alldata]
-            bin_sizes.append(data_tools.self_determine_bin_size(col))
-    else:
-        assert len(bin_sizes) == len(record_attrs), "bin_siezes and record_attrs must have the same size when setting"
+            assert ra in ori_attrs, "record_attrs must be in the database"
 
     # binary the classification
-    classes = [i[len(original_attributes)-1] for i in alldata]  # last column in the origin csv file
+    classes = [i[len(ori_attrs)-1] for i in alldata]  # last column in the origin csv file
     classes = [int(bool(int(c))) for c in classes]
 
     # get the power for each attribute
     # store them in a final table
     all_data_power = []
     for attr_index, attr in enumerate(record_attrs):
-        temp = original_attributes.index(attr)
+        temp = ori_attrs.index(attr)
         col = [i[temp] for i in alldata]
         try: col = map(int, col)
         except ValueError: col = map(float, col)
-        E = data_tools.binrange(col, bin_sizes[attr_index])
+        E = data_tools.binrange(col)
         all_data_power.append(power(col, classes, E))
 
     all_data_power = map(list, zip(*all_data_power))  # transpose.
 
-    cliffout = []
-    cliffout.append(record_attrs+original_attributes[-1:])  # header
+    cliff_out = list()
+    cliff_out.append(record_attrs+ori_attrs[-1:])  # header
 
     # select the largest sum of power in each row from each class
     # TODO make sure the understanding here is correct
@@ -142,78 +127,76 @@ def CLIFF(database,
         row_sum_sub = [sum(row) for row_index, row in enumerate(all_data_power) if classes[row_index] == cls]
         minimum = sorted(row_sum_sub, reverse=True)[int(len(row_sum_sub) * percentage)]
 
-        # create the cliffout
+        # create the cliff_out
         for row_index in range(len(alldata)):
             if classes[row_index] != cls: continue
             if row_sum[row_index] < minimum: continue  # prune due to low power
             temp_row = []
-            for attr_index, attr in enumerate(original_attributes[:-1]):
+            for attr_index, attr in enumerate(ori_attrs[:-1]):
                 if attr in record_attrs:
                     try: x = int(alldata[row_index][attr_index])
                     except ValueError: x = float(alldata[row_index][attr_index])
                     temp_row.append(x)
             temp_row.append(cls)
-            cliffout.append(temp_row)
+            cliff_out.append(temp_row)
 
-    # write the cliffout
+    # write the cliff_out
     if write_out_folder:
         with open(write_out_folder + '/'+database + '.csv', 'wb') as f:
             writer = csv.writer(f)
-            writer.writerows(cliffout)
+            writer.writerows(cliff_out)
 
-    return cliffout
+    return cliff_out
 
 
-def Cliff_simplified(dataset, percentage):
+def Cliff_simplified(dataset, percent):
     """
     simplified version of CLIFF.
     RESTRICTED USED:
     ALL ATTRIBUTE EXCEPT LAST ONE SHOULD BE RECORDED
     :param dataset:
-    :param percentage:
+    :param percent:
     :return: CLIFFed dataset
     """
     if len(dataset) < 50:
         logging.debug("no enough data to cliff. return the whole dataset")
         return dataset
 
-    percentage /= 100 if percentage > 1 else 1
+    percent /= 100 if percent > 1 else 1
 
     # binary the classification
     classes = [row[-1] for row in dataset]  # the last column in dataset
     classes = [int(bool(int(c))) for c in classes]
     if len(set(classes)) == 1:
-        return random.sample(dataset, int(len(dataset)*percentage))
+        return random.sample(dataset, int(len(dataset) * percent))
 
     # determine the bin_size
     # get the power for each attribute
     # store them in a final table
     attrs_num = len(dataset[0])
-    bin_sizes = []
     all_data_power = []
     for attr_index in range(attrs_num-1):
         col = [row[attr_index] for row in dataset]
-        bin_sizes.append(data_tools.self_determine_bin_size(col))
-        e = data_tools.binrange(col, bin_sizes[attr_index])
+        e = data_tools.binrange(col)
         all_data_power.append(power(col, classes, e))
     all_data_power = map(list, zip(*all_data_power))  # transpose
 
-    cliffout = []
+    cliff_out = []
     row_sum = [sum(row) for row in all_data_power]
 
     for cls in set(classes):
-        row_sum_sub = [sum(row) for row_index, row in enumerate(all_data_power) if classes[row_index] == cls]
-        minimum = sorted(row_sum_sub, reverse=True)[int(len(row_sum_sub) * percentage)]
+        row_sum_sub = [sum(row) for c, row in zip(classes, all_data_power) if c == cls]
+        minimum = sorted(row_sum_sub, reverse=True)[int(len(row_sum_sub) * percent)]
 
-        # create the cliffout
+        # create the cliff_out
         for row_index in range(len(dataset)):
             if classes[row_index] != cls:
                 continue
             if row_sum[row_index] < minimum:
                 continue  # prune due to low power
-            cliffout.append(dataset[row_index])
+            cliff_out.append(dataset[row_index])
 
-    return cliffout
+    return cliff_out
 
 
 def testing():

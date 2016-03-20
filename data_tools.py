@@ -1,16 +1,11 @@
 from __future__ import division
-import math
-
+import bins
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
 __license__ = "MIT"
-__version__ = "1.0"
+__version__ = "2.0"
 __email__ = "jchen37@ncsu.edu"
-
-"""
-set of tools for handling csv data
-"""
 
 
 def str2num(s):
@@ -24,31 +19,23 @@ def str2num(s):
     return s
 
 
-def binrange(data_list, bin_number=10):
+def binrange(data_list, enough=None, cohen=0.2, maxBins=16, minBin=4, trivial=1.05):
     """
+
     :param data_list:
-    :param bin_number:
-    :return: list of bin# e.g. {a,b,c,d,e} [a,b] (b,c] (c,d] [d,e]
+    :param enough:
+    :param cohen:
+    :param maxBins:
+    :param minBin:
+    :param trivial:
+    :return: ist of bin# e.g. {a,b,c,d,e} [a,b] (b,c] (c,d] [d,e]
     """
-    l = sorted(data_list)
-    bin_size = math.ceil(len(l)/bin_number)
-    # print bin_size
-    boundary = [l[0]]
-    for i in range(0, len(l)):
-        if (i+1) % bin_size == 0:
-            boundary.append(l[i])
-    if l[-1] not in boundary:
-        boundary.append(l[-1])
-    return boundary
-
-
-def self_determine_bin_size(list_of_data):
-    """
-    Given the list, return the bin size automatically
-    :param list_of_data:
-    :return: bin size
-    """
-    return min(len(set(list_of_data)), 10)
+    ranges = bins.bins(t=data_list, enough=enough, cohen=cohen,
+                       maxBins=maxBins, minBin=minBin,trivial=trivial)
+    res = [ranges[0].lo]
+    for r in ranges:
+        res.append(r.up)
+    return res
 
 
 def attr_norm(all_elements):
@@ -137,7 +124,3 @@ def del_col_in_table(list_of_list, col_index):
             return_table.append(col)
 
     return map(list, zip(*return_table))
-
-
-# import pdb
-# pdb.set_trace()
