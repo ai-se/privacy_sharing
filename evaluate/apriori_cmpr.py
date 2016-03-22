@@ -28,7 +28,7 @@ def dataset_iter(dataset):
         yield frozenset(data)
 
 
-def apriori_cmpr(model, org_folder, privatized_folder, min_support=0.15, min_confidence=0.6):
+def apriori_cmpr(model, org_folder, privatized_folder, min_support, min_confidence):
     """
     Note:
     ignore the class attribute. just focus on the independent attributes
@@ -81,8 +81,7 @@ def apriori_cmpr(model, org_folder, privatized_folder, min_support=0.15, min_con
 
     for attr_name, col in zip(attributes, zip(*all_org_data)):
         col = list(col)
-        bin_size = data_tools.self_determine_bin_size(col)
-        ranges = data_tools.binrange(col, bin_size)
+        ranges = data_tools.binrange(col)
         # ranges_dict[attr_name] = ranges
 
         tags = []
@@ -104,8 +103,7 @@ def apriori_cmpr(model, org_folder, privatized_folder, min_support=0.15, min_con
     dis_privatized_data = []
     for attr_name, col in zip(attributes, zip(*all_privatized_data)):
         col = list(col)
-        bin_size = data_tools.self_determine_bin_size(col)
-        ranges = data_tools.binrange(col, bin_size)
+        ranges = data_tools.binrange(col)
         # ranges = ranges_dict[attr_name]
 
         tags = []
@@ -124,7 +122,6 @@ def apriori_cmpr(model, org_folder, privatized_folder, min_support=0.15, min_con
 
         dis_privatized_data.append(tags)
     dis_privatized_data = map(list, zip(*dis_privatized_data))
-
     logging.info("Database discretization done.")
 
     # writing out the dis dataset
@@ -142,7 +139,7 @@ def apriori_cmpr(model, org_folder, privatized_folder, min_support=0.15, min_con
     items_org, rules_org = runApriori(org_iter, min_support, min_confidence)
     items_privatized, rules_privatized = runApriori(privatized_iter, min_support, min_confidence)
 
-    return items_org, items_privatized, rules_org, rules_privatized
+    return items_org, items_privatized, rules_org, rules_privatized, dis_org_data, dis_privatized_data
 
 
 def item_set_similarity(item1, item2):
@@ -180,41 +177,86 @@ def item_set_similarity(item1, item2):
     return 1 - cosine(value_vector1, value_vector2)  # TODO divide by zero error
 
 
-def apriori_report(model, org_folder, privatized_folder, min_support=0.15, min_confidence=0.6):
-    items_org, items_privatized, rules_org, rules_privatized = \
+def apriori_report(model, org_folder, privatized_folder, print_result=False, min_support=0.15, min_confidence=0.6):
+    """
+
+    :param model:
+    :param org_folder:
+    :param privatized_folder:
+    :param print_result:
+    :param min_support:
+    :param min_confidence:
+    :return:
+    """
+    items_org, items_privatized, rules_org, rules_privatized, dis_org_data, dis_privatized_data = \
         apriori_cmpr(model, org_folder, privatized_folder, min_support, min_confidence)
+
+    # EXPERIMENT
+    status1 = []  # recording the status of rules from original dataset to the privatized dataset
+    status2 = []  # recording the status of rules from privatized dataset to the original dataset
+    for rule in rules_org:
+        left = rule[0][0]
+        right = rule[0][1]
+        # confidence = float(rule[1])
+        d = len([1 for i in dis_privatized_data if set(left) <= set(i)])
+        if d < min_support:
+            status1.append('min_support fail')
+        else:
+            conff = len([1 for i in dis_privatized_data if set(left+right) <= set(i)]) / d
+            if conff >= min_confidence:
+                status1.append('rule remains')
+            else:
+                status1.append('rule disappear')
+
+    for rule in rules_privatized:
+        left = rule[0][0]
+        right = rule[0][1]
+        # confidence = float(rule[1])
+        d = len([1 for i in dis_org_data if set(left) <= set(i)])
+        if d < min_support:
+            status2.append('min_support fail')
+        else:
+            conff = len([1 for i in dis_org_data if set(left+right) <= set(i)]) / d
+            if conff >= min_confidence:
+                status2.append('rule remains')
+            else:
+                status2.append('rule disappear')
+
+    # END OF THE EXPERIMENT
 
     out_file_name = project_path + '/Reports/association_report_' + \
         datetime.datetime.now().strftime('%y-%m-%d-%H') + '.txt'
 
     out_file = open(out_file_name, 'wb')
 
-    # frequent item set similarity
-    itemsets_org = [set(items[0]) for items in items_org]
-    itemsets_privatized = [set(items[0]) for items in items_privatized]
-
     # writing the report
 
-    org_details = printResults(items_org, rules_org, print_result=False)
+    org_details = printResults(items_org, rules_org, print_result=print_result)
     out_file.write('\n------' + org_folder + '---' + model + '---\n')
     out_file.write(org_details)
     out_file.write('\n' + '*' * 20)
 
-    privatize_details = printResults(items_privatized, rules_privatized, print_result=False)
+    privatize_details = printResults(items_privatized, rules_privatized, print_result=print_result)
     out_file.write('\n------' + privatized_folder + '---' + model + '---\n')
     out_file.write(privatize_details)
     out_file.write('\n' + '*' * 20)
 
+    # conclusion report
+    out_file.write('Total # of high_confidence rules in the original dataset: %d\n' % len(rules_org))
+    pdb.set_trace()
+    out_file.write('Rules preserved from original to privatized dataset: %f\n' %
+                   (status1.count('rule remains')/len(status1)))
+
+    out_file.write('Total # of high_confidence rules in the privatized dataset: %d\n' % len(rules_privatized))
+    out_file.write('Rules preserved from privatized to original dataset: %f\n' %
+                   (status2.count('rule remains')/len(status2)))
     out_file.close()
 
-    for itemset_org, itemset_privatized in itertools.product(itemsets_org, itemsets_privatized):
-        print item_set_similarity(itemset_org, itemset_privatized)
-
-    pdb.set_trace()
+    # pdb.set_trace()
 
 
 def test():
-    apriori_report('ant-1.7', 'DataSet', 'Lace1Out', 0.3, 0.6)
+    apriori_report('camel-1.6', 'DataSet', 'Lace1Out', min_support=0.4, min_confidence=0.8)
 
 if __name__ == '__main__':
     test()
