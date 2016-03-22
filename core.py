@@ -19,7 +19,7 @@ available argument list:
 
 '''SETTING THE DEFAULT VALUE HERE.'''
 DEFAULT = {
-    'model': ['camel-1.6', 'xerces-1.4', 'ant-1.7'],
+    'model': ['camel-1.6', 'xerces-1.4', 'ant-1.6', 'ant-1.7'],
     'test_set_ratio': 0.2,
     'CLIFF_percentage': 20,
     'Lace2_holder_number': 5,
@@ -157,9 +157,9 @@ if __name__ == '__main__':
     from evaluate.predict import *
     from evaluate.IPR import *
 
-    predict_models(models, ['Lace1Out','Lace2Out'], writeReports=True)
+    predict_models(models, ['Lace1Out', 'Lace2Out'], writeReports=True)
 
-    sen_list = ['loc', 'rfc', 'amc']
+    sen_list = ['loc']  # one sensitive attribute
     for model in models:
         report_IPR(model, 'DataSet', 'Lace1Out', sen_list)
         report_IPR(model, 'DataSet', 'Lace2Out', sen_list)

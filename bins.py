@@ -119,6 +119,10 @@ def bins(t, enough=None, cohen=0.2, maxBins=16, minBin=4, small=None, verbose=Fa
     global ranges
     ranges = []
     bins1(i, nums, all, 1)
+    if ranges[-1].up < max(t):
+        lo = up = max(t)
+        n = len([1 for i in t if lo <= i <= up])
+        ranges.append(Range(lo=lo, also=None, n=n, up=up))
     return ranges
 
 

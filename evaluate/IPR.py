@@ -37,6 +37,7 @@ class Query(object):
         self.__attrs = []
         self.__upper_bound = []
         self.__lower_bound = []
+        self.sampled = []
 
     def add_attr(self, attribute, upper_bound, lower_bound):
         """
@@ -60,6 +61,12 @@ class Query(object):
                 if a != c or b != d:
                     return False
         return True
+
+    def __repr__(self):
+        res = ''
+        for a in self.__attrs:
+            res += a + ' [' + str(self[a]) + ']' + '\n'
+        return res
 
     def get_attrs(self):
         return self.__attrs
@@ -90,19 +97,12 @@ class IPR(object):
             self.after_all_data = [map(data_tools.str2num, row) for row in self.after_all_data]  # str to numeric
 
         # discrete the attributes...
-        # determine the bin_sizes
-        bin_sizes = dict()
-        for attr in self.after_attrs[:-1]:
-            temp = self.before_attrs.index(attr)
-            col = [original_data_row[temp] for original_data_row in self.before_all_data]
-            bin_sizes[attr] = data_tools.self_determine_bin_size(col)
-
         # determine the bin_ranges
         self.bin_ranges = dict()
         for attr in self.after_attrs[:-1]:
             temp = self.before_attrs.index(attr)
             col = [original_data_row[temp] for original_data_row in self.before_all_data]
-            self.bin_ranges[attr] = data_tools.binrange(col, bin_sizes[attr])
+            self.bin_ranges[attr] = data_tools.binrange(col)
 
     def set_sensitive_attributes(self, sensitive_attribute_list):
         self.__sensitive_attrs = copy.deepcopy(sensitive_attribute_list)
@@ -117,7 +117,7 @@ class IPR(object):
         query_attrs = []
         while len(query_attrs) < query_size:
             temp = random.choice(self.after_attrs)
-            if temp not in self.__sensitive_attrs:
+            if temp not in self.__sensitive_attrs + query_attrs:
                 query_attrs.append(temp)
 
         # select one row randomly
@@ -125,6 +125,8 @@ class IPR(object):
 
         # create the query
         query = Query()
+        query.sampled = sampled_row
+        # pdb.set_trace()
         for query_attr in query_attrs:
             value = sampled_row[self.before_attrs.index(query_attr)]
             binr = self.bin_ranges[query_attr]  # bin ranges for the binr
@@ -136,6 +138,7 @@ class IPR(object):
             else:
                 lower_bound = upper_bound
             if lower_bound == binr[0]: lower_bound -= 0.1  # just to make sure that lower_bound is not included
+            # pdb.set_trace()
             query.add_attr(query_attr, upper_bound, lower_bound)
 
         return query
@@ -145,7 +148,6 @@ class IPR(object):
         while len(queries) < number_of_queries:
             new_query = self._query_generator(query_size)
             if new_query not in queries: queries.append(new_query)  # detect whether existed in the current queries
-
         return queries
 
     def _get_breach_from_query(self, query):
@@ -156,16 +158,17 @@ class IPR(object):
         :return: true if s_max(G) == s_max(G')
         """
         attrs = query.get_attrs()
-        query_target_index_before = [self.before_attrs.index(attr) for attr in attrs]
+        # query_target_index_before = [self.before_attrs.index(attr) for attr in attrs]
         query_target_index_after = [self.after_attrs.index(attr) for attr in attrs]
 
         # find the data that match the query in G and G'
         G_before = []
         for row in self.before_all_data:
             passed = True
-            for attr_index, attr in enumerate(attrs):
+            for attr in attrs:
                 lower_bound, upper_bound = query[attr]
-                if not lower_bound < row[query_target_index_before[attr_index]] <= upper_bound:
+                target_before_i = self.before_attrs.index(attr)
+                if not lower_bound < row[target_before_i] <= upper_bound:
                     passed = False
             if passed:
                 G_before.append(row)
@@ -249,8 +252,8 @@ def report_IPR(model, org_folder, privatized_folder, sensitive_attributes, query
 
 
 def demo():
-    sen_list = ['loc', 'rfc', 'lcom', 'ca', 'ce', 'amc']
-    report_IPR('ant-1.7', 'DataSet', 'MorphOut', sen_list)
+    sen_list = ['loc', 'amc', 'rfc']
+    report_IPR('ant-1.7', 'DataSet', 'Lace1Out', sen_list)
 
 
 if __name__ == "__main__":
