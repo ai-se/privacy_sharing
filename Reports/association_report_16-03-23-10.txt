@@ -1,0 +1,65 @@
+******ant-1.7********
+
+------DataSet---ant-1.7---
+item: ('cbo:1', 'moa:0') , 0.400
+item: ('dit:2',) , 0.409
+item: ('max_cc:1',) , 0.420
+item: ('dam:4', 'noc:0') , 0.420
+item: ('ic:0', 'noc:0') , 0.447
+item: ('noc:0', 'cbm:0') , 0.447
+item: ('ic:0', 'cbm:0', 'noc:0') , 0.447
+item: ('lcom:1', 'noc:0') , 0.458
+item: ('cbo:1', 'noc:0') , 0.462
+item: ('ca:1', 'noc:0') , 0.468
+item: ('cbo:1',) , 0.493
+item: ('dam:4',) , 0.522
+item: ('lcom:1',) , 0.532
+item: ('cbm:0',) , 0.538
+item: ('ic:0',) , 0.538
+item: ('ic:0', 'cbm:0') , 0.538
+item: ('ca:1',) , 0.569
+item: ('moa:0', 'noc:0') , 0.576
+item: ('moa:0',) , 0.647
+item: ('noc:0',) , 0.846
+
+------------------------ RULES:
+Rule: ('dam:4',) ==> ('noc:0',) , 0.805
+Rule: ('cbo:1',) ==> ('moa:0',) , 0.812
+Rule: ('ca:1',) ==> ('noc:0',) , 0.823
+Rule: ('ic:0',) ==> ('noc:0',) , 0.830
+Rule: ('cbm:0',) ==> ('noc:0',) , 0.830
+Rule: ('ic:0',) ==> ('noc:0', 'cbm:0') , 0.830
+Rule: ('cbm:0',) ==> ('ic:0', 'noc:0') , 0.830
+Rule: ('ic:0', 'cbm:0') ==> ('noc:0',) , 0.830
+Rule: ('lcom:1',) ==> ('noc:0',) , 0.861
+Rule: ('moa:0',) ==> ('noc:0',) , 0.890
+Rule: ('cbo:1',) ==> ('noc:0',) , 0.937
+Rule: ('ic:0',) ==> ('cbm:0',) , 1.000
+Rule: ('cbm:0',) ==> ('ic:0',) , 1.000
+Rule: ('ic:0', 'noc:0') ==> ('cbm:0',) , 1.000
+Rule: ('noc:0', 'cbm:0') ==> ('ic:0',) , 1.000
+
+********************
+------Lace2Out---ant-1.7---
+item: ('avg_cc:2',) , 0.402
+item: ('ic:2',) , 0.427
+item: ('lcom:0',) , 0.427
+item: ('wmc:2',) , 0.427
+item: ('cbo:0',) , 0.463
+item: ('noc:1',) , 0.463
+item: ('ca:0',) , 0.500
+item: ('ca:1',) , 0.500
+item: ('wmc:0',) , 0.512
+item: ('lcom:2',) , 0.512
+item: ('avg_cc:0',) , 0.524
+item: ('ic:0',) , 0.524
+item: ('cbo:1',) , 0.537
+item: ('noc:0',) , 0.537
+item: ('rfc:2',) , 0.598
+item: ('amc:1',) , 0.610
+
+------------------------ RULES:
+
+********************Total # of high_confidence rules in the original dataset: 15
+Rules preserved from original to privatized dataset: 0.066667
+No rule found in the privatized dataset.

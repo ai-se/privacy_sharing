@@ -156,6 +156,7 @@ if __name__ == '__main__':
 
     from evaluate.predict import *
     from evaluate.IPR import *
+    from evaluate.apriori_cmpr import *
 
     predict_models(models, ['Lace1Out', 'Lace2Out'], writeReports=True)
 
@@ -163,3 +164,7 @@ if __name__ == '__main__':
     for model in models:
         report_IPR(model, 'DataSet', 'Lace1Out', sen_list)
         report_IPR(model, 'DataSet', 'Lace2Out', sen_list)
+
+    for model in models:
+        apriori_report(model, 'DataSet', 'Lace1Out', conclusion_only=True, min_support=0.4, min_confidence=0.8)
+        apriori_report(model, 'DataSet', 'Lace2Out', conclusion_only=True, min_support=0.4, min_confidence=0.8)

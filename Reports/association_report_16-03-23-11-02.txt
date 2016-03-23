@@ -1,0 +1,38 @@
+******camel-1.6********
+Total # of high_confidence rules in the original dataset: 143
+Rules preserved from original to privatized dataset: 0.048951
+Total # of high_confidence rules in the privatized dataset: 9
+Rules preserved from privatized to original dataset: 0.111111
+******camel-1.6********
+Total # of high_confidence rules in the original dataset: 143
+Rules preserved from original to privatized dataset: 0.132867
+No rule found in the privatized dataset.
+
+******xerces-1.4********
+Total # of high_confidence rules in the original dataset: 1848
+Rules preserved from original to privatized dataset: 0.029221
+Total # of high_confidence rules in the privatized dataset: 85
+Rules preserved from privatized to original dataset: 0.141176
+******xerces-1.4********
+Total # of high_confidence rules in the original dataset: 1848
+Rules preserved from original to privatized dataset: 0.222403
+Total # of high_confidence rules in the privatized dataset: 2
+Rules preserved from privatized to original dataset: 0.000000
+
+******ant-1.6********
+Total # of high_confidence rules in the original dataset: 16
+Rules preserved from original to privatized dataset: 0.000000
+No rule found in the privatized dataset.
+******ant-1.6********
+Total # of high_confidence rules in the original dataset: 16
+Rules preserved from original to privatized dataset: 0.000000
+No rule found in the privatized dataset.
+
+******ant-1.7********
+Total # of high_confidence rules in the original dataset: 15
+Rules preserved from original to privatized dataset: 0.000000
+No rule found in the privatized dataset.
+******ant-1.7********
+Total # of high_confidence rules in the original dataset: 15
+Rules preserved from original to privatized dataset: 0.000000
+No rule found in the privatized dataset.

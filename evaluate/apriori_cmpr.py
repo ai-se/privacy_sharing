@@ -177,13 +177,15 @@ def item_set_similarity(item1, item2):
     return 1 - cosine(value_vector1, value_vector2)  # TODO divide by zero error
 
 
-def apriori_report(model, org_folder, privatized_folder, print_result=False, min_support=0.15, min_confidence=0.6):
+def apriori_report(model, org_folder, privatized_folder, print_result=False,
+                   conclusion_only=False, min_support=0.15, min_confidence=0.6):
     """
 
     :param model:
     :param org_folder:
     :param privatized_folder:
     :param print_result:
+    :param conclusion_only:
     :param min_support:
     :param min_confidence:
     :return:
@@ -225,30 +227,35 @@ def apriori_report(model, org_folder, privatized_folder, print_result=False, min
     # END OF THE EXPERIMENT
 
     out_file_name = project_path + '/Reports/association_report_' + \
-        datetime.datetime.now().strftime('%y-%m-%d-%H') + '.txt'
+        datetime.datetime.now().strftime('%y-%m-%d-%H-%M') + '.txt'
 
-    out_file = open(out_file_name, 'wb')
+    out_file = open(out_file_name, 'a+')
 
     # writing the report
+    out_file.write('******%s********\n' % model)
+    if not conclusion_only:
+        org_details = printResults(items_org, rules_org, print_result=print_result)
+        out_file.write('\n------' + org_folder + '---' + model + '---\n')
+        out_file.write(org_details)
+        out_file.write('\n' + '*' * 20)
 
-    org_details = printResults(items_org, rules_org, print_result=print_result)
-    out_file.write('\n------' + org_folder + '---' + model + '---\n')
-    out_file.write(org_details)
-    out_file.write('\n' + '*' * 20)
-
-    privatize_details = printResults(items_privatized, rules_privatized, print_result=print_result)
-    out_file.write('\n------' + privatized_folder + '---' + model + '---\n')
-    out_file.write(privatize_details)
-    out_file.write('\n' + '*' * 20)
+        privatize_details = printResults(items_privatized, rules_privatized, print_result=print_result)
+        out_file.write('\n------' + privatized_folder + '---' + model + '---\n')
+        out_file.write(privatize_details)
+        out_file.write('\n' + '*' * 20)
 
     # conclusion report
-    out_file.write('Total # of high_confidence rules in the original dataset: %d\n' % len(rules_org))
-    pdb.set_trace()
-    out_file.write('Rules preserved from original to privatized dataset: %f\n' %
+    if len(status1) == 0:
+        out_file.write("No rule found in the original dataset.")
+    else:
+        out_file.write('Total # of high_confidence rules in the original dataset: %d\n' % len(rules_org))
+        out_file.write('Rules preserved from original to privatized dataset: %f\n' %
                    (status1.count('rule remains')/len(status1)))
-
-    out_file.write('Total # of high_confidence rules in the privatized dataset: %d\n' % len(rules_privatized))
-    out_file.write('Rules preserved from privatized to original dataset: %f\n' %
+    if len(status2) == 0:
+        out_file.write("No rule found in the privatized dataset.")
+    else:
+        out_file.write('Total # of high_confidence rules in the privatized dataset: %d\n' % len(rules_privatized))
+        out_file.write('Rules preserved from privatized to original dataset: %f\n' %
                    (status2.count('rule remains')/len(status2)))
     out_file.close()
 
