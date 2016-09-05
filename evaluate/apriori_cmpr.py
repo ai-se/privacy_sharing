@@ -77,41 +77,22 @@ def apriori_cmpr(model, org_folder, privatized_folder, min_support, min_confiden
     # translate the continuous attribute into 'attr+level'
 
     dis_org_data = []
+    dis_privatized_data = []
     # ranges_dict = dict()  # for backup
 
-    for attr_name, col in zip(attributes, zip(*all_org_data)):
-        col = list(col)
+    for attr_name, col1, col2 in zip(attributes, zip(*all_org_data), zip(*all_privatized_data)):
+        col1 = list(col1)
+        col2 = list(col2)
+
+        col = col1 + col2  # NOTE: put two dataset together
         ranges = data_tools.binrange(col)
         # ranges_dict[attr_name] = ranges
 
         tags = []
-        for element in col:
-            for cursor, upper_bound in enumerate(ranges):
-                if upper_bound >= element: break
-
-            # lower_bound = ranges[max(cursor-1, 0)]
-            # mid = (upper_bound + lower_bound) / 2
-            # if type(mid) is float:
-            #     mid = round(mid, 2)
-            #
-            # tags.append(attr_name+':' + str(mid))
-            tags.append(attr_name + ':' + str(cursor))
-
-        dis_org_data.append(tags)
-    dis_org_data = map(list, zip(*dis_org_data))
-
-    dis_privatized_data = []
-    for attr_name, col in zip(attributes, zip(*all_privatized_data)):
-        col = list(col)
-        ranges = data_tools.binrange(col)
-        # ranges = ranges_dict[attr_name]
-
-        tags = []
-        for element in col:
+        for element in col1:
             for cursor, upper_bound in enumerate(ranges):
                 if upper_bound >= element:
                     break
-
             # lower_bound = ranges[max(cursor-1, 0)]
             # mid = (upper_bound + lower_bound) / 2
             # if type(mid) is float:
@@ -119,9 +100,40 @@ def apriori_cmpr(model, org_folder, privatized_folder, min_support, min_confiden
             #
             # tags.append(attr_name+':' + str(mid))
             tags.append(attr_name + ':' + str(cursor))
+        dis_org_data.append(tags)
 
+        tags = []
+        for element in col2:
+            for cursor, upper_bound in enumerate(ranges):
+                if upper_bound >= element:
+                    break
+            tags.append(attr_name + ':' + str(cursor))
         dis_privatized_data.append(tags)
+
+    dis_org_data = map(list, zip(*dis_org_data))
     dis_privatized_data = map(list, zip(*dis_privatized_data))
+
+    # for attr_name, col in zip(attributes, zip(*all_privatized_data)):
+    #     col = list(col)
+    #     ranges = data_tools.binrange(col)
+    #     # ranges = ranges_dict[attr_name]
+    #
+    #     tags = []
+    #     for element in col:
+    #         for cursor, upper_bound in enumerate(ranges):
+    #             if upper_bound >= element:
+    #                 break
+    #
+    #         # lower_bound = ranges[max(cursor-1, 0)]
+    #         # mid = (upper_bound + lower_bound) / 2
+    #         # if type(mid) is float:
+    #         #     mid = round(mid, 2)
+    #         #
+    #         # tags.append(attr_name+':' + str(mid))
+    #         tags.append(attr_name + ':' + str(cursor))
+    #
+    #     dis_privatized_data.append(tags)
+    # dis_privatized_data = map(list, zip(*dis_privatized_data))
     logging.info("Database discretization done.")
 
     # writing out the dis dataset
@@ -246,17 +258,15 @@ def apriori_report(model, org_folder, privatized_folder, print_result=False,
 
     # conclusion report
     if len(status1) == 0:
-        out_file.write("No rule found in the original dataset.")
+        out_file.write("rules in org #: 0\n")
     else:
-        out_file.write('Total # of high_confidence rules in the original dataset: %d\n' % len(rules_org))
-        out_file.write('Rules preserved from original to privatized dataset: %f\n' %
-                   (status1.count('rule remains')/len(status1)))
+        out_file.write('rules in org #: %d\n' % len(rules_org))
+        out_file.write('org -> %s: 1 -> %f\n' % (privatized_folder, (status1.count('rule remains')/len(status1))))
     if len(status2) == 0:
-        out_file.write("No rule found in the privatized dataset.")
+        out_file.write("rules in %s #: 0 \n" % privatized_folder)
     else:
-        out_file.write('Total # of high_confidence rules in the privatized dataset: %d\n' % len(rules_privatized))
-        out_file.write('Rules preserved from privatized to original dataset: %f\n' %
-                   (status2.count('rule remains')/len(status2)))
+        out_file.write('rules in %s #: %d\n' % (privatized_folder, len(rules_privatized)))
+        out_file.write('%s -> org: 1 ->% f\n' % (privatized_folder, (status2.count('rule remains')/len(status2))))
     out_file.close()
 
     # pdb.set_trace()
