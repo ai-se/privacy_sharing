@@ -19,6 +19,16 @@ def str2num(s):
     return s
 
 
+def median(l):
+    """
+    return the median of the list l.
+    l WILL NOT be changed.
+    :param l:
+    :return:
+    """
+    return sorted(l)[int(len(l)/2)]
+
+
 def binrange(data_list, enough=None, cohen=0.2, maxBins=16, minBin=4, trivial=1.05):
     """
 

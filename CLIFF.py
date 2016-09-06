@@ -101,7 +101,17 @@ def CLIFF(database,
 
     # binary the classification
     classes = [i[len(ori_attrs)-1] for i in alldata]  # last column in the origin csv file
-    classes = [int(bool(int(c))) for c in classes]
+    classes = map(data_tools.str2num, classes)
+
+    if 0 in classes:
+        # binary the classification
+        classes = [int(bool(int(c))) for c in classes]
+    else:
+        # use the median to binary classification
+        mid = data_tools.median(classes)
+        classes = map(lambda x: int(x > mid), classes)
+
+    # pdb.set_trace()
 
     # get the power for each attribute
     # store them in a final table
@@ -200,6 +210,12 @@ def Cliff_simplified(dataset, percent):
 
 
 def testing():
+    CLIFF("collegecard",
+          "./Dataset/",
+          0.3,
+          "./CliffOut",
+          ['ADM_RATE', 'SAT_AVG', 'TUITFTE', 'RET_FT4', 'PCTFLOAN', 'PCTPELL', 'DEBT_MDN', 'C150_4', 'CDR3'])
+
     # dataset = "./Dataset/"  # setting up the data set folder
     #
     # """
@@ -228,7 +244,6 @@ def testing():
     # c = [0,1,0,0,0,0,0,1]
     # E = binrange(ce, 2)
     # pwer = power(ce,c,E)
-    pdb.set_trace()
 
 
 if __name__ == '__main__':
