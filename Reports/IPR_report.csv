@@ -215,3 +215,11 @@ report date,model,sensitive attribute list,original db,privatized db,IPR
 16-03-29 20:57,ant-1.6,['loc'],DataSet,Lace2Out,65
 16-03-29 20:57,ant-1.7,['loc'],DataSet,Lace1Out,80
 16-03-29 20:57,ant-1.7,['loc'],DataSet,Lace2Out,74
+16-09-06 14:34,camel-1.6,['loc'],DataSet,Lace1Out,68
+16-09-06 14:34,camel-1.6,['loc'],DataSet,Lace2Out,78
+16-09-06 14:34,xerces-1.4,['loc'],DataSet,Lace1Out,61
+16-09-06 14:34,xerces-1.4,['loc'],DataSet,Lace2Out,74
+16-09-06 14:34,ant-1.6,['loc'],DataSet,Lace1Out,87
+16-09-06 14:34,ant-1.6,['loc'],DataSet,Lace2Out,59
+16-09-06 14:34,ant-1.7,['loc'],DataSet,Lace1Out,88
+16-09-06 14:34,ant-1.7,['loc'],DataSet,Lace2Out,65

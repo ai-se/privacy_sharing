@@ -126,8 +126,8 @@ def testing():
     # l2 = map(denorm_loc, l1)
     # print l1
     # print l2
-    MORPH("ant-1.7", 'CliffOut', write_out_folder='Lace1Out')
-    pdb.set_trace()
+    MORPH("collegecard", 'CliffOut', write_out_folder='Lace1Out')
+    # pdb.set_trace()
 
 
 if __name__ == "__main__":

@@ -147,7 +147,6 @@ def program_loading():
     for model in models:
         assert model in existed_models, model + "does NOT in the dataset. Please check it again."
 
-
 if __name__ == '__main__':
     program_loading()
 
