@@ -9,7 +9,7 @@ from os import sys, path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 project_path = [i for i in sys.path if i.endswith('privacy_sharing')][0]
 from evaluate.Apriori.apriori import *
-import data_tools
+import toolkit
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
@@ -46,7 +46,7 @@ def apriori_cmpr(model, org_folder, privatized_folder, min_support, min_confiden
         all_org_data = []
         for line in reader:
             all_org_data.append(line)
-        all_org_data = [map(data_tools.str2num, row) for row in all_org_data]  # str to numeric
+        all_org_data = [map(toolkit.str2num, row) for row in all_org_data]  # str to numeric
 
     with open(project_path+'/'+privatized_folder+'/'+model+'.csv', 'r') as f:
         reader = csv.reader(f)
@@ -54,7 +54,7 @@ def apriori_cmpr(model, org_folder, privatized_folder, min_support, min_confiden
         all_privatized_data = []
         for line in reader:
             all_privatized_data.append(line)
-        all_privatized_data = [map(data_tools.str2num, row) for row in all_privatized_data]  # str to numeric
+        all_privatized_data = [map(toolkit.str2num, row) for row in all_privatized_data]  # str to numeric
 
     # delete the useless columns
     attributes = [attr for attr in org_attrs if attr in privatized_attrs]  # intersection of two data set attributes
@@ -70,8 +70,8 @@ def apriori_cmpr(model, org_folder, privatized_folder, min_support, min_confiden
         if attr not in attributes:
             tmp_del_i2.append(attr_i)
 
-    all_org_data = data_tools.del_col_in_table(all_org_data, tmp_del_i1)
-    all_privatized_data = data_tools.del_col_in_table(all_privatized_data, tmp_del_i2)
+    all_org_data = toolkit.del_col_in_table(all_org_data, tmp_del_i1)
+    all_privatized_data = toolkit.del_col_in_table(all_privatized_data, tmp_del_i2)
 
     # discretize the data
     # translate the continuous attribute into 'attr+level'
@@ -85,7 +85,7 @@ def apriori_cmpr(model, org_folder, privatized_folder, min_support, min_confiden
         col2 = list(col2)
 
         col = col1 + col2  # NOTE: put two dataset together
-        ranges = data_tools.binrange(col)
+        ranges = toolkit.binrange(col)
         # ranges_dict[attr_name] = ranges
 
         tags = []

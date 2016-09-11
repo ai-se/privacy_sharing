@@ -40,12 +40,12 @@ def data_set_split(model):
 
     # discrete the dependent variable
     classes = [i[-1] for i in all_original_data]  # last column in the origin csv file
-    classes = map(data_tools.str2num, classes)
+    classes = map(toolkit.str2num, classes)
     if 0 in classes:
         # binary the classification
         classes = [int(bool(int(c))) for c in classes]
     else:
-        from data_tools import binrange
+        from toolkit import binrange
         slot = binrange(classes)
         tmp_c = list()
         for c in classes:

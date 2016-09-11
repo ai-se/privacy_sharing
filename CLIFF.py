@@ -5,7 +5,7 @@ import logging
 import random
 import settings
 import pdb
-import data_tools
+import toolkit
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
@@ -58,85 +58,78 @@ def power(L, C, Erange):
     return power
 
 
-def CLIFF(database_or_data,
-          db_folder=None,
+def cliff_core(data):
+    """
+    data has no header, only containing the record attributes
+    :return the cliffed data (part of the input data)
+    """
+
+    if len(data) < 50:
+        logging.debug("no enough data to cliff. return the whole dataset")
+        return data
+
+    percentage = settings.CLIFF_percentage
+    percentage /= 100 if percentage > 1 else 1
+
+    classes = map(toolkit.str2num, zip(*data)[-1])
+
+    data_power = list()  # will be 2D list (list of list)
+    for col in zip(*data):
+        col = map(toolkit.str2num, col)
+        E = toolkit.binrange(col)
+        data_power.append(power(col, classes, E))
+
+    data_power = map(list, zip(*data_power))  # transposing the data power
+    row_sum = [sum(row) for row in data_power]
+
+    output = list()  # will be 2D list (list of list)
+    for cls in set(classes):  # for each classification
+        row_subsum = [sum(row) for c, row in zip(classes, data_power) if c == cls]
+        minimum = sorted(row_subsum, reverse=True)[int(len(row_subsum)*percentage)]
+
+        for r_i, row in enumerate(data):
+            if classes[r_i] != cls: continue
+            if row_sum[r_i] < minimum: continue  # prune due to low power
+            output.append(row)
+
+    return output
+
+
+def CLIFF(model,
+          db_folder,
           write_out_folder=None):
     """
     Core function for CLIFF algorithm
     prune the data set according to the power
     attributes are discretized
 
-    :param database_or_data: should be a csv file containing the original database, or the list containing the data
+    :param model: should be a csv file containing the original database
     :param db_folder: the folder name of db
-    :param write_out_folder: where to write out the generated data base into "write_out_folder/***_p.csv"
+    :param write_out_folder: where to write out the generated data base into "write_out_folder/model.csv"
     :return: the CLIFFED database
     """
-    percentage = settings.CLIFF_percentage
-    percentage /= 100 if percentage > 1 else 1
-
-    if type(database_or_data) is str:
-        # load the database
-        with open(db_folder + '/' + database_or_data+'.csv', 'r') as db:
-            reader = csv.reader(db)
-            ori_attrs = next(reader)
-            alldata = []
-            for line in reader:
-                alldata.append(line)
-    else:
-        alldata = database_or_data
-
+    ori_attrs, alldata = toolkit.load_csv(db_folder, model)  # load the database
     record_attrs = settings.record_attrs
 
-    classes = [i[-1] for i in alldata]  # last column in the origin csv file
-    classes = map(data_tools.str2num, classes)
+    alldataT = map(list, zip(*alldata))
+    valued_dataT = list()
+    for attr, col in zip(ori_attrs, alldataT):
+        if attr in record_attrs:
+            valued_dataT.append(col)
 
-    # get the power for each attribute
-    # store them in a final table
-    all_data_power = []
-    for attr_index, attr in enumerate(record_attrs):
-        temp = ori_attrs.index(attr)
-        col = [i[temp] for i in alldata]
-        try: col = map(int, col)
-        except ValueError: col = map(float, col)
-        E = data_tools.binrange(col)
-        all_data_power.append(power(col, classes, E))
+    alldata = map(list, zip(*valued_dataT))
 
-    all_data_power = map(list, zip(*all_data_power))  # transpose.
+    after_cliff = cliff_core(alldata)
+    after_cliff.insert(0, record_attrs+ori_attrs[-1])  # add the header
 
-    cliff_out = list()
-    cliff_out.append(record_attrs+ori_attrs[-1:])  # header
-
-    # select the largest sum of power in each row from each class
-    row_sum = [sum(row) for row_index, row in enumerate(all_data_power)]
-
-    for cls in set(classes):
-        row_sum_sub = [sum(row) for row_index, row in enumerate(all_data_power) if classes[row_index] == cls]
-        minimum = sorted(row_sum_sub, reverse=True)[int(len(row_sum_sub) * percentage)]
-
-        # create the cliff_out
-        for row_index in range(len(alldata)):
-            if classes[row_index] != cls: continue
-            if row_sum[row_index] < minimum: continue  # prune due to low power
-            temp_row = []
-            for attr_index, attr in enumerate(ori_attrs[:-1]):
-                if attr in record_attrs:
-                    try: x = int(alldata[row_index][attr_index])
-                    except ValueError: x = float(alldata[row_index][attr_index])
-                    temp_row.append(x)
-            temp_row.append(cls)
-            cliff_out.append(temp_row)
-
-    # write the cliff_out
     if write_out_folder:
-        with open(write_out_folder + '/'+database + '.csv', 'wb') as f:
-            writer = csv.writer(f)
-            writer.writerows(cliff_out)
+        toolkit.write_csv(write_out_folder, model, after_cliff)
 
-    return cliff_out
+    return after_cliff
 
 
 def testing():
-    CLIFF("school",
+    CLIFF("ant-1.7",
           "./Dataset",
           "./CliffOut",
           )

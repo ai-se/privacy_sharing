@@ -1,5 +1,6 @@
 from __future__ import division
 import bins
+import csv
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
@@ -134,3 +135,30 @@ def del_col_in_table(list_of_list, col_index):
             return_table.append(col)
 
     return map(list, zip(*return_table))
+
+
+def load_csv(folder, file_name, has_header=True):
+    """
+    loading the csv file at folder/file_name.csv
+    :param folder:
+    :param file_name:
+    :param has_header:
+    :return: (header if possible) + (content)
+    """
+    with open(folder + '/' + file_name+'.csv', 'r') as db:
+        reader = csv.reader(db)
+        if has_header:
+            header = next(reader)
+        content = []
+        for line in reader:
+            content.append(line)
+    if has_header:
+        return header, content
+    else:
+        return content
+
+
+def write_csv(folder, file_name, content):
+    with open(folder + '/' + file_name + '.csv', 'wb') as f:
+        writer = csv.writer(f)
+        writer.writerows(content)
