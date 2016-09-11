@@ -5,6 +5,7 @@ import os
 import sys
 sys.path.append(os.path.abspath(".."))
 import data_tools
+import pdb
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
@@ -58,8 +59,6 @@ def get_original_train(model):
         for line in reader:
             record_row = [line[i] for i in _original_recored_index]
             record_row = map(data_tools.str2num, record_row)
-            if record_row[-1] > 0:
-                record_row[-1] = 1  # setting the result as binary
             all_trains.append(record_row)
 
     x = [row[:-1] for row in all_trains]
@@ -172,7 +171,7 @@ def predict_models(models, to_test_folders, writeReports=True, showResults=False
     global _original_recored_index
     global privatized_set_folder
     privatized_set_folder = to_test_folders[0]
-
+    pdb.set_trace()
     # generate all sklearer clf instances
     from sklearn import svm, tree
     from sklearn.naive_bayes import GaussianNB

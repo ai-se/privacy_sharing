@@ -3,11 +3,12 @@ from CLIFF import *
 from MORPH import *
 from LeaF import *
 import sys, traceback
+import settings
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
 __license__ = "MIT"
-__version__ = "1.0"
+__version__ = "2.0"
 __email__ = "jchen37@ncsu.edu"
 
 
@@ -18,17 +19,16 @@ Given the dataset, return the result of LACE2.
 """
 
 
-def data_distribute_simulator(data_set, number_of_holder):
+def data_distribute_simulator(data_set):
     """
     This is a simulator. Distribute to the data to different members UNEQUALLY.
     :param data_set:
-    :param number_of_holder:
     :return: list of list. each of list represent a data set holder by one person
     """
     data = copy.deepcopy(data_set)  # protect the original parameters
     n = len(data)
 
-    assert n > number_of_holder, "not enough data to simulate!"
+    number_of_holder = settings.Lace2_holder_number
 
     part_size = [random.uniform(0, 1) for _ in xrange(number_of_holder)]
     s = sum(part_size)
@@ -54,17 +54,12 @@ def data_distribute_simulator(data_set, number_of_holder):
     return result
 
 
-def LACE2(model, original_data_folder, final_out_put_folder, holder_number=5,
-          cliff_percent=0.3, morph_alpha=0.15, morph_beta=0.35):
+def LACE2(model, original_data_folder, final_out_put_folder):
     """
 
     :param model:
     :param original_data_folder:
     :param final_out_put_folder:
-    :param holder_number:
-    :param cliff_percent:
-    :param morph_alpha:
-    :param morph_beta:
     :return:
     """
     # load the database and handle them
@@ -76,20 +71,15 @@ def LACE2(model, original_data_folder, final_out_put_folder, holder_number=5,
             line = map(data_tools.str2num, line)
             all_data.append(line)
 
-    # TODO user-given record attributes
-    record_attrs = []
-    tmp_all_data = []
-    for attr_index, attr in enumerate(original_attributes):
-        if type(all_data[0][attr_index]) is str:
-            continue
-        col = zip(*all_data)[attr_index]
-        if len(set(col)) > 1:
-            record_attrs.append(attr)
-            tmp_all_data.append(col)
+    tmp_all_data = list()
+
+    record_attrs = settings.record_attrs
+    for attr in record_attrs:
+        col = zip(*all_data)[original_attributes.index(attr)]
+        tmp_all_data.append(col)
 
     original_attributes = record_attrs
-    tmp_all_data = map(list, zip(*tmp_all_data))
-    all_data = copy.deepcopy(tmp_all_data)
+    all_data = copy.deepcopy(map(list, zip(*tmp_all_data)))
     logging.debug("loading the whole database and col selection done.")
 
     # get the **important** Leaf Distance
@@ -119,25 +109,24 @@ def LACE2(model, original_data_folder, final_out_put_folder, holder_number=5,
     all_data = map(list, zip(*all_data))
 
     # simulate generate the holders
-    holder_datas = data_distribute_simulator(all_data, holder_number)
+    holder_datas = data_distribute_simulator(all_data)
 
     # passing the cache between the holders
     CACHE = []
     for holder_data in holder_datas:
         if len(CACHE) == 0:  # the first holder
-            init_submit = Cliff_simplified(holder_data, cliff_percent)
-            init_submit = MORPH(init_submit, alpha=morph_alpha, beta=morph_beta, db_has_normalized=True)
+            init_submit = CLIFF(holder_data)
+            init_submit = MORPH(init_submit, db_has_normalized=True)
             CACHE.extend(init_submit)
         else:  # something exist in the cache
-            to_submits = Cliff_simplified(holder_data, cliff_percent)
+            to_submits = CLIFF(holder_data)
             cache_cursor = len(CACHE)
             # do the Leaf
             for to_submit in to_submits:
                 if whether_add_to_private_cache(to_submit, CACHE, inter_class_dist):
                     CACHE.append(to_submit)
             # morph
-            CACHE = MORPH(CACHE, alpha=morph_alpha, beta=morph_beta,
-                          db_has_normalized=True, effect_scope=[cache_cursor, -1])
+            CACHE = MORPH(CACHE, db_has_normalized=True, effect_scope=[cache_cursor, -1])
 
             # TODO checking the holder privacy criterion met?
 
@@ -159,7 +148,7 @@ def LACE2(model, original_data_folder, final_out_put_folder, holder_number=5,
 
 
 def test():
-    LACE2("camel-1.6", 'TrainSet', 'Lace2Out')
+    LACE2("school", 'DataSet', 'Lace2Out')
 
 if __name__ == '__main__':
     try:

@@ -1,11 +1,12 @@
 from CLIFF import CLIFF
 from MORPH import *
 import sys, os
+import settings
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
 __license__ = "MIT"
-__version__ = "1.0"
+__version__ = "2.0"
 __email__ = "jchen37@ncsu.edu"
 
 """
@@ -17,19 +18,10 @@ available argument list:
 -testRatio          | set the ratio of test set size (for evaluate the prediction precision)
 """
 
-'''SETTING THE DEFAULT VALUE HERE.'''
-DEFAULT = {
-    'model': ['camel-1.6', 'xerces-1.4', 'ant-1.6', 'ant-1.7'],
-    'test_set_ratio': 0.2,
-    'CLIFF_percentage': 20,
-    'Lace2_holder_number': 5,
-    'MORPH_alpha': 0.15,
-    'MORPH_beta': 0.35,
-}
 
-_cliff_percent = DEFAULT['CLIFF_percentage']
-_test_set_ratio = DEFAULT['test_set_ratio']
-models = DEFAULT['model']
+_cliff_percent = settings.CLIFF_percentage
+_test_set_ratio = settings.test_set_ratio
+models = settings.model
 
 
 def data_set_split(model):
