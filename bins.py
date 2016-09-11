@@ -54,7 +54,7 @@ def unnum(z, stat):  # opposite to num1
     stat.m2 -= delta * (z - stat.mu)
 
     if stat.m2 < 0:
-        assert abs(stat.m2) < 0.01, "unmum function wrong! m2 < -0.01"
+        assert abs(stat.m2) < 0.03, "unmum function wrong! m2 < -0.03"
         stat.m2 = 0
 
     return stat
@@ -83,7 +83,7 @@ ranges = []
 
 def bins1(i, nums, all, lvl):
     if i.verbose:
-        print "|.."*lvl, str(nums)
+        print("|.."*lvl, str(nums))
 
     cut = -1
     n = len(nums)

@@ -99,19 +99,8 @@ def CLIFF(database,
         for ra in record_attrs:
             assert ra in ori_attrs, "record_attrs must be in the database"
 
-    # binary the classification
     classes = [i[len(ori_attrs)-1] for i in alldata]  # last column in the origin csv file
     classes = map(data_tools.str2num, classes)
-
-    if 0 in classes:
-        # binary the classification
-        classes = [int(bool(int(c))) for c in classes]
-    else:
-        # use the median to binary classification
-        mid = data_tools.median(classes)
-        classes = map(lambda x: int(x > mid), classes)
-
-    # pdb.set_trace()
 
     # get the power for each attribute
     # store them in a final table
@@ -130,7 +119,6 @@ def CLIFF(database,
     cliff_out.append(record_attrs+ori_attrs[-1:])  # header
 
     # select the largest sum of power in each row from each class
-    # TODO make sure the understanding here is correct
     row_sum = [sum(row) for row_index, row in enumerate(all_data_power)]
 
     for cls in set(classes):

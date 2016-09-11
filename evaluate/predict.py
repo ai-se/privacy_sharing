@@ -207,25 +207,25 @@ def predict_models(models, to_test_folders, writeReports=True, showResults=False
     # show the results
     if showResults:
         for m, model in enumerate(models):
-            print 'MODEL : ', model
-            print '-' * 5
+            print('MODEL : ', model)
+            print('-' * 5)
 
-            print 'SVM from ORGI:     ', str(precs_org[m]['svm'])
+            print('SVM from ORGI:     ', str(precs_org[m]['svm']))
             for material in to_test_folders:
-                print 'SVM after %s: %s' % (material, str(precs_prtz[model][material]['svm']))
-            print '-' * 5
+                print('SVM after %s: %s' % (material, str(precs_prtz[model][material]['svm'])))
+            print('-' * 5)
 
-            print 'CART from ORGI:    ', str(precs_org[m]['cart'])
+            print('CART from ORGI:    ', str(precs_org[m]['cart']))
             for material in to_test_folders:
-                print 'SVM after %s: %s' % (material, str(precs_prtz[model][material]['cart']))
-            print '-' * 5
+                print('SVM after %s: %s' % (material, str(precs_prtz[model][material]['cart'])))
+            print('-' * 5)
 
-            print 'NB from ORGI:      ', str(precs_org[m]['nb'])
+            print('NB from ORGI:      ', str(precs_org[m]['nb']))
             for material in to_test_folders:
-                print 'SVM after %s: %s' % (material, str(precs_prtz[model][material]['nb']))
-            print '-' * 5
+                print('SVM after %s: %s' % (material, str(precs_prtz[model][material]['nb'])))
+            print('-' * 5)
 
-            print '\n\n'
+            print('\n\n')
 
     # write the reports
     if writeReports:
