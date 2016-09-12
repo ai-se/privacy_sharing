@@ -1,9 +1,11 @@
 from __future__ import division
 import copy
 import logging
+import random
 import settings
 import pdb
 import toolkit
+from toolkit import log_v
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
@@ -79,17 +81,21 @@ def cliff_core(data):
     data_power = map(list, zip(*data_power))  # transposing the data power
     row_sum = [sum(row) for row in data_power]
 
-    output = list()  # will be 2D list (list of list)
-    for cls in set(classes):  # for each classification
-        # pdb.set_trace()
-        row_subsum = [sum(row) for c, row in zip(classes, data_power) if c == cls]
-        minimum = sorted(row_subsum, reverse=True)[int(len(row_subsum)*percentage)]
+    zips = zip(data, classes, row_sum)
 
-        for r_i, row in enumerate(data):
-            if classes[r_i] != cls: continue
-            if row_sum[r_i] < minimum: continue  # prune due to low power
-            output.append(row)
-    # TODO CHECK PERCENTAGE EFFECTIVE??!
+    output = list()
+    for cls in set(classes):
+        matched = filter(lambda z: z[1] == cls, zips)
+        random.shuffle(matched)
+        matched = sorted(matched, key=lambda z:z[2], reverse=True)
+
+        if len(matched) < 5:
+            output.extend([m[0] for m in matched])  # all saved
+            continue
+
+        for i in range(int(len(matched)*percentage)):
+            output.append(matched[i][0])
+
     return output
 
 
@@ -119,7 +125,6 @@ def CLIFF(model,
     alldata = map(list, zip(*valued_dataT))
     alldata = map(lambda row:map(toolkit.str2num, row), alldata)  # numbering the 2d table
 
-    pdb.set_trace()
     after_cliff = cliff_core(alldata)
     after_cliff.insert(0, record_attrs+[ori_attrs[-1]])  # add the header
 

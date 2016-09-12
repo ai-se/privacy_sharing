@@ -123,7 +123,7 @@ def LACE2(model, original_data_folder, final_out_put_folder):
             for to_submit in to_submits:
                 if whether_add_to_private_cache(to_submit, CACHE, inter_class_dist):
                     CACHE.append(to_submit)
-        print(len(CACHE))
+        # print(len(CACHE))
 
     # morph
     CACHE = MORPH(CACHE, db_has_normalized=True, effect_scope=[cache_cursor, -1])
@@ -136,7 +136,6 @@ def LACE2(model, original_data_folder, final_out_put_folder):
         if is_int[attr_index]:
             CACHE[attr_index] = map(int, CACHE[attr_index])
     CACHE = map(list, zip(*CACHE))
-    pdb.set_trace()
     CACHE.insert(0, record_attrs)
     if final_out_put_folder:
         with open(final_out_put_folder+'/'+model+'.csv', 'w') as f:
