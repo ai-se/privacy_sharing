@@ -66,7 +66,7 @@ def whether_add_to_private_cache(data_instance, existed_cache, distinguish_dista
 
 
 if __name__ == '__main__':
-    print 'this is testing sentence.'
+    print('this is testing sentence.')
     logging.basicConfig(level=logging.DEBUG)
     # d = [[1,2,3,4,1], [1,3,4,5,0], [4,6,7,4,0], [21,2,2,1,1], [4,4,6,7,0], [1,2,6,9,2]]
     # print find_distinct_diff(d)

@@ -1,8 +1,6 @@
 from __future__ import division
-import csv
 import copy
 import logging
-import random
 import settings
 import pdb
 import toolkit
@@ -72,7 +70,6 @@ def cliff_core(data):
     percentage /= 100 if percentage > 1 else 1
 
     classes = map(toolkit.str2num, zip(*data)[-1])
-
     data_power = list()  # will be 2D list (list of list)
     for col in zip(*data):
         col = map(toolkit.str2num, col)
@@ -84,6 +81,7 @@ def cliff_core(data):
 
     output = list()  # will be 2D list (list of list)
     for cls in set(classes):  # for each classification
+        # pdb.set_trace()
         row_subsum = [sum(row) for c, row in zip(classes, data_power) if c == cls]
         minimum = sorted(row_subsum, reverse=True)[int(len(row_subsum)*percentage)]
 
@@ -91,7 +89,7 @@ def cliff_core(data):
             if classes[r_i] != cls: continue
             if row_sum[r_i] < minimum: continue  # prune due to low power
             output.append(row)
-
+    # TODO CHECK PERCENTAGE EFFECTIVE??!
     return output
 
 
@@ -116,11 +114,14 @@ def CLIFF(model,
     for attr, col in zip(ori_attrs, alldataT):
         if attr in record_attrs:
             valued_dataT.append(col)
+    valued_dataT.append(alldataT[-1])  # cant miss the classification
 
     alldata = map(list, zip(*valued_dataT))
+    alldata = map(lambda row:map(toolkit.str2num, row), alldata)  # numbering the 2d table
 
+    pdb.set_trace()
     after_cliff = cliff_core(alldata)
-    after_cliff.insert(0, record_attrs+ori_attrs[-1])  # add the header
+    after_cliff.insert(0, record_attrs+[ori_attrs[-1]])  # add the header
 
     if write_out_folder:
         toolkit.write_csv(write_out_folder, model, after_cliff)

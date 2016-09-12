@@ -38,7 +38,7 @@ Setting all kinds of parameters here before running core.py
 # model = ['camel-1.6', 'xerces-1.4', 'ant-1.6', 'ant-1.7']
 model = ['school']
 test_set_ratio = 0.2
-CLIFF_percentage = 20
+CLIFF_percentage = 0.1
 Lace2_holder_number = 5
 MORPH_alpha = 0.15
 MORPH_beta = 0.35

@@ -25,3 +25,6 @@ def LACE1(model, original_data_folder, lace1_out_put_folder):
     """
     CLIFF(model, original_data_folder, write_out_folder="CliffOut")
     MORPH(model, 'CliffOut', lace1_out_put_folder)  # run morph algorithm
+
+import debug
+LACE1('school', 'TrainSet', 'Lace1Out')

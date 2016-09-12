@@ -63,28 +63,25 @@ def LACE2(model, original_data_folder, final_out_put_folder):
     :return:
     """
     # load the database and handle them
-    with open(original_data_folder+'/'+model+'.csv', 'r') as db:
-        reader = csv.reader(db)
-        original_attributes = next(reader)
-        all_data = []
-        for line in reader:
-            line = map(toolkit.str2num, line)
-            all_data.append(line)
+    ori_attrs, alldata = toolkit.load_csv(original_data_folder, model)
 
     tmp_all_data = list()
 
     record_attrs = settings.record_attrs
     for attr in record_attrs:
-        col = zip(*all_data)[original_attributes.index(attr)]
+        col = zip(*alldata)[ori_attrs.index(attr)]
         tmp_all_data.append(col)
+    tmp_all_data.append(zip(*alldata)[-1])
 
-    original_attributes = record_attrs
-    all_data = copy.deepcopy(map(list, zip(*tmp_all_data)))
+    alldata = copy.deepcopy(map(list, zip(*tmp_all_data)))
+    for i in range(len(alldata)):
+        alldata[i] = map(toolkit.str2num, alldata[i])
+
     logging.debug("loading the whole database and col selection done.")
 
     # get the **important** Leaf Distance
-    fetch_num = min(len(all_data), 100)
-    tmp_all_data_table = random.sample(all_data, fetch_num)
+    fetch_num = min(len(alldata), 100)
+    tmp_all_data_table = random.sample(alldata, fetch_num)
     tmp_all_data_table = toolkit.normalize_cols_for_table([row[:-1] for row in tmp_all_data_table])
     inter_class_dist = find_distinct_distance(tmp_all_data_table)
 
@@ -92,55 +89,57 @@ def LACE2(model, original_data_folder, final_out_put_folder):
     norm_funcs = []
     denorm_funcs = []
 
-    all_data = map(list, zip(*all_data))
-    is_int = [True]*len(all_data)  # save. for better representation of the output table
+    alldataT = map(list, zip(*alldata))  # transpose mode
+    is_int = [True]*len(record_attrs)  # save. for better representation of the output table
 
-    for attr_index, attr_elements in enumerate(all_data[:-1]):
+    for attr_index, col in enumerate(alldataT[:-1]):
         # save is_int. for better representation of the output table
-        for i in attr_elements:
+        for i in col:
             if type(i) is not int:
                 is_int[attr_index] = False
                 break
 
-        f1, f2 = toolkit.attr_norm(attr_elements)
+        f1, f2 = toolkit.attr_norm(col)
         norm_funcs.append(f1)
         denorm_funcs.append(f2)
-        all_data[attr_index] = map(f1, attr_elements)
-    all_data = map(list, zip(*all_data))
+        alldataT[attr_index] = map(f1, col)
+    alldata = map(list, zip(*alldataT))
 
     # simulate generate the holders
-    holder_datas = data_distribute_simulator(all_data)
+    holder_datas = data_distribute_simulator(alldata)
 
     # passing the cache between the holders
     CACHE = []
     for holder_data in holder_datas:
         if len(CACHE) == 0:  # the first holder
-            init_submit = Cliff_simplified(holder_data)
+            init_submit = cliff_core(holder_data)
             init_submit = MORPH(init_submit, db_has_normalized=True)
             CACHE.extend(init_submit)
         else:  # something exist in the cache
-            to_submits = Cliff_simplified(holder_data)
+            to_submits = cliff_core(holder_data)
+            # print(len(to_submits))
             cache_cursor = len(CACHE)
             # do the Leaf
             for to_submit in to_submits:
                 if whether_add_to_private_cache(to_submit, CACHE, inter_class_dist):
                     CACHE.append(to_submit)
-            # morph
-            CACHE = MORPH(CACHE, db_has_normalized=True, effect_scope=[cache_cursor, -1])
+        print(len(CACHE))
 
-            # TODO checking the holder privacy criterion met?
+    # morph
+    CACHE = MORPH(CACHE, db_has_normalized=True, effect_scope=[cache_cursor, -1])
 
+    # TODO checking the holder privacy criterion met?
     # denormalize the result
     CACHE = map(list, zip(*CACHE))
-    for attr_index, attr_elements in enumerate(CACHE[:-1]):
-        CACHE[attr_index] = map(denorm_funcs[attr_index], attr_elements)
+    for attr_index, col in enumerate(CACHE[:-1]):
+        CACHE[attr_index] = map(denorm_funcs[attr_index], col)
         if is_int[attr_index]:
             CACHE[attr_index] = map(int, CACHE[attr_index])
     CACHE = map(list, zip(*CACHE))
-
-    CACHE.insert(0, original_attributes)
+    pdb.set_trace()
+    CACHE.insert(0, record_attrs)
     if final_out_put_folder:
-        with open(final_out_put_folder+'/'+model+'.csv', 'wb') as f:
+        with open(final_out_put_folder+'/'+model+'.csv', 'w') as f:
             writer = csv.writer(f)
             writer.writerows(CACHE)
 
@@ -148,7 +147,7 @@ def LACE2(model, original_data_folder, final_out_put_folder):
 
 
 def test():
-    LACE2("school", 'DataSet', 'Lace2Out')
+    LACE2("school", 'TrainSet', 'Lace2Out')
 
 if __name__ == '__main__':
     try:

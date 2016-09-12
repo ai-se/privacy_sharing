@@ -159,6 +159,6 @@ def load_csv(folder, file_name, has_header=True):
 
 
 def write_csv(folder, file_name, content):
-    with open(folder + '/' + file_name + '.csv', 'wb') as f:
+    with open(folder + '/' + file_name + '.csv', 'w') as f:
         writer = csv.writer(f)
         writer.writerows(content)
