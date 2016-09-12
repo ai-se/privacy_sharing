@@ -4,7 +4,8 @@ import csv
 import os
 import sys
 sys.path.append(os.path.abspath(".."))
-import data_tools
+import toolkit
+import pdb
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
@@ -57,9 +58,7 @@ def get_original_train(model):
         next(reader)  # pass the first line (csv header)
         for line in reader:
             record_row = [line[i] for i in _original_recored_index]
-            record_row = map(data_tools.str2num, record_row)
-            if record_row[-1] > 0:
-                record_row[-1] = 1  # setting the result as binary
+            record_row = map(toolkit.str2num, record_row)
             all_trains.append(record_row)
 
     x = [row[:-1] for row in all_trains]
@@ -74,7 +73,7 @@ def get_moprhed_train(model):
         reader = csv.reader(f)
         next(reader)  # pass the first line (csv header)
         for line in reader:
-            record_row = map(data_tools.str2num, line)
+            record_row = map(toolkit.str2num, line)
             if record_row[-1] > 0:
                 record_row[-1] = 1  # setting the result as binary
             all_trains.append(record_row)
@@ -95,7 +94,7 @@ def get_test(model):
         next(reader)  # pass the first line (csv header)
         for line in reader:
             record_row = [line[i] for i in _original_recored_index]
-            record_row = map(data_tools.str2num, record_row)
+            record_row = map(toolkit.str2num, record_row)
             if record_row[-1] > 0:
                 record_row[-1] = 1  # setting the result as binary
             all_trains.append(record_row)
@@ -172,7 +171,7 @@ def predict_models(models, to_test_folders, writeReports=True, showResults=False
     global _original_recored_index
     global privatized_set_folder
     privatized_set_folder = to_test_folders[0]
-
+    pdb.set_trace()
     # generate all sklearer clf instances
     from sklearn import svm, tree
     from sklearn.naive_bayes import GaussianNB
@@ -207,25 +206,25 @@ def predict_models(models, to_test_folders, writeReports=True, showResults=False
     # show the results
     if showResults:
         for m, model in enumerate(models):
-            print 'MODEL : ', model
-            print '-' * 5
+            print('MODEL : ', model)
+            print('-' * 5)
 
-            print 'SVM from ORGI:     ', str(precs_org[m]['svm'])
+            print('SVM from ORGI:     ', str(precs_org[m]['svm']))
             for material in to_test_folders:
-                print 'SVM after %s: %s' % (material, str(precs_prtz[model][material]['svm']))
-            print '-' * 5
+                print('SVM after %s: %s' % (material, str(precs_prtz[model][material]['svm'])))
+            print('-' * 5)
 
-            print 'CART from ORGI:    ', str(precs_org[m]['cart'])
+            print('CART from ORGI:    ', str(precs_org[m]['cart']))
             for material in to_test_folders:
-                print 'SVM after %s: %s' % (material, str(precs_prtz[model][material]['cart']))
-            print '-' * 5
+                print('SVM after %s: %s' % (material, str(precs_prtz[model][material]['cart'])))
+            print('-' * 5)
 
-            print 'NB from ORGI:      ', str(precs_org[m]['nb'])
+            print('NB from ORGI:      ', str(precs_org[m]['nb']))
             for material in to_test_folders:
-                print 'SVM after %s: %s' % (material, str(precs_prtz[model][material]['nb']))
-            print '-' * 5
+                print('SVM after %s: %s' % (material, str(precs_prtz[model][material]['nb'])))
+            print('-' * 5)
 
-            print '\n\n'
+            print('\n\n')
 
     # write the reports
     if writeReports:

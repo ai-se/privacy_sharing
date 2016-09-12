@@ -6,13 +6,13 @@ import os
 sys.path.append(os.path.abspath(".."))
 import CLIFF
 import copy
-import data_tools
+import toolkit
 import pdb
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
 __license__ = "MIT"
-__version__ = "1.0"
+__version__ = "2.0"
 __email__ = "jchen37@ncsu.edu"
 
 
@@ -85,7 +85,7 @@ class IPR(object):
             self.before_all_data = []
             for line in reader:
                 self.before_all_data.append(line)
-            self.before_all_data = [map(data_tools.str2num, row) for row in self.before_all_data]  # str to numeric
+            self.before_all_data = [map(toolkit.str2num, row) for row in self.before_all_data]  # str to numeric
 
         # load the after database
         with open(after_db, 'r') as f:
@@ -94,7 +94,7 @@ class IPR(object):
             self.after_all_data = []
             for line in reader:
                 self.after_all_data.append(line)
-            self.after_all_data = [map(data_tools.str2num, row) for row in self.after_all_data]  # str to numeric
+            self.after_all_data = [map(toolkit.str2num, row) for row in self.after_all_data]  # str to numeric
 
         # discrete the attributes...
         # determine the bin_ranges
@@ -102,7 +102,7 @@ class IPR(object):
         for attr in self.after_attrs[:-1]:
             temp = self.before_attrs.index(attr)
             col = [original_data_row[temp] for original_data_row in self.before_all_data]
-            self.bin_ranges[attr] = data_tools.binrange(col)
+            self.bin_ranges[attr] = toolkit.binrange(col)
 
     def set_sensitive_attributes(self, sensitive_attribute_list):
         self.__sensitive_attrs = copy.deepcopy(sensitive_attribute_list)

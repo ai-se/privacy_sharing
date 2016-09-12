@@ -1,11 +1,12 @@
 from CLIFF import CLIFF
 from MORPH import *
 import sys, os
+import settings
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
 __license__ = "MIT"
-__version__ = "1.0"
+__version__ = "2.0"
 __email__ = "jchen37@ncsu.edu"
 
 """
@@ -17,24 +18,16 @@ available argument list:
 -testRatio          | set the ratio of test set size (for evaluate the prediction precision)
 """
 
-'''SETTING THE DEFAULT VALUE HERE.'''
-DEFAULT = {
-    'model': ['camel-1.6', 'xerces-1.4', 'ant-1.6', 'ant-1.7'],
-    'test_set_ratio': 0.2,
-    'CLIFF_percentage': 20,
-    'Lace2_holder_number': 5,
-    'MORPH_alpha': 0.15,
-    'MORPH_beta': 0.35,
-}
 
-_cliff_percent = DEFAULT['CLIFF_percentage']
-_test_set_ratio = DEFAULT['test_set_ratio']
-models = DEFAULT['model']
+_cliff_percent = settings.CLIFF_percentage
+_test_set_ratio = settings.test_set_ratio
+models = settings.model
 
 
 def data_set_split(model):
     """
     split the data as testing set and non-testing set (training set)
+    NOTE: handing the dependent variable here.
     :param model: name of the model
     """
     # load the original data
@@ -44,6 +37,30 @@ def data_set_split(model):
         all_original_data = []
         for line in reader:
             all_original_data.append(line)
+
+    # discrete the dependent variable
+    classes = [i[-1] for i in all_original_data]  # last column in the origin csv file
+    classes = map(toolkit.str2num, classes)
+    if 0 in classes:
+        # binary the classification
+        classes = [int(bool(int(c))) for c in classes]
+    else:
+        from toolkit import binrange
+        slot = binrange(classes)
+        tmp_c = list()
+        for c in classes:
+            cursor = 0
+            for i in slot:
+                if c > i:
+                    cursor += 1
+                else:
+                    break
+            tmp_c.append(cursor)
+        classes = tmp_c
+
+    for l, c in zip(all_original_data, classes):
+        l[-1] = c
+    # discrete done
 
     # split the data body
     random.shuffle(all_original_data)
@@ -73,11 +90,33 @@ def main_process(model):
     data_set_split(model)
 
     from LACE1 import LACE1
-    LACE1(model, 'TrainSet', 'Lace1Out', _cliff_percent, DEFAULT['MORPH_alpha'], DEFAULT['MORPH_beta'])
+    LACE1(model, 'TrainSet', 'Lace1Out', _cliff_percent, DEFAULT['MORPH_alpha'],
+          DEFAULT['MORPH_beta'], ['all_attributes'])
 
     from LACE2 import LACE2
     LACE2(model, 'TrainSet', 'Lace2Out', DEFAULT['Lace2_holder_number'],
           _cliff_percent, DEFAULT['MORPH_alpha'], DEFAULT['MORPH_beta'])
+
+
+def exp4school():
+    print('========Here is the experiment for shcoolcard model========')
+    model = 'school'
+
+    data_set_split(model)
+    from LACE1 import LACE1
+    LACE1(model,
+          'TrainSet',
+          'Lace1Out',
+          _cliff_percent,
+          DEFAULT['MORPH_alpha'],
+          DEFAULT['MORPH_beta'],
+          ['ADM_RATE', 'SAT_AVG', 'TUITFTE', 'RET_FT4', 'PCTFLOAN', 'PCTPELL', 'DEBT_MDN', 'C150_4', 'CDR3'])
+
+    print('Wrote in LACE1.')
+
+    from evaluate.predict import *
+    predict_models([model], ['Lace1Out'], writeReports=True)
+    print("Lace1 predict report wrote.")
 
 
 def program_loading():
@@ -131,12 +170,12 @@ def program_loading():
         elif arg.startswith('-'):
             # display the waring or manual information
             if arg not in ['-help', '-h']:
-                print "ERROR: illegal option: " + arg
-            print "available argument list:\n \
+                print("ERROR: illegal option: " + arg)
+            print("available argument list:\n \
                     -cls                | clear all the generated dataset by this project\n \
                     -models             | specify one or more models to test\n \
                     -CLIFF_percentage   | specify the percentage used in the CLIFF algorithm\n \
-                    -testRatio          | set the ratio of test set size (for evaluate the prediction precision)"
+                    -testRatio          | set the ratio of test set size (for evaluate the prediction precision)")
             exit(0)
 
     if len(models) == 0:
@@ -147,24 +186,27 @@ def program_loading():
     for model in models:
         assert model in existed_models, model + "does NOT in the dataset. Please check it again."
 
+# if __name__ == '__main__':
+#     program_loading()
+#     for model in models:
+#         main_process(model)
+#
+#     from evaluate.predict import *
+#     from evaluate.IPR import *
+#     from evaluate.apriori_cmpr import *
+#
+#     predict_models(models, ['Lace1Out', 'Lace2Out'], writeReports=True)
+#
+#     sen_list = ['loc']  # one sensitive attribute
+#     for model in models:
+#         report_IPR(model, 'DataSet', 'Lace1Out', sen_list)
+#         report_IPR(model, 'DataSet', 'Lace2Out', sen_list)
+#
+#     for model in models:
+#         apriori_report(model, 'DataSet', 'Lace1Out', conclusion_only=True, min_support=0.4, min_confidence=0.8)
+#         apriori_report(model, 'DataSet', 'Lace2Out', conclusion_only=True, min_support=0.4, min_confidence=0.8)
 
 if __name__ == '__main__':
+    import debug
     program_loading()
-
-    for model in models:
-        main_process(model)
-
-    from evaluate.predict import *
-    from evaluate.IPR import *
-    from evaluate.apriori_cmpr import *
-
-    predict_models(models, ['Lace1Out', 'Lace2Out'], writeReports=True)
-
-    sen_list = ['loc']  # one sensitive attribute
-    for model in models:
-        report_IPR(model, 'DataSet', 'Lace1Out', sen_list)
-        report_IPR(model, 'DataSet', 'Lace2Out', sen_list)
-
-    for model in models:
-        apriori_report(model, 'DataSet', 'Lace1Out', conclusion_only=True, min_support=0.4, min_confidence=0.8)
-        apriori_report(model, 'DataSet', 'Lace2Out', conclusion_only=True, min_support=0.4, min_confidence=0.8)
+    exp4school()

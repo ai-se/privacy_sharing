@@ -1,5 +1,6 @@
 from __future__ import division
 import bins
+import csv
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
@@ -17,6 +18,16 @@ def str2num(s):
         except ValueError:
             pass
     return s
+
+
+def median(l):
+    """
+    return the median of the list l.
+    l WILL NOT be changed.
+    :param l:
+    :return:
+    """
+    return sorted(l)[int(len(l)/2)]
 
 
 def binrange(data_list, enough=None, cohen=0.2, maxBins=16, minBin=4, trivial=1.05):
@@ -124,3 +135,37 @@ def del_col_in_table(list_of_list, col_index):
             return_table.append(col)
 
     return map(list, zip(*return_table))
+
+
+def load_csv(folder, file_name, has_header=True):
+    """
+    loading the csv file at folder/file_name.csv
+    :param folder:
+    :param file_name:
+    :param has_header:
+    :return: (header if possible) + (content)
+    """
+    with open(folder + '/' + file_name+'.csv', 'r') as db:
+        reader = csv.reader(db)
+        if has_header:
+            header = next(reader)
+        content = []
+        for line in reader:
+            content.append(line)
+    if has_header:
+        return header, content
+    else:
+        return content
+
+
+def write_csv(folder, file_name, content):
+    with open(folder + '/' + file_name + '.csv', 'w') as f:
+        writer = csv.writer(f)
+        writer.writerows(content)
+
+
+def log_v(variable, value):
+    if type(value) is str:
+        print(variable + ": " + value)
+    else:
+        print(variable + ": " + str(value))

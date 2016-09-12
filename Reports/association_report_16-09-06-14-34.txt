@@ -1,0 +1,37 @@
+******camel-1.6********
+rules in org #: 178
+org -> Lace1Out: 1 -> 0.050562
+rules in Lace1Out #: 20
+Lace1Out -> org: 1 -> 0.150000
+******camel-1.6********
+rules in org #: 599
+org -> Lace2Out: 1 -> 0.517529
+rules in Lace2Out #: 1
+Lace2Out -> org: 1 -> 0.000000
+******xerces-1.4********
+rules in org #: 2101
+org -> Lace1Out: 1 -> 0.110900
+rules in Lace1Out #: 466
+Lace1Out -> org: 1 -> 0.431330
+******xerces-1.4********
+rules in org #: 4762
+org -> Lace2Out: 1 -> 0.640487
+rules in Lace2Out #: 0 
+******ant-1.6********
+rules in org #: 22
+org -> Lace1Out: 1 -> 0.090909
+rules in Lace1Out #: 1
+Lace1Out -> org: 1 -> 0.000000
+******ant-1.6********
+rules in org #: 29
+org -> Lace2Out: 1 -> 0.586207
+rules in Lace2Out #: 1
+Lace2Out -> org: 1 -> 1.000000
+******ant-1.7********
+rules in org #: 67
+org -> Lace1Out: 1 -> 0.029851
+rules in Lace1Out #: 0 
+******ant-1.7********
+rules in org #: 86
+org -> Lace2Out: 1 -> 0.290698
+rules in Lace2Out #: 0 

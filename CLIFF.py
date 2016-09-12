@@ -1,15 +1,16 @@
 from __future__ import division
-import csv
 import copy
 import logging
 import random
+import settings
 import pdb
-import data_tools
+import toolkit
+from toolkit import log_v
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
 __license__ = "MIT"
-__version__ = "1.0"
+__version__ = "2.0"
 __email__ = "jchen37@ncsu.edu"
 
 """
@@ -57,179 +58,87 @@ def power(L, C, Erange):
     return power
 
 
-def CLIFF(database,
+def cliff_core(data):
+    """
+    data has no header, only containing the record attributes
+    :return the cliffed data (part of the input data)
+    """
+
+    if len(data) < 50:
+        logging.debug("no enough data to cliff. return the whole dataset")
+        return data
+
+    percentage = settings.CLIFF_percentage
+    percentage /= 100 if percentage > 1 else 1
+
+    classes = map(toolkit.str2num, zip(*data)[-1])
+    data_power = list()  # will be 2D list (list of list)
+    for col in zip(*data):
+        col = map(toolkit.str2num, col)
+        E = toolkit.binrange(col)
+        data_power.append(power(col, classes, E))
+
+    data_power = map(list, zip(*data_power))  # transposing the data power
+    row_sum = [sum(row) for row in data_power]
+
+    zips = zip(data, classes, row_sum)
+
+    output = list()
+    for cls in set(classes):
+        matched = filter(lambda z: z[1] == cls, zips)
+        random.shuffle(matched)
+        matched = sorted(matched, key=lambda z:z[2], reverse=True)
+
+        if len(matched) < 5:
+            output.extend([m[0] for m in matched])  # all saved
+            continue
+
+        for i in range(int(len(matched)*percentage)):
+            output.append(matched[i][0])
+
+    return output
+
+
+def CLIFF(model,
           db_folder,
-          percentage,
-          write_out_folder=None,
-          record_attrs=['all_attributes']):
+          write_out_folder=None):
     """
     Core function for CLIFF algorithm
     prune the data set according to the power
     attributes are discretized
 
-    :param database: should be a csv file containing the original database
+    :param model: should be a csv file containing the original database
     :param db_folder: the folder name of db
-    :param percentage: the percentage of data to be return
-    :param write_out_folder: where to write out the generated data base into "write_out_folder/***_p.csv"
-    :param record_attrs: specify the recording attributes. if not set, all numeric attributes will be considered
+    :param write_out_folder: where to write out the generated data base into "write_out_folder/model.csv"
     :return: the CLIFFED database
     """
-    percentage /= 100 if percentage > 1 else 1
+    ori_attrs, alldata = toolkit.load_csv(db_folder, model)  # load the database
+    record_attrs = settings.record_attrs
 
-    # load the database
-    with open(db_folder + '/' + database+'.csv', 'r') as db:
-        reader = csv.reader(db)
-        ori_attrs = next(reader)
-        alldata = []
-        for line in reader:
-            alldata.append(line)
+    alldataT = map(list, zip(*alldata))
+    valued_dataT = list()
+    for attr, col in zip(ori_attrs, alldataT):
+        if attr in record_attrs:
+            valued_dataT.append(col)
+    valued_dataT.append(alldataT[-1])  # cant miss the classification
 
-    # determine which ori_attrs to the record, as well as the perfect bin size
-    if 'all_attributes' in record_attrs:
-        record_attrs = list()
-        for attr in range(len(ori_attrs)-1):  # the last attr is the CLASS
-            col = [or_data_r[attr] for or_data_r in alldata]  # get the col in this attribute
-            if len(set(col)) == 1: continue  # all rows are the same in this attr. Not informative. Ignore it
-            try:
-                float(col[0])  # numeric? testing
-                record_attrs.append(ori_attrs[attr])
-            except ValueError:
-                continue
-    else:
-        for ra in record_attrs:
-            assert ra in ori_attrs, "record_attrs must be in the database"
+    alldata = map(list, zip(*valued_dataT))
+    alldata = map(lambda row:map(toolkit.str2num, row), alldata)  # numbering the 2d table
 
-    # binary the classification
-    classes = [i[len(ori_attrs)-1] for i in alldata]  # last column in the origin csv file
-    classes = [int(bool(int(c))) for c in classes]
+    after_cliff = cliff_core(alldata)
+    after_cliff.insert(0, record_attrs+[ori_attrs[-1]])  # add the header
 
-    # get the power for each attribute
-    # store them in a final table
-    all_data_power = []
-    for attr_index, attr in enumerate(record_attrs):
-        temp = ori_attrs.index(attr)
-        col = [i[temp] for i in alldata]
-        try: col = map(int, col)
-        except ValueError: col = map(float, col)
-        E = data_tools.binrange(col)
-        all_data_power.append(power(col, classes, E))
-
-    all_data_power = map(list, zip(*all_data_power))  # transpose.
-
-    cliff_out = list()
-    cliff_out.append(record_attrs+ori_attrs[-1:])  # header
-
-    # select the largest sum of power in each row from each class
-    # TODO make sure the understanding here is correct
-    row_sum = [sum(row) for row_index, row in enumerate(all_data_power)]
-
-    for cls in set(classes):
-        row_sum_sub = [sum(row) for row_index, row in enumerate(all_data_power) if classes[row_index] == cls]
-        minimum = sorted(row_sum_sub, reverse=True)[int(len(row_sum_sub) * percentage)]
-
-        # create the cliff_out
-        for row_index in range(len(alldata)):
-            if classes[row_index] != cls: continue
-            if row_sum[row_index] < minimum: continue  # prune due to low power
-            temp_row = []
-            for attr_index, attr in enumerate(ori_attrs[:-1]):
-                if attr in record_attrs:
-                    try: x = int(alldata[row_index][attr_index])
-                    except ValueError: x = float(alldata[row_index][attr_index])
-                    temp_row.append(x)
-            temp_row.append(cls)
-            cliff_out.append(temp_row)
-
-    # write the cliff_out
     if write_out_folder:
-        with open(write_out_folder + '/'+database + '.csv', 'wb') as f:
-            writer = csv.writer(f)
-            writer.writerows(cliff_out)
+        toolkit.write_csv(write_out_folder, model, after_cliff)
 
-    return cliff_out
-
-
-def Cliff_simplified(dataset, percent):
-    """
-    simplified version of CLIFF.
-    RESTRICTED USED:
-    ALL ATTRIBUTE EXCEPT LAST ONE SHOULD BE RECORDED
-    :param dataset:
-    :param percent:
-    :return: CLIFFed dataset
-    """
-    if len(dataset) < 50:
-        logging.debug("no enough data to cliff. return the whole dataset")
-        return dataset
-
-    percent /= 100 if percent > 1 else 1
-
-    # binary the classification
-    classes = [row[-1] for row in dataset]  # the last column in dataset
-    classes = [int(bool(int(c))) for c in classes]
-    if len(set(classes)) == 1:
-        return random.sample(dataset, int(len(dataset) * percent))
-
-    # determine the bin_size
-    # get the power for each attribute
-    # store them in a final table
-    attrs_num = len(dataset[0])
-    all_data_power = []
-    for attr_index in range(attrs_num-1):
-        col = [row[attr_index] for row in dataset]
-        e = data_tools.binrange(col)
-        all_data_power.append(power(col, classes, e))
-    all_data_power = map(list, zip(*all_data_power))  # transpose
-
-    cliff_out = []
-    row_sum = [sum(row) for row in all_data_power]
-
-    for cls in set(classes):
-        row_sum_sub = [sum(row) for c, row in zip(classes, all_data_power) if c == cls]
-        minimum = sorted(row_sum_sub, reverse=True)[int(len(row_sum_sub) * percent)]
-
-        # create the cliff_out
-        for row_index in range(len(dataset)):
-            if classes[row_index] != cls:
-                continue
-            if row_sum[row_index] < minimum:
-                continue  # prune due to low power
-            cliff_out.append(dataset[row_index])
-
-    return cliff_out
+    return after_cliff
 
 
 def testing():
-    # dataset = "./Dataset/"  # setting up the data set folder
-    #
-    # """
-    # load the csv file by attributes
-    # scripts from http://stackoverflow.com/questions/16503560/read-specific-columns-from-csv-file-with-python-csv
-    # """
-    # from collections import defaultdict
-    # columns = defaultdict(list)  # each value in each column is appended to a list
-    # with open(dataset + 'ant-1.3.csv') as f:
-    #     reader = csv.DictReader(f)  # read rows into a dictionary format
-    #     for row in reader:  # read a row as {column1: value1, column2: value2,...}
-    #         for (k, v) in row.items():  # go over each column name and value
-    #             columns[k].append(v)  # append the value into the appropriate list based on column name k
-    #
-    # # bug = map(int, columns['bug'])
-    # # rfc = map(int, columns['rfc'])
-    # # E = binrange(rfc)
-    # #
-    # # #wmc = [11,14,3,12,6,5,4,14]
-    # # dit = [4,1,2,3,3,1,2,1]
-    # # c = [0,1,0,0,0,0,0,1]
-    # # E = binrange(dit,1)
-    # # pwer = power(dit,c,E)
-    #
-    # ce = [12,4,1,12,4,1,3,20]
-    # c = [0,1,0,0,0,0,0,1]
-    # E = binrange(ce, 2)
-    # pwer = power(ce,c,E)
-    pdb.set_trace()
-
+    CLIFF("ant-1.7",
+          "./Dataset",
+          "./CliffOut",
+          )
 
 if __name__ == '__main__':
     testing()

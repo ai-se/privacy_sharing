@@ -5,12 +5,13 @@ import random
 import math
 import pdb
 import copy
-import data_tools
+import toolkit
+import settings
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
 __license__ = "MIT"
-__version__ = "1.0"
+__version__ = "2.0"
 __email__ = "jchen37@ncsu.edu"
 
 
@@ -24,18 +25,19 @@ Software Engineering, IEEE Transactions on 39.8 (2013): 1054-1068.
 
 
 def MORPH(database, db_folder='not_from_csv_file', write_out_folder=None,
-          alpha=0.15, beta=0.35, db_has_normalized=False, effect_scope=[0, -1]):
+          db_has_normalized=False, effect_scope=[0, -1]):
     """
     MORPH is a instance mutator which can shake the instance within the class boundary
     :param database: original data.
     :param db_folder: from where database fetch. by default, the database is a list of list
     :param write_out_folder: specify the  writing out folder. None means no writing
-    :param alpha: shake amplitude lower bound
-    :param beta: shake amplitude upper bound
     :param db_has_normalized: whether the database has been normalized
     :param effect_scope: specify the scope in the database to be morphed. Any data beyond the scope will remain the same
     :return: the morphed data
     """
+    alpha = settings.MORPH_alpha
+    beta = settings.MORPH_beta
+
     # load the database
     if db_folder != 'not_from_csv_file':
         with open(db_folder + '/' + database + '.csv', 'r') as db:
@@ -44,7 +46,7 @@ def MORPH(database, db_folder='not_from_csv_file', write_out_folder=None,
             dataset = []
             for line in reader:
                 dataset.append(line)
-        dataset = [map(data_tools.str2num, row) for row in dataset]  # str to numeric
+        dataset = [map(toolkit.str2num, row) for row in dataset]  # str to numeric
     else:
         dataset = database
         attributes = ['foo'] * len(dataset[0])
@@ -72,7 +74,7 @@ def MORPH(database, db_folder='not_from_csv_file', write_out_folder=None,
     # normalizing
 
     for attr_index, attr_elements in enumerate(dataset):  # for each attribute elements
-        f1, f2 = data_tools.attr_norm(attr_elements)
+        f1, f2 = toolkit.attr_norm(attr_elements)
         norm_funcs.append(f1)
         denorm_funcs.append(f2)
         dataset[attr_index] = map(f1, attr_elements)
@@ -82,7 +84,7 @@ def MORPH(database, db_folder='not_from_csv_file', write_out_folder=None,
 
     for row_index, row in enumerate(dataset):  # for each row
         heterogeneous_index = [i for i in range(len(classes)) if classes[i] != classes[row_index]]
-        boundary_dist = min([data_tools.euclidean_dist(row, dataset[heg]) for heg in heterogeneous_index])
+        boundary_dist = min([toolkit.euclidean_dist(row, dataset[heg]) for heg in heterogeneous_index])
         boundary_dist /= math.sqrt(len(attributes)-1)
         for i in range(len(row)):
             dataset[row_index][i] += boundary_dist*random.uniform(alpha, beta)*random.choice([1, -1])  # shake
@@ -120,15 +122,7 @@ def MORPH(database, db_folder='not_from_csv_file', write_out_folder=None,
 
 
 def testing():
-    # loc = [100,200,100,300]
-    # norm_loc, denorm_loc = attr_norm(loc)
-    # l1 = map(norm_loc,loc)
-    # l2 = map(denorm_loc, l1)
-    # print l1
-    # print l2
-    MORPH("ant-1.7", 'CliffOut', write_out_folder='Lace1Out')
-    pdb.set_trace()
-
+    MORPH("school", 'CliffOut', write_out_folder='Lace1Out')
 
 if __name__ == "__main__":
     testing()
