@@ -1,27 +1,18 @@
-from CLIFF import CLIFF
 from MORPH import *
-import sys, os
+from evaluate.predict import *
+import sys
+import os
 import settings
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
 __license__ = "MIT"
-__version__ = "2.0"
+__version__ = "2.2"
 __email__ = "jchen37@ncsu.edu"
 
 """
-core.py: the main entrance and process for the whole project
-available argument list:
--cls                | clear all the generated dataset by this project
--models             | specify one or more models to test
--CLIFF_percentage   | specify the percentage used in the CLIFF algorithm
--testRatio          | set the ratio of test set size (for evaluate the prediction precision)
+To clean, run python core.py -cls
 """
-
-
-_cliff_percent = settings.CLIFF_percentage
-_test_set_ratio = settings.test_set_ratio
-models = settings.model
 
 
 def data_set_split(model):
@@ -64,7 +55,7 @@ def data_set_split(model):
 
     # split the data body
     random.shuffle(all_original_data)
-    line = int(len(all_original_data) * (1 - _test_set_ratio))
+    line = int(len(all_original_data) * (1 - settings.test_set_ratio))
 
     # write the train set
     with open('TrainSet/' + model + '.csv', 'wb') as f:
@@ -88,103 +79,51 @@ def main_process(model):
     :return:
     """
     data_set_split(model)
-
-    from LACE1 import LACE1
-    LACE1(model, 'TrainSet', 'Lace1Out', _cliff_percent, DEFAULT['MORPH_alpha'],
-          DEFAULT['MORPH_beta'], ['all_attributes'])
-
-    from LACE2 import LACE2
-    LACE2(model, 'TrainSet', 'Lace2Out', DEFAULT['Lace2_holder_number'],
-          _cliff_percent, DEFAULT['MORPH_alpha'], DEFAULT['MORPH_beta'])
+    #
+    # from LACE1 import LACE1
+    # LACE1(model, 'TrainSet', 'Lace1Out', _cliff_percent, DEFAULT['MORPH_alpha'],
+    #       DEFAULT['MORPH_beta'], ['all_attributes'])
+    #
+    # from LACE2 import LACE2
+    # LACE2(model, 'TrainSet', 'Lace2Out', DEFAULT['Lace2_holder_number'],
+    #       _cliff_percent, DEFAULT['MORPH_alpha'], DEFAULT['MORPH_beta'])
 
 
 def exp4school():
     print('========Here is the experiment for shcoolcard model========')
+    assert settings.model == ['school'], "check the model settings in setting.py"
+
     model = 'school'
-
     data_set_split(model)
+
     from LACE1 import LACE1
-    LACE1(model,
-          'TrainSet',
-          'Lace1Out',
-          _cliff_percent,
-          DEFAULT['MORPH_alpha'],
-          DEFAULT['MORPH_beta'],
-          ['ADM_RATE', 'SAT_AVG', 'TUITFTE', 'RET_FT4', 'PCTFLOAN', 'PCTPELL', 'DEBT_MDN', 'C150_4', 'CDR3'])
-
+    LACE1(model, 'TrainSet', 'Lace1Out')
     print('Wrote in LACE1.')
-
-    from evaluate.predict import *
-    predict_models([model], ['Lace1Out'], writeReports=True)
+    # TODO refactoring the predict modules
+    predict_models(settings.model, ['Lace1Out'])
     print("Lace1 predict report wrote.")
 
 
-def program_loading():
-    global models, _cliff_percent, _test_set_ratio
+def cleaning():
+    cliffs = [f for f in os.listdir("./CliffOut") if not f.endswith('.py')]
+    lace1s = [f for f in os.listdir("./Lace1Out") if not f.endswith('.py')]
+    lace2s = [f for f in os.listdir("./Lace2Out") if not f.endswith('.py')]
+    tests = [f for f in os.listdir("./TestSet") if not f.endswith('.py')]
+    trains = [f for f in os.listdir("./TrainSet") if not f.endswith('.py')]
+    for f in cliffs: os.remove("./CliffOut/" + f)
+    for f in lace1s: os.remove("./Lace1Out/" + f)
+    for f in lace2s: os.remove("./Lace2Out/" + f)
+    for f in tests: os.remove("./TestSet/" + f)
+    for f in trains: os.remove("./TrainSet/" + f)
 
-    for i, arg in enumerate(sys.argv):
-        # parsing the arguments
-        if arg in ['-clear', '-cls', '-clean']:
-            # delete the files generate by the project
-            # will NOT delete the files in dataset
-            cliffs = [f for f in os.listdir("./CliffOut") if not f.endswith('.py')]
-            lace1s = [f for f in os.listdir("./Lace1Out") if not f.endswith('.py')]
-            lace2s = [f for f in os.listdir("./Lace2Out") if not f.endswith('.py')]
-            tests = [f for f in os.listdir("./TestSet") if not f.endswith('.py')]
-            trains = [f for f in os.listdir("./TrainSet") if not f.endswith('.py')]
-            for f in cliffs: os.remove("./CliffOut/" + f)
-            for f in lace1s: os.remove("./Lace1Out/" + f)
-            for f in lace2s: os.remove("./Lace2Out/" + f)
-            for f in tests: os.remove("./TestSet/" + f)
-            for f in trains: os.remove("./TrainSet/" + f)
+    # delete the temporary file in the project
+    import fnmatch
+    matches = []
+    for root, dirnames, filenames in os.walk('.'):
+        for filename in fnmatch.filter(filenames, '*.pyc'):
+            matches.append(os.path.join(root, filename))
+    for f in matches: os.remove(f)
 
-            # delete the temporary file in the project
-            import fnmatch
-            matches = []
-            for root, dirnames, filenames in os.walk('.'):
-                for filename in fnmatch.filter(filenames, '*.pyc'):
-                    matches. append(os.path.join(root,filename))
-            for f in matches: os.remove(f)
-
-            exit()
-
-        elif arg in ['-model', '-models']:
-            models = []
-            # recording all the user_set_models
-            for user_set_model in sys.argv[i+1:]:
-                if user_set_model[0] == '-': break
-                models.append(user_set_model)
-
-        elif arg.lower().startswith('-cliff_per'):  # e.g. -CLIFF_percentage
-            # recording the cliff percentage
-            percentage = float(sys.argv[i+1])
-            percentage *= 100 if percentage <= 1 else 1
-            _cliff_percent = int(percentage)
-            assert _cliff_percent <= 100, sys.argv[i+1] + " is not a valid percentage."
-
-        elif arg in ['-test_ratio', '-test_set_ratio', '-testratio', '-testRatio']:
-            # recording the test set ratio
-            _test_set_ratio = float(sys.argv[i+1])
-            assert 0 < _test_set_ratio < 1, "test set ratio must be in (0,1)"
-
-        elif arg.startswith('-'):
-            # display the waring or manual information
-            if arg not in ['-help', '-h']:
-                print("ERROR: illegal option: " + arg)
-            print("available argument list:\n \
-                    -cls                | clear all the generated dataset by this project\n \
-                    -models             | specify one or more models to test\n \
-                    -CLIFF_percentage   | specify the percentage used in the CLIFF algorithm\n \
-                    -testRatio          | set the ratio of test set size (for evaluate the prediction precision)")
-            exit(0)
-
-    if len(models) == 0:
-        models = DEFAULT['model']  # by default, the small dataset. ant-1.3
-
-    # check the validation for the models
-    existed_models = [os.path.splitext(f)[0] for f in os.listdir("./Dataset/")]
-    for model in models:
-        assert model in existed_models, model + "does NOT in the dataset. Please check it again."
 
 # if __name__ == '__main__':
 #     program_loading()
@@ -207,6 +146,10 @@ def program_loading():
 #         apriori_report(model, 'DataSet', 'Lace2Out', conclusion_only=True, min_support=0.4, min_confidence=0.8)
 
 if __name__ == '__main__':
+    if set(sys.argv) & {'-clear', '-cls', '-clean'}:
+        cleaning()
+        print("cleaning...done")
+        exit(0)
+
     import debug
-    program_loading()
     exp4school()

@@ -145,7 +145,9 @@ def load_csv(folder, file_name, has_header=True):
     :param has_header:
     :return: (header if possible) + (content)
     """
-    with open(folder + '/' + file_name+'.csv', 'r') as db:
+    if '/' not in folder:
+        folder += '/'
+    with open(folder + file_name+'.csv', 'r') as db:
         reader = csv.reader(db)
         if has_header:
             header = next(reader)
@@ -169,3 +171,9 @@ def log_v(variable, value):
         print(variable + ": " + value)
     else:
         print(variable + ": " + str(value))
+
+
+def make_it_list(single_object_or_a_list):
+    if type(single_object_or_a_list) is not list:
+        single_object_or_a_list = [single_object_or_a_list]
+    return single_object_or_a_list
