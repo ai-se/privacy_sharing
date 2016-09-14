@@ -1,5 +1,8 @@
 from MORPH import *
+from LACE1 import LACE1
+from LACE2 import LACE2
 from evaluate.predict import *
+from evaluate.apriori_cmpr import *
 import sys
 import os
 import settings
@@ -96,12 +99,12 @@ def exp4school():
     model = 'school'
     data_set_split(model)
 
-    from LACE1 import LACE1
     LACE1(model, 'TrainSet', 'Lace1Out')
-    print('Wrote in LACE1.')
-    # TODO refactoring the predict modules
-    predict_models(settings.model, ['Lace1Out'])
-    print("Lace1 predict report wrote.")
+    LACE2(model, 'TrainSet', 'Lace2Out')
+
+    predict_models(settings.model, ['Lace1Out', 'Lace2Out'])
+
+    print('precision report done...')
 
 
 def cleaning():

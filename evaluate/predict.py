@@ -1,6 +1,12 @@
 from __future__ import division
-from collections import defaultdict
-from sklearn.metrics import mean_squared_error, mean_absolute_error
+from collections import OrderedDict
+from sklearn.metrics import mean_squared_error, mean_absolute_error, classification_report
+from sklearn import svm, tree
+from sklearn.linear_model import LinearRegression
+from sklearn.naive_bayes import GaussianNB
+from sklearn.multiclass import OneVsRestClassifier
+import time
+import csv
 import settings
 import toolkit
 import pdb
@@ -8,18 +14,11 @@ import pdb
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
 __license__ = "MIT"
-__version__ = "1.3"
+__version__ = "2.2"
 __email__ = "jchen37@ncsu.edu"
 
 """
 experiment to answer the question: does the CLIFF+MORPHed dataset lead to a better/worse prediction
-Measure: pf, pd, g-measure
-recall(pd): TP/(TP+FN)
-pf: FP/(FP+TN)
-g-measure: 2*pd*(1-pf)/(pd+(1-pf))
-
-Learners used for testing: SVM, CART, NB (Naive Bayes)
-
 Main function: predict_models
 """
 
@@ -47,6 +46,7 @@ def get_original_train(model):
 
 
 def get_moprhed_train(source_folder, model):
+    # type: (str, str) -> list, list
     _, all_trains = toolkit.load_csv(source_folder, model)
     all_trains = map(lambda r:map(toolkit.str2num, r), all_trains)  # change the numbers if possible
 
@@ -75,24 +75,16 @@ def get_test(model):
     return x, y
 
 
-# TODO only for the binary
-# TODO how to cmpr when continuous?
 def get_error_measure(actual, predict):
-    """
-    given the actual list and predict list, return the pd, pf and g-measure
-    :param actual:
-    :param predict:
-    :return: pd, pf, g-measure
-    """
-    if not type(actual) is list:
-        actual = [actual]
-
-    if not type(predict) is list:
-        predict = [predict]
+    # type: (list, list) -> list
+    actual = toolkit.make_it_list(actual)
+    predict = toolkit.make_it_list(predict)
 
     assert len(actual) == len(predict), "length of the actual list and predict list must be the same"
 
-    if len(set(actual)) == 2: # binary version err measure
+    err = OrderedDict()
+
+    if settings.predict_mode is 'CLASSIFICATION_BIN':
         TP = sum([1 for a, p in zip(actual, predict) if a == 1 and p == 1])
         FP = sum([1 for a, p in zip(actual, predict) if a == 0 and p == 1])
         FN = sum([1 for a, p in zip(actual, predict) if a == 1 and p == 0])
@@ -103,19 +95,22 @@ def get_error_measure(actual, predict):
         g_measure = 2 * pd * (1 - pf) / (pd + (1 - pf))
         g_measure = round(g_measure, 2)
 
-        error = dict()
-        error['pd'] = pd
-        error['pf'] = pf
-        error['g_measure'] = g_measure
-        return error
-    else:  # multi-classfication
-        print(mean_squared_error(actual, predict))
-        print(mean_absolute_error(actual, predict))
-        pdb.set_trace()
+        err['pd'] = pd
+        err['pf'] = pf
+        err['g_measure'] = g_measure
 
+    if settings.predict_mode is 'CLASSIFICATION_MUL':
+        target_names = list(sorted(set(actual)))
+        assert True, 'Please check here. under construction...'
+        return classification_report(actual, predict, target_names)
+
+    if settings.predict_mode is 'REGRESSION':
+        err['RMSE'] = mean_squared_error(actual, predict) ** 0.5
+        err['MAE'] = mean_absolute_error(actual, predict)
+
+    return err
 
 def predicting(x, y, model, clf_instance):
-    pdb.set_trace()
     clf_instance.fit(x, y)
     test_x, actual = get_test(model)
     predict = clf_instance.predict(test_x).tolist()
@@ -137,80 +132,46 @@ def predict_models(models, we_report_folder):
 
     privatized_set_folder = we_report_folder[0]
 
-    # generate all sklearer clf instances
-    from sklearn import svm, tree
-    from sklearn.multiclass import OneVsOneClassifier
-    from sklearn.naive_bayes import GaussianNB
-    # TODO bug svm learner
-    # svm_learner = OneVsOneClassifier(svm.LinearSVC())
-    cart_learner = tree.DecisionTreeClassifier()
-    gnb = GaussianNB()
+    clfs = list()
 
-    precs_org = []
-    precs_prtz = defaultdict(dict)
+    if settings.predict_mode is 'CLASSIFICATION_BIN':
+        print("Predicting at the classification mode (binary)")
+        svm_clf = svm.SVC()
+        cart_clf = tree.DecisionTreeClassifier()
+        nb_clf = GaussianNB()
+        clfs = [('svm', svm_clf), ('cart', cart_clf), 'naive bayes', nb_clf]
+
+    if settings.predict_mode is 'CLASSIFICATION_MUL':
+        print("Predicting at the classification mode (multiple)")
+        svm_clf = OneVsRestClassifier(svm.SVC(kernel='linear'))
+        cart_clf = tree.DecisionTreeClassifier()
+        nb_clf = OneVsRestClassifier(GaussianNB())
+        clfs = [('svm', svm_clf), ('cart', cart_clf), 'naive bayes', nb_clf]
+
+    if settings.predict_mode is 'REGRESSION':
+        print("Predicting at the regression mode.")
+
+        lg = LinearRegression()
+        dt_clf = tree.DecisionTreeRegressor()
+        # TODO the neual network??!
+        clfs = [('linear regression', lg), ('decision tree', dt_clf)]
+
+    report_at = csv.writer(open('Reports/PREDICTION_report.csv', 'a'))
+    date = time.strftime('%m%d%y')
+
     for model in models:
-        prec_di = dict()
-        x, y = get_moprhed_train('Lace2Out', model)
-        # x, y = get_original_train(model)
-        # prec_di['svm'] = predicting(x, y, model, svm_learner)
-        prec_di['cart'] = predicting(x, y, model, cart_learner)
-        prec_di['nb'] = predicting(x, y, model, gnb)
+        # get the prediction at original dataset
+        x, y = get_original_train(model)
+        for clf_name, clf in clfs:
+            err = predicting(x, y, model, clf)
+            for k, v in err.items(): report_at.writerow([date, time.time(), model, 'NoHandle', k, "%.4f"%v])
 
-        precs_org.append(prec_di)
-
-        for predict_material in we_report_folder:
-            global privatized_set_folder
-            privatized_set_folder = predict_material
-
-            prec_di = dict()
-            prec_di['svm'] = predicting(get_moprhed_train, model, svm_learner)
-            prec_di['cart'] = predicting(get_moprhed_train, model, cart_learner)
-            prec_di['nb'] = predicting(get_moprhed_train, model, gnb)
-
-            precs_prtz[model][predict_material] = prec_di
-
-    # write the reports
-    import datetime
-    now = datetime.datetime.now()
-    report_output_file_name = project_path + 'Reports/' + 'prediction_measure_'\
-        + now.strftime('%y-%m-%d-%H') + '.csv'
-
-    f = open(report_output_file_name, 'w+')
-
-    def check_prtz_prec(model, learner, measure):
-        ff = []
-        for material in we_report_folder:
-            ff.append(str(round(precs_prtz[model][material][learner][measure], 2)))
-        return ','.join(ff)
-
-    # write the SVM result
-    f.write("SVM,,original," +','.join(we_report_folder) + "\n")
-    for m, model in enumerate(models):
-        f.write("%s,g,%.2f,%s\n" % (model, precs_org[m]['svm']['g_measure'],
-                                    check_prtz_prec(model, 'svm', 'g_measure')))
-        f.write(",pd,%.2f,%s\n" % (precs_org[m]['svm']['pd'], check_prtz_prec(model, 'svm', 'pd')))
-        f.write(",pf,%.2f,%s\n" % (precs_org[m]['svm']['pf'], check_prtz_prec(model, 'svm', 'pf')))
-
-    # write the CART result
-    f.write(','.join(['***'] * (len(we_report_folder) + 3)) + "\n")
-    f.write("CART,,original," +','.join(we_report_folder) + "\n")
-    for m, model in enumerate(models):
-        f.write("%s,g,%.2f,%s\n" % (model, precs_org[m]['cart']['g_measure'],
-                                    check_prtz_prec(model, 'cart', 'g_measure')))
-        f.write(",pd,%.2f,%s\n" % (precs_org[m]['cart']['pd'], check_prtz_prec(model, 'cart', 'pd')))
-        f.write(",pf,%.2f,%s\n" % (precs_org[m]['cart']['pf'], check_prtz_prec(model, 'cart', 'pf')))
-
-    # write the NB result
-    f.write(','.join(['***'] * (len(we_report_folder) + 3)) + "\n")
-    f.write("NB,,original," +','.join(we_report_folder) + "\n")
-    for m, model in enumerate(models):
-        f.write("%s,g,%.2f,%s\n" % (model, precs_org[m]['nb']['g_measure'],
-                                    check_prtz_prec(model, 'nb', 'g_measure')))
-        f.write(",pd,%.2f,%s\n" % (precs_org[m]['nb']['pd'], check_prtz_prec(model, 'nb', 'pd')))
-        f.write(",pf,%.2f,%s\n" % (precs_org[m]['nb']['pf'], check_prtz_prec(model, 'nb', 'pf')))
-
-    f.close()
-
+        # get the refined dataset
+        for re in we_report_folder:
+            x, y = get_moprhed_train(re, model)
+            for clf_name, clf in clfs:
+                err = predicting(x, y, model, clf)
+                for k, v in err.items(): report_at.writerow([date, time.time(), model, re, k, "%.4f"%v])
 
 if __name__ == '__main__':
     predict_models(['ant-1.7', 'camel-1.6'], we_report_folder=['Lace1Out', 'Lace2Out'])

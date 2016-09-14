@@ -16,3 +16,6 @@ CLIFF_percentage = 0.3
 Lace2_holder_number = 5
 MORPH_alpha = 0.15
 MORPH_beta = 0.35
+
+predict_mode = 'REGRESSION'  # 'CLASSIFICATION_BIN' 'CLASSIFICATION_MUL'
+
