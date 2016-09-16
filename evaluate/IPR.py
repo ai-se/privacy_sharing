@@ -1,9 +1,6 @@
 from __future__ import division
 import csv
 import random
-import sys
-import os
-sys.path.append(os.path.abspath("."))
 import copy
 import toolkit
 import settings

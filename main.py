@@ -1,4 +1,3 @@
-from MORPH import *
 from LACE1 import LACE1
 from LACE2 import LACE2
 from evaluate.predict import *
@@ -103,7 +102,7 @@ def exp4school():
     LACE1(model, 'TrainSet', 'Lace1Out')
     LACE2(model, 'TrainSet', 'Lace2Out')
 
-    predict_models(settings.model, ['Lace1Out', 'Lace2Out'])
+    predict_models(model, ['Lace1Out', 'Lace2Out'])
     # print('precision report done...')
 
     apriori_report(model, 'TrainSet', ['Lace1Out', 'Lace2Out'])

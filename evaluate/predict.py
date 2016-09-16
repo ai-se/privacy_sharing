@@ -110,6 +110,7 @@ def get_error_measure(actual, predict):
 
     return err
 
+
 def predicting(x, y, model, clf_instance):
     clf_instance.fit(x, y)
     test_x, actual = get_test(model)
@@ -164,14 +165,14 @@ def predict_models(models, we_report_folder):
         x, y = get_original_train(model)
         for clf_name, clf in clfs:
             err = predicting(x, y, model, clf)
-            for k, v in err.items(): report_at.writerow([date, time.time(), model, 'NoHandle', k, "%.4f"%v])
+            for k, v in err.items(): report_at.writerow([date, time.time(), model, 'NoHandle', clf_name, k, "%.4f"%v])
 
         # get the refined dataset
         for re in we_report_folder:
             x, y = get_moprhed_train(re, model)
             for clf_name, clf in clfs:
                 err = predicting(x, y, model, clf)
-                for k, v in err.items(): report_at.writerow([date, time.time(), model, re, k, "%.4f"%v])
+                for k, v in err.items(): report_at.writerow([date, time.time(), model, re, clf_name, k, "%.4f"%v])
 
 if __name__ == '__main__':
     predict_models(['ant-1.7', 'camel-1.6'], we_report_folder=['Lace1Out', 'Lace2Out'])

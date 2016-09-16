@@ -167,6 +167,12 @@ def write_csv(folder, file_name, content, header=None):
         writer.writerows(content)
 
 
+def append_csv_row(folder, file_name, row):
+    with open(folder+'/'+file_name+'.csv', 'a') as f:
+        writer = csv.writer(f)
+        writer.writerow(row)
+
+
 def log_v(variable, value):
     if type(value) is str:
         print(variable + ": " + value)

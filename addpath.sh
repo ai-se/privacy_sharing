@@ -1,0 +1,8 @@
+# adding the current project path to PYTHONPATH.
+# this script can be called at any folder
+
+#!/usr/bin/env bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PYTHONPATH="${PYTHONPATH}:$DIR"
+export PYTHONPATH
