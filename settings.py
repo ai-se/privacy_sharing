@@ -17,5 +17,8 @@ Lace2_holder_number = 5
 MORPH_alpha = 0.15
 MORPH_beta = 0.35
 
+apriori_min_support = 0.06
+apriori_min_confidence = 0.6
+
 predict_mode = 'REGRESSION'  # 'CLASSIFICATION_BIN' 'CLASSIFICATION_MUL'
 

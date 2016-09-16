@@ -126,14 +126,13 @@ def del_col_in_table(list_of_list, col_index):
         col_index = [col_index]
     for i in range(len(col_index)):
         if col_index[i] < 0:
-            col_index[i] += len(list_of_list)
+            col_index[i] += len(list_of_list[0])
 
     list_of_list = map(list, zip(*list_of_list))
     return_table = []
     for index, col in enumerate(list_of_list):
         if index not in col_index:
             return_table.append(col)
-
     return map(list, zip(*return_table))
 
 

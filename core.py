@@ -32,7 +32,7 @@ def data_set_split(model):
         for line in reader:
             all_original_data.append(line)
 
-    # discrete the dependent variable
+    # discrete the independent variable
     classes = [i[-1] for i in all_original_data]  # last column in the origin csv file
     classes = map(toolkit.str2num, classes)
     if 0 in classes:
@@ -103,8 +103,10 @@ def exp4school():
     LACE2(model, 'TrainSet', 'Lace2Out')
 
     predict_models(settings.model, ['Lace1Out', 'Lace2Out'])
-
     print('precision report done...')
+
+    apriori_report(model, 'TrainSet', ['Lace1Out', 'Lace2Out'])
+    print('apriori report done...')
 
 
 def cleaning():
