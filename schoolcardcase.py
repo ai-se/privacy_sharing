@@ -38,7 +38,7 @@ The experiments for the schoolcard case studies
 """
 
 
-REGIONS = [
+REGIONS = [  # 0=NE, 1=NW, 2=S, 3=W
     ['CT', 'ME', 'MA', 'NH', 'RI', 'VT',
      'NJ', 'NY', 'PA'],  # NE
     ['IL', 'MI', 'OH', 'WI', 'IN',
@@ -50,3 +50,18 @@ REGIONS = [
      'WA', 'OR', 'CA', 'HI', 'AK'],   # W
 ]
 
+
+def load_csv_within_region(folder, model, region):
+    header, content = toolkit.load_csv(folder, model, has_header=True)
+    assert 'STABBR' in header, 'please make sure region info in database'
+    abbr_at = header.index('STABBR')
+
+    content = [i for i in content if i[abbr_at] in REGIONS[region]]
+
+    return header, content
+#
+# for i in range(4):
+#     h, ct = load_csv_within_region('DataSet', 'school', i)
+#     toolkit.write_csv('db4school', 'school%d'%i, ct, h)
+#
+#

@@ -159,9 +159,11 @@ def load_csv(folder, file_name, has_header=True):
         return content
 
 
-def write_csv(folder, file_name, content):
+def write_csv(folder, file_name, content, header=None):
     with open(folder + '/' + file_name + '.csv', 'w') as f:
         writer = csv.writer(f)
+        if header is not None:
+            writer.writerow(header)
         writer.writerows(content)
 
 
