@@ -20,5 +20,9 @@ MORPH_beta = 0.35
 apriori_min_support = 0.06
 apriori_min_confidence = 0.6
 
+ipr_sensitive_attrs = ['ADM_RATE', 'PCTFLOAN', 'C150_4']
+ipr_query_size = 4
+ipr_num_of_queries = 100
+
 predict_mode = 'REGRESSION'  # 'CLASSIFICATION_BIN' 'CLASSIFICATION_MUL'
 

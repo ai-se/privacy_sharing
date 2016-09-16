@@ -3,6 +3,7 @@ from LACE1 import LACE1
 from LACE2 import LACE2
 from evaluate.predict import *
 from evaluate.apriori_cmpr import *
+from evaluate.IPR import *
 import sys
 import os
 import settings
@@ -103,10 +104,13 @@ def exp4school():
     LACE2(model, 'TrainSet', 'Lace2Out')
 
     predict_models(settings.model, ['Lace1Out', 'Lace2Out'])
-    print('precision report done...')
+    # print('precision report done...')
 
     apriori_report(model, 'TrainSet', ['Lace1Out', 'Lace2Out'])
-    print('apriori report done...')
+    # print('apriori report done...')
+
+    ipr_report(model, 'TrainSet', ['Lace1Out', 'Lace2Out'])
+    # print('ipr report done...')
 
 
 def cleaning():
@@ -129,26 +133,6 @@ def cleaning():
             matches.append(os.path.join(root, filename))
     for f in matches: os.remove(f)
 
-
-# if __name__ == '__main__':
-#     program_loading()
-#     for model in models:
-#         main_process(model)
-#
-#     from evaluate.predict import *
-#     from evaluate.IPR import *
-#     from evaluate.apriori_cmpr import *
-#
-#     predict_models(models, ['Lace1Out', 'Lace2Out'], writeReports=True)
-#
-#     sen_list = ['loc']  # one sensitive attribute
-#     for model in models:
-#         report_IPR(model, 'DataSet', 'Lace1Out', sen_list)
-#         report_IPR(model, 'DataSet', 'Lace2Out', sen_list)
-#
-#     for model in models:
-#         apriori_report(model, 'DataSet', 'Lace1Out', conclusion_only=True, min_support=0.4, min_confidence=0.8)
-#         apriori_report(model, 'DataSet', 'Lace2Out', conclusion_only=True, min_support=0.4, min_confidence=0.8)
 
 if __name__ == '__main__':
     if set(sys.argv) & {'-clear', '-cls', '-clean'}:
