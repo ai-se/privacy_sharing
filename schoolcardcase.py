@@ -98,7 +98,7 @@ def data_set_split(model):
     :param model: name of the model
     """
     # load the original data
-    with open('db4school/' + model + '.csv', 'r') as db:
+    with open('db4school/raw/' + model + '.csv', 'r') as db:
         reader = csv.reader(db)
         head = next(reader)
         all_original_data = []
@@ -248,3 +248,6 @@ for repeat in range(20):
                                     ee['MAE'],
                                     ])
     print("Repeat %d done." % repeat)
+
+
+# MODULE 2
