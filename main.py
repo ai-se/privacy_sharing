@@ -105,10 +105,10 @@ def exp4school():
     predict_models(model, ['Lace1Out', 'Lace2Out'])
     # print('precision report done...')
 
-    apriori_report(model, 'TrainSet', ['Lace1Out', 'Lace2Out'])
+    # apriori_report(model, 'TrainSet', ['Lace1Out', 'Lace2Out'])
     # print('apriori report done...')
 
-    ipr_report(model, 'TrainSet', ['Lace1Out', 'Lace2Out'])
+    # ipr_report(model, 'TrainSet', ['Lace1Out', 'Lace2Out'])
     # print('ipr report done...')
 
 
@@ -140,4 +140,7 @@ if __name__ == '__main__':
         exit(0)
 
     import debug
-    exp4school()
+    for i in range(20):
+        exp4school()
+        print('Repeat %d done.'%i)
+

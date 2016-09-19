@@ -43,7 +43,6 @@ __email__ = "jchen37@ncsu.edu"
 
 """
 The experiments for the schoolcard case studies
-
 """
 
 
@@ -291,4 +290,3 @@ for repeat in range(20):
     print("Repeat %d done." % repeat)
 
 
-# MODULE 2

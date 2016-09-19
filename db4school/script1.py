@@ -34,69 +34,112 @@ import toolkit
 """
 study case schoolcard script 1::
 cross region prediction statistics
-HANDLING the db4school/precision_report.csv
+DRAWING the db4school/precision_report.csv
+DRAWING prediction_report.csv
 """
 
-header, content = toolkit.load_csv(settings.project_path+"/db4school", "precision_report")
+# module_1
+def module1():
+    header, content = toolkit.load_csv(settings.project_path+"/db4school", "precision_report")
 
-content = map(lambda r: map(toolkit.str2num, r), content)
+    content = map(lambda r: map(toolkit.str2num, r), content)
 
-source_db = lambda x: x[2]
-test_for = lambda x: x[4]
+    source_db = lambda x: x[2]
+    test_for = lambda x: x[4]
 
-cases = ['school0', 'school1', 'school2', 'school3']
+    cases = ['school0', 'school1', 'school2', 'school3']
 
-lg_rmse = lambda x: x[5]=='linear regression' and x[6]=='RMSE'
-# lg_mae = lambda x: x[5]=='linear regression' and x[6]=='MAE'
-dt_rmse = lambda x: x[5]=='decision tree' and x[6]=='RMSE'
-# dt_mae = lambda x: x[5]=='decision tree' and x[6]=='MAE'
+    lg_rmse = lambda x: x[5]=='linear regression' and x[6]=='RMSE'
+    # lg_mae = lambda x: x[5]=='linear regression' and x[6]=='MAE'
+    dt_rmse = lambda x: x[5]=='decision tree' and x[6]=='RMSE'
+    # dt_mae = lambda x: x[5]=='decision tree' and x[6]=='MAE'
 
-for case in cases:
-    plt.clf()
-    fig = plt.figure(1, figsize=(9, 6))
-    match_cases = filter(lambda x: source_db(x) == case, content)
-    lace1_cases = filter(lambda x: 'LACE1' in x, match_cases)
-    lace2_cases = filter(lambda x: 'LACE2' in x, match_cases)
+    for case in cases:
+        plt.clf()
+        fig = plt.figure(1)
+        fig.set_size_inches(7,5)
+        match_cases = filter(lambda x: source_db(x) == case, content)
+        lace1_cases = filter(lambda x: 'LACE1' in x, match_cases)
+        lace2_cases = filter(lambda x: 'LACE2' in x, match_cases)
+        v = list()
+
+        for testat in cases:
+            # lace1
+            selected = filter(lambda x: test_for(x) == testat, lace1_cases)
+
+            lg = filter(lg_rmse, selected)
+            dt = filter(dt_rmse, selected)
+
+            v.append(zip(*lg)[-1])
+            v.append(zip(*dt)[-1])
+
+            # lace2
+            selected = filter(lambda x: test_for(x) == testat, lace2_cases)
+            lg = filter(lg_rmse, selected)
+            dt = filter(dt_rmse, selected)
+
+            v.append(zip(*lg)[-1])
+            v.append(zip(*dt)[-1])
+
+        ax = fig.add_subplot(111)
+        box = ax.boxplot(v)
+
+        ax.axvspan(0, 4.5, alpha=0.3, color='gray')
+        ax.axvspan(8.5, 12.5, alpha=0.3, color='gray')
+
+        ax.text(1, 6, 'LACE1\nregression', fontsize=10)
+        ax.text(5, 6, 'LACE1\ndecision tree', fontsize=10)
+        ax.text(9, 6, 'LACE2\nregression', fontsize=10)
+        ax.text(13, 6, 'LACE2\ndecision tree', fontsize=10)
+
+        plt.setp(box['boxes'][cases.index(case)], color='red')
+        plt.setp(box['boxes'][cases.index(case)+4], color='red')
+        plt.setp(box['boxes'][cases.index(case)+8], color='red')
+        plt.setp(box['boxes'][cases.index(case)+12], color='red')
+        # pdb.set_trace()
+        plt.xticks(range(1, 17), ['NE', 'NW', 'S', 'W']*4)
+        ax.set_ylim([0, 10])
+        ax.set_title('RMSE for prediction from region data.')
+        fig.savefig(case+'.png', bbox_inches='tight')
+
+
+def module2():
+    print('this is the second module in this file.')
+    head, content = toolkit.load_csv(settings.project_path+'/Reports', 'PREDICTION_report')
+    content = map(lambda r: map(toolkit.str2num, r), content)
+
+    lg_rmse = lambda x: x[4]=='linear regression' and x[5]=='RMSE'
+    dt_rmse = lambda x: x[4]=='decision tree' and x[5]=='RMSE'
+
+    lace1 = lambda x: x[3]=='Lace1Out'
+    lace2 = lambda x: x[3]=='Lace2Out'
+    org   = lambda x: x[3]=='NoHandle'
+
     v = list()
+    for clf in [lg_rmse, dt_rmse]:
+        for alg in [org, lace1, lace2]:
+            selected = filter(clf and alg, content)
+            v.append(zip(*selected)[-1])
 
-    for testat in cases:
-        # lace1
-        selected = filter(lambda x: test_for(x) == testat, lace1_cases)
-
-        lg = filter(lg_rmse, selected)
-        dt = filter(dt_rmse, selected)
-
-        v.append(zip(*lg)[-1])
-        v.append(zip(*dt)[-1])
-
-        # lace2
-        selected = filter(lambda x: test_for(x) == testat, lace2_cases)
-        lg = filter(lg_rmse, selected)
-        dt = filter(dt_rmse, selected)
-
-        v.append(zip(*lg)[-1])
-        v.append(zip(*dt)[-1])
-
+    plt.clf()
+    fig = plt.figure(1)
+    fig.set_size_inches(7, 5)
     ax = fig.add_subplot(111)
     box = ax.boxplot(v)
 
-    ax.axvspan(0, 4.5, alpha=0.3, color='gray')
-    ax.axvspan(8.5, 12.5, alpha=0.3, color='gray')
+    plt.xticks(range(1, 7), ['org', 'lace1', 'lace2']*2)
 
-    ax.text(1, 6, 'LACE1\nregression', fontsize=10)
-    ax.text(5, 6, 'LACE1\ndecision tree', fontsize=10)
-    ax.text(9, 6, 'LACE2\nregression', fontsize=10)
-    ax.text(13, 6, 'LACE2\ndecision tree', fontsize=10)
+    ax.axvspan(0, 3.5, alpha=0.3, color='gray')
 
-    plt.setp(box['boxes'][cases.index(case)], color='red')
-    plt.setp(box['boxes'][cases.index(case)+4], color='red')
-    plt.setp(box['boxes'][cases.index(case)+8], color='red')
-    plt.setp(box['boxes'][cases.index(case)+12], color='red')
-    # pdb.set_trace()
-    plt.xticks(range(1, 17), ['NE', 'NW', 'S', 'W']*4)
+    ax.text(1, 6, 'Linear regression', fontsize=10)
+    ax.text(4, 6, 'Decision tree', fontsize=10)
+
     ax.set_ylim([0, 10])
-    ax.set_title('RMSE for prediction from region data.')
-    fig.savefig(case+'.png', bbox_inches='tight')
+    ax.set_title('RMSE for predicting at the whole shoolcard set')
+    fig.savefig('school.png', bbox_inhes='tight')
 
 
+if __name__ == '__main__':
+    module1()
+    module2()
 
