@@ -136,7 +136,7 @@ def module2():
 
     ax.set_ylim([0, 10])
     ax.set_title('RMSE for predicting at the whole shoolcard set')
-    fig.savefig('school.png', bbox_inhes='tight')
+    fig.savefig('school.png', bbox_inches='tight')
 
 
 if __name__ == '__main__':

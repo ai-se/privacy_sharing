@@ -146,6 +146,8 @@ def load_csv(folder, file_name, has_header=True):
     """
     if not folder.endswith('/'):
         folder += '/'
+    folder = folder.replace('//', '/')
+
     with open(folder + file_name+'.csv', 'r') as db:
         reader = csv.reader(db)
         if has_header:
