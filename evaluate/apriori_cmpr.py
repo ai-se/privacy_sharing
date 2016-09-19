@@ -2,14 +2,14 @@ from __future__ import division
 import pdb
 import logging
 import csv
-import datetime
-import itertools
+import time
+import toolkit
+import settings
 from scipy.spatial.distance import cosine
 from os import sys, path
+
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-project_path = [i for i in sys.path if i.endswith('privacy_sharing')][0]
 from evaluate.Apriori.apriori import *
-import toolkit
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
@@ -28,59 +28,37 @@ def dataset_iter(dataset):
         yield frozenset(data)
 
 
-def apriori_cmpr(model, org_folder, privatized_folder, min_support, min_confidence):
+def apriori_cmpr(model, org_folder, ptz_folder):
     """
     Note:
     ignore the class attribute. just focus on the independent attributes
     :param model:
     :param org_folder:
-    :param privatized_folder:
-    :param min_support:
-    :param min_confidence:
+    :param ptz_folder:
     :return:
     """
     # load the data sets
-    with open(project_path+'/'+org_folder+'/'+model+'.csv', 'r') as f:
-        reader = csv.reader(f)
-        org_attrs = next(reader)
-        all_org_data = []
-        for line in reader:
-            all_org_data.append(line)
-        all_org_data = [map(toolkit.str2num, row) for row in all_org_data]  # str to numeric
+    org_attrs, org_data = toolkit.load_csv(org_folder, model)
+    org_data = map(lambda r: map(toolkit.str2num, r), org_data)
 
-    with open(project_path+'/'+privatized_folder+'/'+model+'.csv', 'r') as f:
-        reader = csv.reader(f)
-        privatized_attrs = next(reader)
-        all_privatized_data = []
-        for line in reader:
-            all_privatized_data.append(line)
-        all_privatized_data = [map(toolkit.str2num, row) for row in all_privatized_data]  # str to numeric
+    ptz_attrs, ptz_data = toolkit.load_csv(ptz_folder, model)
+    ptz_data = map(lambda r: map(toolkit.str2num, r), ptz_data)
+    ptz_data = toolkit.del_col_in_table(ptz_data, -1)
 
     # delete the useless columns
-    attributes = [attr for attr in org_attrs if attr in privatized_attrs]  # intersection of two data set attributes
-    del attributes[-1]  # do not consider the classification attributes
-
-    tmp_del_i1, tmp_del_i2 = [], []
-
-    for attr_i, attr in enumerate(org_attrs):
-        if attr not in attributes:
-            tmp_del_i1.append(attr_i)
-
-    for attr_i, attr in enumerate(privatized_attrs):
-        if attr not in attributes:
-            tmp_del_i2.append(attr_i)
-
-    all_org_data = toolkit.del_col_in_table(all_org_data, tmp_del_i1)
-    all_privatized_data = toolkit.del_col_in_table(all_privatized_data, tmp_del_i2)
+    attributes = settings.record_attrs
+    org_dataT = map(list, zip(*org_data))
+    org_dataT = [col for col, a1 in zip(org_dataT, org_attrs) if a1 in attributes]
+    org_data = map(list, zip(*org_dataT))
 
     # discretize the data
     # translate the continuous attribute into 'attr+level'
 
     dis_org_data = []
-    dis_privatized_data = []
+    dis_ptz_data = []
     # ranges_dict = dict()  # for backup
 
-    for attr_name, col1, col2 in zip(attributes, zip(*all_org_data), zip(*all_privatized_data)):
+    for attr_name, col1, col2 in zip(attributes, zip(*org_data), zip(*ptz_data)):
         col1 = list(col1)
         col2 = list(col2)
 
@@ -108,50 +86,20 @@ def apriori_cmpr(model, org_folder, privatized_folder, min_support, min_confiden
                 if upper_bound >= element:
                     break
             tags.append(attr_name + ':' + str(cursor))
-        dis_privatized_data.append(tags)
+        dis_ptz_data.append(tags)
 
     dis_org_data = map(list, zip(*dis_org_data))
-    dis_privatized_data = map(list, zip(*dis_privatized_data))
+    dis_ptz_data = map(list, zip(*dis_ptz_data))
 
-    # for attr_name, col in zip(attributes, zip(*all_privatized_data)):
-    #     col = list(col)
-    #     ranges = data_tools.binrange(col)
-    #     # ranges = ranges_dict[attr_name]
-    #
-    #     tags = []
-    #     for element in col:
-    #         for cursor, upper_bound in enumerate(ranges):
-    #             if upper_bound >= element:
-    #                 break
-    #
-    #         # lower_bound = ranges[max(cursor-1, 0)]
-    #         # mid = (upper_bound + lower_bound) / 2
-    #         # if type(mid) is float:
-    #         #     mid = round(mid, 2)
-    #         #
-    #         # tags.append(attr_name+':' + str(mid))
-    #         tags.append(attr_name + ':' + str(cursor))
-    #
-    #     dis_privatized_data.append(tags)
-    # dis_privatized_data = map(list, zip(*dis_privatized_data))
     logging.info("Database discretization done.")
 
-    # writing out the dis dataset
-    # with open('tmp_org.csv', 'wb') as f:
-    #     writer = csv.writer(f)
-    #     writer.writerows(dis_org_data)
-    #
-    # with open('tmp_pri.csv', 'wb') as f:
-    #     writer = csv.writer(f)
-    #     writer.writerows(dis_privatized_data)
-
     org_iter = dataset_iter(dis_org_data)
-    privatized_iter = dataset_iter(dis_privatized_data)
+    ptz_iter = dataset_iter(dis_ptz_data)
 
-    items_org, rules_org = runApriori(org_iter, min_support, min_confidence)
-    items_privatized, rules_privatized = runApriori(privatized_iter, min_support, min_confidence)
+    items_org, rules_org = runApriori(org_iter, settings.apriori_min_support, settings.apriori_min_confidence)
+    items_ptz, rules_ptz = runApriori(ptz_iter, settings.apriori_min_support, settings.apriori_min_confidence)
 
-    return items_org, items_privatized, rules_org, rules_privatized, dis_org_data, dis_privatized_data
+    return items_org, items_ptz, rules_org, rules_ptz, dis_org_data, dis_ptz_data
 
 
 def item_set_similarity(item1, item2):
@@ -189,91 +137,47 @@ def item_set_similarity(item1, item2):
     return 1 - cosine(value_vector1, value_vector2)  # TODO divide by zero error
 
 
-def apriori_report(model, org_folder, privatized_folder, print_result=False,
-                   conclusion_only=False, min_support=0.15, min_confidence=0.6):
+def apriori_report(model, org_folder, we_report_folder):
     """
 
     :param model:
     :param org_folder:
-    :param privatized_folder:
-    :param print_result:
-    :param conclusion_only:
-    :param min_support:
-    :param min_confidence:
+    :param we_report_folder:
     :return:
     """
-    items_org, items_privatized, rules_org, rules_privatized, dis_org_data, dis_privatized_data = \
-        apriori_cmpr(model, org_folder, privatized_folder, min_support, min_confidence)
+    we_report_folder = toolkit.make_it_list(we_report_folder)
 
-    # EXPERIMENT
-    status1 = []  # recording the status of rules from original dataset to the privatized dataset
-    status2 = []  # recording the status of rules from privatized dataset to the original dataset
-    for rule in rules_org:
-        left = rule[0][0]
-        right = rule[0][1]
-        # confidence = float(rule[1])
-        d = len([1 for i in dis_privatized_data if set(left) <= set(i)])
-        if d < min_support:
-            status1.append('min_support fail')
+    for ptz_folder in we_report_folder:
+        items_org, items_ptz, rules_org, rules_ptz, dis_org_data, dis_ptz_data = \
+            apriori_cmpr(model, org_folder, ptz_folder)
+
+        ruleId = lambda r: hash(r[0][0][0]+'0'+r[0][1][0])
+
+        rules_org_id = set(map(ruleId, rules_org))
+        rules_ptz_id = set(map(ruleId, rules_ptz))
+
+        lap = rules_org_id&rules_ptz_id
+
+        if len(lap) == 0:
+            pr = rr = 0  # the preserve and reveal rate
         else:
-            conff = len([1 for i in dis_privatized_data if set(left+right) <= set(i)]) / d
-            if conff >= min_confidence:
-                status1.append('rule remains')
-            else:
-                status1.append('rule disappear')
+            pr = len(lap) / len(rules_org)
+            rr = len(lap) / len(rules_ptz)
 
-    for rule in rules_privatized:
-        left = rule[0][0]
-        right = rule[0][1]
-        # confidence = float(rule[1])
-        d = len([1 for i in dis_org_data if set(left) <= set(i)])
-        if d < min_support:
-            status2.append('min_support fail')
-        else:
-            conff = len([1 for i in dis_org_data if set(left+right) <= set(i)]) / d
-            if conff >= min_confidence:
-                status2.append('rule remains')
-            else:
-                status2.append('rule disappear')
-
-    # END OF THE EXPERIMENT
-
-    out_file_name = project_path + '/Reports/association_report_' + \
-        datetime.datetime.now().strftime('%y-%m-%d-%H-%M') + '.txt'
-
-    out_file = open(out_file_name, 'a+')
-
-    # writing the report
-    out_file.write('******%s********\n' % model)
-    if not conclusion_only:
-        org_details = printResults(items_org, rules_org, print_result=print_result)
-        out_file.write('\n------' + org_folder + '---' + model + '---\n')
-        out_file.write(org_details)
-        out_file.write('\n' + '*' * 20)
-
-        privatize_details = printResults(items_privatized, rules_privatized, print_result=print_result)
-        out_file.write('\n------' + privatized_folder + '---' + model + '---\n')
-        out_file.write(privatize_details)
-        out_file.write('\n' + '*' * 20)
-
-    # conclusion report
-    if len(status1) == 0:
-        out_file.write("rules in org #: 0\n")
-    else:
-        out_file.write('rules in org #: %d\n' % len(rules_org))
-        out_file.write('org -> %s: 1 -> %f\n' % (privatized_folder, (status1.count('rule remains')/len(status1))))
-    if len(status2) == 0:
-        out_file.write("rules in %s #: 0 \n" % privatized_folder)
-    else:
-        out_file.write('rules in %s #: %d\n' % (privatized_folder, len(rules_privatized)))
-        out_file.write('%s -> org: 1 ->% f\n' % (privatized_folder, (status2.count('rule remains')/len(status2))))
-    out_file.close()
-
-    # pdb.set_trace()
+        with open(settings.project_path+'/Reports/APRIORI_report.csv', 'a') as f:
+            writer = csv.writer(f)
+            writer.writerow([time.strftime("%m%d%y"), time.time(), model, ptz_folder,
+                             len(items_org),
+                             len(items_ptz),
+                             len(rules_org),
+                             len(rules_ptz),
+                             round(pr, 3),
+                             round(rr, 3)])
 
 
 def test():
-    apriori_report('camel-1.6', 'DataSet', 'Lace1Out', min_support=0.4, min_confidence=0.8)
+    apriori_report('camel-1.6', 'DataSet', 'Lace1Out')
+
 
 if __name__ == '__main__':
     test()

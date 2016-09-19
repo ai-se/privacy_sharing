@@ -126,14 +126,13 @@ def del_col_in_table(list_of_list, col_index):
         col_index = [col_index]
     for i in range(len(col_index)):
         if col_index[i] < 0:
-            col_index[i] += len(list_of_list)
+            col_index[i] += len(list_of_list[0])
 
     list_of_list = map(list, zip(*list_of_list))
     return_table = []
     for index, col in enumerate(list_of_list):
         if index not in col_index:
             return_table.append(col)
-
     return map(list, zip(*return_table))
 
 
@@ -145,7 +144,9 @@ def load_csv(folder, file_name, has_header=True):
     :param has_header:
     :return: (header if possible) + (content)
     """
-    with open(folder + '/' + file_name+'.csv', 'r') as db:
+    if not folder.endswith('/'):
+        folder += '/'
+    with open(folder + file_name+'.csv', 'r') as db:
         reader = csv.reader(db)
         if has_header:
             header = next(reader)
@@ -158,10 +159,18 @@ def load_csv(folder, file_name, has_header=True):
         return content
 
 
-def write_csv(folder, file_name, content):
+def write_csv(folder, file_name, content, header=None):
     with open(folder + '/' + file_name + '.csv', 'w') as f:
         writer = csv.writer(f)
+        if header is not None:
+            writer.writerow(header)
         writer.writerows(content)
+
+
+def append_csv_row(folder, file_name, row):
+    with open(folder+'/'+file_name+'.csv', 'a') as f:
+        writer = csv.writer(f)
+        writer.writerow(row)
 
 
 def log_v(variable, value):
@@ -169,3 +178,9 @@ def log_v(variable, value):
         print(variable + ": " + value)
     else:
         print(variable + ": " + str(value))
+
+
+def make_it_list(single_object_or_a_list):
+    if type(single_object_or_a_list) is not list:
+        single_object_or_a_list = [single_object_or_a_list]
+    return single_object_or_a_list

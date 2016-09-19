@@ -1,12 +1,9 @@
 from __future__ import division
 import csv
 import random
-import sys
-import os
-sys.path.append(os.path.abspath(".."))
-import CLIFF
 import copy
 import toolkit
+import settings
 import pdb
 
 __author__ = "Jianfeng Chen"
@@ -235,26 +232,33 @@ class IPR(object):
         return int((1 - ipr / len(queries)) * 100)
 
 
-def report_IPR(model, org_folder, privatized_folder, sensitive_attributes, query_size=4, number_of_queries=100):
-    project_path = [p for p in sys.path if p.endswith('privacy_sharing')][0]+'/'
+def ipr_report(model, org_folder, we_report_folders):
+    we_report_folders = toolkit.make_it_list(we_report_folders)
+    project_path = settings.project_path
+    sensitive_attributes = settings.ipr_sensitive_attrs
 
-    ipr = IPR(project_path + org_folder + '/' + model + '.csv',
-              project_path + privatized_folder + '/' + model + '.csv')
+    for ptz_folder in we_report_folders:
+        ipr = IPR(project_path + org_folder + '/' + model + '.csv',
+                  project_path + ptz_folder + '/' + model + '.csv')
 
-    ipr.set_sensitive_attributes(sensitive_attributes)
-    result = ipr.get_ipr(query_size, number_of_queries)
+        ipr.set_sensitive_attributes(sensitive_attributes)
+        result = ipr.get_ipr(settings.ipr_query_size, settings.ipr_num_of_queries)
 
-    with open(project_path + 'Reports/IPR_report.csv', 'a+') as f:
-        import datetime
-        now = datetime.datetime.now()
-        w = csv.writer(f, delimiter=',', lineterminator='\n')
-        w.writerow([now.strftime('%y-%m-%d %H:%M'), model, sensitive_attributes, org_folder, privatized_folder, result])
+        with open(project_path + 'Reports/IPR_report.csv', 'a+') as f:
+            import time
+            w = csv.writer(f, delimiter=',', lineterminator='\n')
+            w.writerow([time.strftime("%m%d%y"),
+                        time.time(),
+                        model,
+                        sensitive_attributes,
+                        org_folder,
+                        ptz_folder,
+                        result
+                        ])
 
 
 def demo():
-    sen_list = ['loc', 'amc', 'rfc']
-    report_IPR('ant-1.7', 'DataSet', 'Lace1Out', sen_list)
-
+    ipr_report('school', 'DataSet', 'Lace1Out')
 
 if __name__ == "__main__":
     demo()
