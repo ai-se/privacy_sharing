@@ -22,8 +22,8 @@
 #  THE SOFTWARE.
 
 from __future__ import division
-from LACE1 import LACE1
-from LACE2 import LACE2
+from db4school.lace1 import LACE1
+from db4school.lace2 import LACE2
 from sklearn.linear_model import LinearRegression
 from sklearn import tree
 from evaluate.predict import get_error_measure
