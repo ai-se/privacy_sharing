@@ -144,7 +144,7 @@ def load_csv(folder, file_name, has_header=True):
     :param has_header:
     :return: (header if possible) + (content)
     """
-    if '/' not in folder:
+    if not folder.endswith('/'):
         folder += '/'
     with open(folder + file_name+'.csv', 'r') as db:
         reader = csv.reader(db)

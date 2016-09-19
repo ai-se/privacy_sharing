@@ -202,6 +202,16 @@ for repeat in range(20):
                                     'RMSE',
                                     ee['RMSE'],
                                     ])
+            toolkit.append_csv_row('db4school', 'precision_report',
+                                   [time.strftime('%m%d%y'),
+                                    time.time(),
+                                    db,
+                                    'LACE1',
+                                    dbt,
+                                    'linear regression',
+                                    'MAE',
+                                    ee['MAE'],
+                                    ])
 
             x_train, y_train, x_test, actual = get_predicting_data('lace2/' + db, 'test/' + dbt)
             lg_clf.fit(x_train, y_train)
@@ -216,6 +226,16 @@ for repeat in range(20):
                                     'linear regression',
                                     'MAE',
                                     ee['MAE'],
+                                    ])
+            toolkit.append_csv_row('db4school', 'precision_report',
+                                   [time.strftime('%m%d%y'),
+                                    time.time(),
+                                    db,
+                                    'LACE2',
+                                    dbt,
+                                    'linear regression',
+                                    'RMSE',
+                                    ee['RMSE'],
                                     ])
 
             x_train, y_train, x_test, actual = get_predicting_data('lace1/'+db, 'test/'+dbt)
@@ -232,6 +252,16 @@ for repeat in range(20):
                                     'RMSE',
                                     ee['RMSE'],
                                     ])
+            toolkit.append_csv_row('db4school', 'precision_report',
+                                   [time.strftime('%m%d%y'),
+                                    time.time(),
+                                    db,
+                                    'LACE1',
+                                    dbt,
+                                    'decision tree',
+                                    'MAE',
+                                    ee['MAE'],
+                                    ])
 
             x_train, y_train, x_test, actual = get_predicting_data('lace2/' + db, 'test/' + dbt)
             dt_clf.fit(x_train, y_train)
@@ -247,6 +277,17 @@ for repeat in range(20):
                                     'MAE',
                                     ee['MAE'],
                                     ])
+            toolkit.append_csv_row('db4school', 'precision_report',
+                                   [time.strftime('%m%d%y'),
+                                    time.time(),
+                                    db,
+                                    'LACE2',
+                                    dbt,
+                                    'decision tree',
+                                    'RMSE',
+                                    ee['RMSE'],
+                                    ])
+
     print("Repeat %d done." % repeat)
 
 
