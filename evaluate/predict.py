@@ -176,4 +176,3 @@ def predict_models(models, we_report_folder):
 
 if __name__ == '__main__':
     predict_models(['ant-1.7', 'camel-1.6'], we_report_folder=['Lace1Out', 'Lace2Out'])
-
