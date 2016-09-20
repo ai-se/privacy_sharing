@@ -139,6 +139,8 @@ def module2():
     fig.savefig('school.png', bbox_inches='tight')
 
 
+print(settings.MORPH_alpha)
+
 if __name__ == '__main__':
     module1()
     module2()

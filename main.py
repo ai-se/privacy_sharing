@@ -105,10 +105,10 @@ def exp4school():
     # predict_models(model, ['Lace1Out', 'Lace2Out'])
     # print('precision report done...')
 
-    # apriori_report(model, 'TrainSet', ['Lace1Out', 'Lace2Out'])
+    apriori_report(model, 'TrainSet', ['Lace1Out', 'Lace2Out'])
     # print('apriori report done...')
 
-    ipr_report(model, 'TrainSet', ['Lace1Out', 'Lace2Out'])
+    # ipr_report(model, 'TrainSet', ['Lace1Out', 'Lace2Out'])
     # print('ipr report done...')
 
 
