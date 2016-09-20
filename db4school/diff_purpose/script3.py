@@ -26,7 +26,70 @@ from __future__ import division
 import pdb
 import settings
 import toolkit
+import matplotlib.pylab as plt
 import sys
 
 
 sys.dont_write_btyecode = True
+
+head, content = toolkit.load_csv(settings.project_path+'db4school/diff_purpose', 'diff_purpose_precision')
+content = map(lambda r: map(toolkit.str2num, r), content)
+
+C2E = lambda x: x[3] == 'school_01' and x[4] == 'school_02'
+C2C = lambda x: x[3] == 'school_01' and x[4] == 'school_01'
+E2C = lambda x: x[3] == 'school_02' and x[4] == 'school_01'
+E2E = lambda x: x[3] == 'school_02' and x[4] == 'school_02'
+
+# regression
+v = list()
+for handler in ['org', 'lace1', 'lace2']:
+    selected = filter(lambda x: x[2]==handler and x[5]=='linear regression', content)
+    for scenario in [C2C, E2E, C2E, E2C]:
+        selc = filter(scenario, selected)
+        v.append(zip(*selc)[-1])
+
+plt.clf()
+
+fig = plt.figure(1)
+fig.set_size_inches(6, 5)
+ax = fig.add_subplot(111)
+box = ax.boxplot(v)
+
+ax.set_ylim(0, 4)
+ax.set_title('Linear regression. RMSE. 20 repeats')
+ax.axvspan(4.5, 8.5, alpha=0.3, color='gray')
+
+ax.text(1, 3, 'No privatization', fontsize=10)
+ax.text(5, 3, 'LACE1', fontsize=10)
+ax.text(9, 3, 'LACE2', fontsize=10)
+ax.text(6, 1, 'C=C150_4\nE=earnings\nCE=applied C-targeted model to predict E', fontsize=7)
+plt.xticks(range(1,13), ['CC', 'EE', 'CE',' EC']*3)
+fig.savefig('lr.png', bbox_inchees='tight')
+
+# decision tree
+v = list()
+for handler in ['org', 'lace1', 'lace2']:
+    selected = filter(lambda x: x[2]==handler and x[5]=='decision tree', content)
+    for scenario in [C2C, E2E, C2E, E2C]:
+        selc = filter(scenario, selected)
+        v.append(zip(*selc)[-1])
+
+plt.clf()
+
+fig = plt.figure(1)
+fig.set_size_inches(6, 5)
+ax = fig.add_subplot(111)
+box = ax.boxplot(v)
+
+ax.set_ylim(0, 4)
+ax.set_title('Decision tree. RMSE. 20 repeats')
+ax.axvspan(4.5, 8.5, alpha=0.3, color='gray')
+
+ax.text(1, 3, 'No privatization', fontsize=10)
+ax.text(5, 3, 'LACE1', fontsize=10)
+ax.text(9, 3, 'LACE2', fontsize=10)
+ax.text(6, 1, 'C=C150_4\nE=earnings\nCE=applied C-targeted model to predict E', fontsize=7)
+plt.xticks(range(1,13), ['CC', 'EE', 'CE', 'EC']*3)
+fig.savefig('dt.png', bbox_inchees='tight')
+
+
