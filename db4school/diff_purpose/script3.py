@@ -91,5 +91,3 @@ ax.text(9, 3, 'LACE2', fontsize=10)
 ax.text(6, 1, 'C=C150_4\nE=earnings\nCE=applied C-targeted model to predict E', fontsize=7)
 plt.xticks(range(1,13), ['CC', 'EE', 'CE', 'EC']*3)
 fig.savefig('dt.png', bbox_inchees='tight')
-
-
