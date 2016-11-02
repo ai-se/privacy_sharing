@@ -40,7 +40,7 @@ DRAWING prediction_report.csv
 
 # module_1
 def module1():
-    header, content = toolkit.load_csv(settings.project_path+"/db4school", "precision_report")
+    header, content = toolkit.load_csv(settings.project_path+"/db4school", "region_prediction/precision_report_copy")
 
     content = map(lambda r: map(toolkit.str2num, r), content)
 
@@ -81,16 +81,24 @@ def module1():
             v.append(zip(*lg)[-1])
             v.append(zip(*dt)[-1])
 
+        # transformed to fit the charts
+        v = [v[0],v[4],v[8],v[12],
+             v[1],v[5],v[9],v[13],
+             v[2],v[6],v[10],v[14],
+             v[3],v[7],v[11],v[15]]
+
         ax = fig.add_subplot(111)
         box = ax.boxplot(v)
-
+        import numpy
+        for i in v: print(numpy.median(i))
+        print('~~~')
         ax.axvspan(0, 4.5, alpha=0.3, color='gray')
         ax.axvspan(8.5, 12.5, alpha=0.3, color='gray')
 
-        ax.text(1, 6, 'LACE1\nregression', fontsize=10)
-        ax.text(5, 6, 'LACE1\ndecision tree', fontsize=10)
-        ax.text(9, 6, 'LACE2\nregression', fontsize=10)
-        ax.text(13, 6, 'LACE2\ndecision tree', fontsize=10)
+        ax.text(1, 60000, 'LACE1\nregression', fontsize=10)
+        ax.text(5, 60000, 'LACE1\ndecision tree', fontsize=10)
+        ax.text(9, 60000, 'LACE2\nregression', fontsize=10)
+        ax.text(13, 60000, 'LACE2\ndecision tree', fontsize=10)
 
         plt.setp(box['boxes'][cases.index(case)], color='red')
         plt.setp(box['boxes'][cases.index(case)+4], color='red')
@@ -98,14 +106,14 @@ def module1():
         plt.setp(box['boxes'][cases.index(case)+12], color='red')
         # pdb.set_trace()
         plt.xticks(range(1, 17), ['NE', 'NW', 'S', 'W']*4)
-        ax.set_ylim([0, 10])
+        ax.set_ylim([0, 150000])
         ax.set_title('RMSE for prediction from region data.')
         fig.savefig(case+'.png', bbox_inches='tight')
 
 
 def module2():
     print('this is the second module in this file.')
-    head, content = toolkit.load_csv(settings.project_path+'/Reports', 'PREDICTION_report')
+    head, content = toolkit.load_csv(settings.project_path+'/Reports', 'PREDICTION_report_copy')
     content = map(lambda r: map(toolkit.str2num, r), content)
 
     lg_rmse = lambda x: x[4]=='linear regression' and x[5]=='RMSE'
@@ -131,10 +139,10 @@ def module2():
 
     ax.axvspan(0, 3.5, alpha=0.3, color='gray')
 
-    ax.text(1, 6, 'Linear regression', fontsize=10)
-    ax.text(4, 6, 'Decision tree', fontsize=10)
+    ax.text(1, 60000, 'Linear regression', fontsize=10)
+    ax.text(4, 60000, 'Decision tree', fontsize=10)
 
-    ax.set_ylim([0, 10])
+    ax.set_ylim([0, 150000])
     ax.set_title('RMSE for predicting at the whole shoolcard set')
     fig.savefig('school.png', bbox_inches='tight')
 

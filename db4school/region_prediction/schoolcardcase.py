@@ -22,8 +22,8 @@
 #  THE SOFTWARE.
 
 from __future__ import division
-from db4school.lace1 import LACE1
-from db4school.lace2 import LACE2
+from LACE1 import LACE1
+from LACE2 import LACE2
 from sklearn.linear_model import LinearRegression
 from sklearn import tree
 from evaluate.predict import get_error_measure
@@ -191,6 +191,7 @@ for repeat in range(20):
             lg_clf.fit(x_train, y_train)
             predict = lg_clf.predict(x_test).tolist()
             ee = get_error_measure(actual, predict)
+
             toolkit.append_csv_row('db4school', 'precision_report',
                                    [time.strftime('%m%d%y'),
                                     time.time(),
@@ -239,7 +240,7 @@ for repeat in range(20):
 
             x_train, y_train, x_test, actual = get_predicting_data('lace1/'+db, 'test/'+dbt)
             dt_clf.fit(x_train, y_train)
-            predict = lg_clf.predict(x_test).tolist()
+            predict = dt_clf.predict(x_test).tolist()
             ee = get_error_measure(actual, predict)
             toolkit.append_csv_row('db4school', 'precision_report',
                                    [time.strftime('%m%d%y'),
