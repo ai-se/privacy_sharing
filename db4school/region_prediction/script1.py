@@ -41,6 +41,7 @@ DRAWING prediction_report.csv
 # module_1
 def module1():
     header, content = toolkit.load_csv(settings.project_path+"/db4school", "region_prediction/precision_report_copy")
+    # header, content = toolkit.load_csv(settings.project_path + "/db4school", "region_prediction/precision_report")
 
     content = map(lambda r: map(toolkit.str2num, r), content)
 
@@ -55,6 +56,7 @@ def module1():
     # dt_mae = lambda x: x[5]=='decision tree' and x[6]=='MAE'
 
     for case in cases:
+        # print('now training by ', case)
         plt.clf()
         fig = plt.figure(1)
         fig.set_size_inches(7,5)
@@ -89,9 +91,39 @@ def module1():
 
         ax = fig.add_subplot(111)
         box = ax.boxplot(v)
-        import numpy
-        for i in v: print(numpy.median(i))
-        print('~~~')
+
+        # ee = toolkit.a12s([['NE']+list(v[0]),
+        #                         ['NW']+list(v[1]),
+        #                          ['S']+list(v[2]),
+        #                           ['W']+list(v[3])
+        #                        ], enough=0.9, rev=False)
+        # for i in ee: print(i)
+        # print('\n\n\n')
+        #
+        # ee = toolkit.a12s([['NE'] + list(v[4]),
+        #                        ['NW'] + list(v[5]),
+        #                        ['S'] + list(v[6]),
+        #                        ['W'] + list(v[7])
+        #                        ], enough=0.9, rev=False)
+        # for i in ee: print(i)
+        # print('\n\n\n')
+        #
+        # ee = toolkit.a12s([['NE'] + list(v[8]),
+        #                        ['NW'] + list(v[9]),
+        #                        ['S'] + list(v[10]),
+        #                        ['W'] + list(v[11])
+        #                        ], enough=0.9, rev=False)
+        # for i in ee: print(i)
+        # print('\n\n\n')
+        #
+        # ee = toolkit.a12s([['NE'] + list(v[12]),
+        #                        ['NW'] + list(v[13]),
+        #                        ['S'] + list(v[14]),
+        #                        ['W'] + list(v[15])
+        #                        ], enough=0.9, rev=False)
+        # for i in ee: print(i)
+        # print('\n\n\n')
+
         ax.axvspan(0, 4.5, alpha=0.3, color='gray')
         ax.axvspan(8.5, 12.5, alpha=0.3, color='gray')
 
@@ -104,7 +136,7 @@ def module1():
         plt.setp(box['boxes'][cases.index(case)+4], color='red')
         plt.setp(box['boxes'][cases.index(case)+8], color='red')
         plt.setp(box['boxes'][cases.index(case)+12], color='red')
-        # pdb.set_trace()
+
         plt.xticks(range(1, 17), ['NE', 'NW', 'S', 'W']*4)
         ax.set_ylim([0, 150000])
         ax.set_title('RMSE for prediction from region data.')

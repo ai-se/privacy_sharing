@@ -1,4 +1,5 @@
 from __future__ import division
+from stat_helper import a12s as a12rank
 import bins
 import csv
 
@@ -186,3 +187,48 @@ def make_it_list(single_object_or_a_list):
     if type(single_object_or_a_list) is not list:
         single_object_or_a_list = [single_object_or_a_list]
     return single_object_or_a_list
+
+
+def a12s(rxs,rev=False,enough=0.75):
+    """
+     Given a performance measure M seen in m measures of X and n measures
+; of Y, the A12 statistics measures the probability that running
+; algorithm X yields higher M values than running another algorithm Y.
+;
+; A12 = #(X > Y)/mn + 0.5*#(X=Y)/mn
+;
+; According to Vargha and Delaney, a small, medium, large difference
+; between two populations:
+;
+; + Big is A12 over 0.71
+; + Medium is A12 over 0.64
+; + Small is A12 over 0.56
+;
+; In my view, this seems gratitiously different to...
+;
+; + Big is A12 over three-quarters (0.75)
+; + Medium is A12 over two-thirds (0.66)
+; + Small is A12 over half (0.5)
+;
+; Whatever, the following code parameterizes that magic number
+; so you can use the standard values if you want to.
+;
+; While A12 studies two treatments. LA12 handles multiple treatments.
+; Samples from each population are sorted by their mean. Then
+; b4= sample[i] and after= sample[i+1] and rank(after) = 1+rank(b4)
+; if a12 reports that the two populations are different.
+
+To simplify that process, I offer the following syntax. A population
+; is a list of numbers, which may be unsorted, and starts with some
+; symbol or string describing the population. A12s expects a list of
+; such populations. For examples of that syntax, see the following use cases
+
+rxs= [["x1", 0.34, 0.49, 0.51, 0.60],
+["x2", 0.9, 0.7, 0.8, 0.60],
+["x3", 0.15, 0.25, 0.4, 0.35],
+["x4", 0.6, 0.7, 0.8, 0.90],
+["x5", 0.1, 0.2, 0.3, 0.40]]
+for rx in a12s(rxs,rev=False,enough=0.75): print rx
+    """
+
+    return a12rank(rxs, rev, enough)
