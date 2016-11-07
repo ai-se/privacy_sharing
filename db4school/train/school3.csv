@@ -1,0 +1,137 @@
+INSTNM,CITY,STABBR,CONTROL,ADM_RATE,SAT_AVG,TUITFTE,PCTFLOAN,PCTPELL,DEBT_MDN,C150_4,CDR3,mn_earn_wne_p7,RET_FT4
+California State University-Sacramento,Sacramento,CA,1,0.6968,945,5274,0.4153,0.505,15000,0.4285,0.071,43000,7
+California Institute of Technology,Pasadena,CA,2,0.1055,1534,15679,0.2508,0.1063,14583,0.9307,0,66900,10
+The Master's College and Seminary,Santa Clarita,CA,2,0.6137,1104,12657,0.5335,0.3051,15750,0.5362,0.025,39000,6
+California State University-Bakersfield,Bakersfield,CA,1,0.6626,901,3182,0.4158,0.5843,11000,0.3946,0.096,41400,3
+Colorado State University-Pueblo,Pueblo,CO,1,0.9434,967,5059,0.5624,0.4132,12061,0.3306,0.139,33900,1
+Humboldt State University,Arcata,CA,1,0.8018,1008,5300,0.605,0.5162,15000,0.4004,0.118,32000,5
+San Diego Christian College,El Cajon,CA,2,0.492,986,18089,0.8793,0.6475,11806,0.4125,0.084,32700,2
+Brigham Young University-Provo,Provo,UT,2,0.4942,1277,5348,0.1918,0.3578,9260.5,0.7797,0.013,49700,7
+University of Washington-Bothell Campus,Bothell,WA,1,0.7568,1014,4068,0.4052,0.3454,14793.5,0.6757,0.043,52100,5
+Seattle University,Seattle,WA,2,0.7323,1175,24756,0.5757,0.2109,24000,0.7663,0.038,49700,7
+Willamette University,Salem,OR,2,0.5784,1198,21725,0.5031,0.207,19538.5,0.7883,0.035,40500,7
+New Mexico Institute of Mining and Technology,Socorro,NM,1,0.4136,1200,5159,0.3495,0.2952,9283,0.4417,0.069,49700,4
+University of Hawaii at Manoa,Honolulu,HI,1,0.8009,1087,9277,0.381,0.3086,13750,0.5651,0.051,40600,5
+Oregon State University,Corvallis,OR,1,0.7894,1102,9398,0.5162,0.3339,16846,0.6147,0.05,43000,7
+Westminster College,Salt Lake City,UT,2,0.7517,1134,18359,0.6207,0.2767,17958,0.5714,0.034,41700,4
+Alaska Pacific University,Anchorage,AK,2,0.3745,1008,13615,0.4587,0.2791,19250,0.3902,0.079,39500,2
+Carroll College,Helena,MT,2,0.53,1112,13810,0.5598,0.2167,21500,0.6738,0.017,37500,6
+University of Portland,Portland,OR,2,0.668,1195,19068,0.5196,0.2189,22454,0.755,0.011,49500,8
+California State University-San Bernardino,San Bernardino,CA,1,0.5831,888,5417,0.4698,0.5799,16431,0.4112,0.097,40500,8
+San Francisco Art Institute,San Francisco,CA,2,0.8269,1061,26288,1,0.3267,13650.5,0.2881,0.043,26300,2
+Sonoma State University,Rohnert Park,CA,1,0.8186,1006,6880,0.4143,0.2968,14592,0.5392,0.057,41900,7
+San Jose State University,San Jose,CA,1,0.6347,1030,7238,0.3548,0.3955,14000,0.4809,0.048,49200,8
+University of San Francisco,San Francisco,CA,2,0.6129,1161,26745,0.5115,0.2625,23000,0.6901,0.053,58700,7
+University of Hawaii-West Oahu,Kapolei,HI,1,0.7643,891,4390,0.3185,0.3505,8045,0.25,0.066,37300,2
+Occidental College,Los Angeles,CA,2,0.4239,1303,24394,0.5333,0.2131,20900,0.8777,0.022,40800,9
+Hawaii Pacific University,Honolulu,HI,2,0.6411,1005,14333,0.4436,0.257,16250,0.3961,0.044,45500,2
+University of Colorado Boulder,Boulder,CO,1,0.8771,1192,16762,0.3298,0.1722,15000,0.6969,0.047,43900,7
+Montana State University,Bozeman,MT,1,0.8449,1115,9218,0.4913,0.3161,14465,0.4941,0.057,37300,4
+California State University-Northridge,Northridge,CA,1,0.4624,918,5994,0.3636,0.4848,12500,0.4575,0.076,39700,5
+Brigham Young University-Idaho,Rexburg,ID,2,0.9963,1036,2404,0.2567,0.3881,7725,0.6011,0.029,35600,2
+University of Nevada-Las Vegas,Las Vegas,NV,1,0.8512,1003,6600,0.3687,0.3351,12608,0.4288,0.088,40600,5
+La Sierra University,Riverside,CA,2,0.4677,926,26008,0.6943,0.4819,14500,0.4918,0.063,42400,4
+University of Utah,Salt Lake City,UT,1,0.8174,1109,9592,0.3557,0.3225,12839,0.6037,0.039,47900,8
+San Francisco State University,San Francisco,CA,1,0.6379,998,6712,0.3997,0.4239,15000,0.455,0.072,43300,7
+The College of Idaho,Caldwell,ID,2,0.905,1070,10722,0.6008,0.3618,20000,0.6652,0.071,35300,8
+Reed College,Portland,OR,2,0.4853,1371,26827,0.3582,0.1718,15500,0.819,0.023,33000,9
+Loyola Marymount University,Los Angeles,CA,2,0.5412,1202,29076,0.4747,0.1923,20201.5,0.7583,0.039,52300,9
+California State University-Monterey Bay,Seaside,CA,1,0.444,976,4501,0.5159,0.476,13750,0.3828,0.076,37500,6
+Point Loma Nazarene University,San Diego,CA,2,0.6654,1155,18917,0.641,0.2712,20500,0.7208,0.025,44100,8
+Linfield College-McMinnville Campus,McMinnville,OR,2,0.9219,1090,20413,0.6392,0.255,22697,0.6786,0.033,48600,6
+California State University-Los Angeles,Los Angeles,CA,1,0.6752,871,4287,0.3924,0.6447,12000.5,0.3565,0.076,40300,7
+University of Colorado Denver,Denver,CO,1,0.7587,1073,12112,0.3877,0.2777,16750,0.4129,0.05,58300,4
+Western Oregon University,Monmouth,OR,1,0.882,950,5590,0.6583,0.4433,17500,0.4443,0.093,33800,2
+Oregon Institute of Technology,Klamath Falls,OR,1,0.7135,1025,6574,0.5068,0.3621,18333.5,0.444,0.051,48800,3
+University of California-Riverside,Riverside,CA,1,0.62,1078,11937,0.5688,0.564,17000,0.6617,0.061,40600,8
+Northwest Christian University,Eugene,OR,2,0.7044,974,9587,0.8114,0.4956,17587.5,0.4615,0.04,39900,0
+Multnomah University,Portland,OR,2,0.538,1104,11396,0.7117,0.5924,20075,0.4714,0.037,28800,2
+University of California-Los Angeles,Los Angeles,CA,1,0.2199,1289,15123,0.374,0.3624,15200,0.9031,0.022,54900,10
+Lewis & Clark College,Portland,OR,2,0.6285,1279,23450,0.6599,0.2135,19115,0.7451,0.019,37900,7
+Whittier College,Whittier,CA,2,0.6325,1043,25047,0.6934,0.3551,21500,0.6677,0.062,37400,7
+Eastern Washington University,Cheney,WA,1,0.7967,970,7467,0.5349,0.3871,15265,0.4524,0.063,38500,4
+Southern California Institute of Architecture,Los Angeles,CA,2,0.8667,1137,36395,0.5472,0.4906,38000,0.5,0.097,39100,9
+New Mexico State University-Main Campus,Las Cruces,NM,1,0.852,982,4016,0.4438,0.4342,11147,0.4328,0.199,33400,3
+Concordia University-Irvine,Irvine,CA,2,0.9119,1020,12540,0.6231,0.2503,18112,0.6256,0.035,40100,4
+Saint Mary's College of California,Moraga,CA,2,0.6947,1115,22829,0.5307,0.3267,21500,0.675,0.046,56200,8
+Claremont McKenna College,Claremont,CA,2,0.1173,1397,28851,0.0862,0.1163,12086,0.9254,0,66800,10
+Woodbury University,Burbank,CA,2,0.5575,987,21113,0.6741,0.4852,27000,0.4465,0.076,43000,3
+Notre Dame de Namur University,Belmont,CA,2,0.872,972,18965,0.672,0.4201,18750,0.4792,0.054,49200,5
+California State University-Chico,Chico,CA,1,0.7161,1014,5091,0.452,0.3893,14889.5,0.5605,0.076,42900,8
+Northwest Nazarene University,Nampa,ID,2,0.617,1079,10827,0.6407,0.3735,19500,0.4909,0.036,35100,4
+Brigham Young University-Hawaii,Laie,HI,2,0.3604,1081,3449,0.2189,0.2985,5780,0.4703,0.069,36100,1
+University of California-Irvine,Irvine,CA,1,0.4239,1122,13713,0.4418,0.432,15500,0.8585,0.031,47700,9
+University of La Verne,La Verne,CA,2,0.3895,1035,16881,0.6816,0.4647,22218,0.5928,0.038,46200,8
+California State University-Stanislaus,Turlock,CA,1,0.7215,917,4704,0.4286,0.5774,14000,0.5198,0.049,38600,8
+California State University-Fullerton,Fullerton,CA,1,0.4579,1021,6147,0.3327,0.4061,12900.5,0.5347,0.056,41200,8
+Fresno Pacific University,Fresno,CA,2,0.7844,979,14221,0.6928,0.5761,16802,0.5412,0.059,36500,7
+Saint Martin's University,Lacey,WA,2,0.876,1057,14109,0.5742,0.3656,19843,0.4774,0.061,40700,7
+Fort Lewis College,Durango,CO,1,0.875,1049,5566,0.4633,0.3175,10500,0.3662,0.072,32300,1
+University of Northern Colorado,Greeley,CO,1,0.6957,1029,9051,0.592,0.3514,14250,0.4638,0.059,36500,2
+Otis College of Art and Design,Los Angeles,CA,2,0.4628,1002,27612,0.629,0.4851,26500,0.5731,0.102,44400,6
+Dominican University of California,San Rafael,CA,2,0.7752,1057,21979,0.8516,0.3232,25222,0.5387,0.047,53700,7
+California State University-East Bay,Hayward,CA,1,0.6872,910,6821,0.3844,0.4426,12500,0.3808,0.058,47000,5
+Vanguard University of Southern California,Costa Mesa,CA,2,0.6977,980,15125,0.7302,0.3797,19895,0.5232,0.049,35500,4
+University of California-Davis,Davis,CA,1,0.4521,1192,13500,0.4467,0.4297,13626.5,0.8133,0.038,49900,9
+California Maritime Academy,Vallejo,CA,1,0.748,1080,8025,0.6043,0.3762,21500,0.5871,0.058,72300,7
+Portland State University,Portland,OR,1,0.6117,1045,8128,0.5297,0.4019,18832,0.417,0.06,40400,3
+Chapman University,Orange,CA,2,0.4471,1208,24444,0.6536,0.2035,19000,0.761,0.035,48000,9
+Simpson University,Redding,CA,2,0.555,1030,12950,0.9457,0.5635,16666,0.4724,0.055,32500,6
+University of California-Santa Barbara,Santa Barbara,CA,1,0.4444,1212,13553,0.438,0.3798,15000,0.807,0.045,46000,9
+University of San Diego,San Diego,CA,2,0.4885,1228,25057,0.4259,0.1807,19500,0.7502,0.028,57000,9
+Western Washington University,Bellingham,WA,1,0.8371,1114,7992,0.4661,0.255,15500,0.6932,0.047,38500,7
+Walla Walla University,College Place,WA,2,0.9286,1072,17298,0.6228,0.3129,22000,0.4593,0.041,42100,5
+Northern Arizona University,Flagstaff,AZ,1,0.9137,1050,6697,0.5571,0.3778,15000,0.4924,0.102,37000,3
+George Fox University,Newberg,OR,2,0.7528,1070,15258,0.6722,0.364,18750,0.623,0.047,41400,7
+Pacific University,Forest Grove,OR,2,0.8619,1102,23540,0.8608,0.3145,20758.5,0.6156,0.018,37200,6
+Adams State University,Alamosa,CO,1,0.526,939,6026,0.629,0.5029,11000,0.227,0.093,31500,1
+University of New Mexico-Main Campus,Albuquerque,NM,1,0.6458,1038,5090,0.3877,0.3846,14164.5,0.4828,0.13,35700,5
+University of Washington-Seattle Campus,Seattle,WA,1,0.5523,1234,17091,0.3261,0.2489,14793.5,0.8183,0.043,52100,9
+California State University-Long Beach,Long Beach,CA,1,0.3082,1012,5322,0.393,0.4733,14494,0.6033,0.055,42600,8
+Boise State University,Boise,ID,1,0.7766,1050,6355,0.4894,0.3715,16309,0.3801,0.114,34800,3
+Stanford University,Stanford,CA,2,0.0569,1466,23849,0.1343,0.1596,11500,0.9576,0.01,98600,10
+University of the Pacific,Stockton,CA,2,0.7265,1172,29264,0.6292,0.4011,21250,0.5669,0.035,73700,8
+Colorado Mesa University,Grand Junction,CO,1,0.8212,972,6199,0.576,0.4025,11250,0.3005,0.16,34800,2
+University of Oregon,Eugene,OR,1,0.7417,1108,14391,0.418,0.2585,18309,0.6653,0.058,39200,8
+University of Colorado Colorado Springs,Colorado Springs,CO,1,0.91,1068,9413,0.5042,0.3222,12500,0.4598,0.027,39400,3
+Arizona State University-Tempe,Tempe,AZ,1,0.8023,1145,11705,0.4784,0.3376,16250,0.5947,0.085,43300,7
+University of Denver,Denver,CO,2,0.7673,1231,25538,0.3973,0.1856,20832,0.7752,0.019,51700,8
+Chaminade University of Honolulu,Honolulu,HI,2,0.8359,972,13775,0.4346,0.2925,15969.5,0.3843,0.083,36200,3
+California State University-San Marcos,San Marcos,CA,1,0.6251,966,7628,0.4157,0.431,14000,0.4791,0.064,41200,7
+Pacific Union College,Angwin,CA,2,0.5055,1017,16425,0.8453,0.4393,20832,0.4452,0.057,49100,7
+Southern Utah University,Cedar City,UT,1,0.5709,1066,5380,0.5257,0.3843,8250,0.526,0.067,34700,1
+University of Hawaii at Hilo,Hilo,HI,1,0.752,967,6601,0.4574,0.4532,11293,0.3642,0.097,31600,3
+Colorado College,Colorado Springs,CO,2,0.2228,1323,28994,0.3333,0.0983,17255,0.8721,0.03,34200,10
+Metropolitan State University of Denver,Denver,CO,1,0.7116,973,5392,0.512,0.3851,13450.5,0.2597,0.134,36300,2
+Pacific Lutheran University,Tacoma,WA,2,0.7676,1112,17987,0.644,0.3086,22695,0.7045,0.027,43600,7
+Embry-Riddle Aeronautical University-Prescott,Prescott,AZ,2,0.7898,1171,35302,0.5596,0.2884,16500,0.5915,0.046,54700,7
+University of Nevada-Reno,Reno,NV,1,0.8396,1081,7552,0.3853,0.2884,12000,0.5139,0.051,43500,6
+Mount St Mary's College,Los Angeles,CA,2,0.7409,928,21833,0.9203,0.5875,21500,0.6379,0.058,55900,5
+California State Polytechnic University-Pomona,Pomona,CA,1,0.5218,1070,4577,0.3883,0.4404,15703.5,0.5237,0.038,45200,8
+Colorado State University-Fort Collins,Fort Collins,CO,1,0.7743,1127,12292,0.4739,0.2571,16707.5,0.6383,0.048,41000,7
+DigiPen Institute of Technology,Redmond,WA,3,0.6635,1225,18204,0.5888,0.2866,19000,0.5422,0.013,70000,4
+Regis University,Denver,CO,2,0.6986,1087,18145,0.5635,0.2602,20501,0.5807,0.032,52800,7
+University of Idaho,Moscow,ID,1,0.6565,1070,7622,0.5423,0.3985,18550,0.5381,0.083,38400,5
+Central Washington University,Ellensburg,WA,1,0.8216,986,6413,0.5472,0.3547,15916,0.5132,0.079,40300,3
+William Jessup University,Rocklin,CA,2,0.6929,1039,14067,0.8951,0.4743,17000,0.5614,0.044,35700,7
+San Diego State University,San Diego,CA,1,0.3121,1090,6601,0.3828,0.3956,14495,0.6616,0.052,44400,8
+University of Washington-Tacoma Campus,Tacoma,WA,1,0.8523,963,4165,0.5181,0.4643,14793.5,0.4943,0.043,52100,5
+University of Puget Sound,Tacoma,WA,2,0.8522,1233,25089,0.5632,0.2071,20789,0.7816,0.024,42300,8
+University of Wyoming,Laramie,WY,1,0.9569,1123,4422,0.3741,0.2428,12511.5,0.5409,0.053,43800,3
+Concordia University-Portland,Portland,OR,2,0.5592,993,13342,0.74,0.4485,17500,0.5549,0.042,41600,3
+Neumont University,Salt Lake City,UT,3,0.7997,1104,15610,0.8868,0.5391,22313,0.5431,0.067,46100,7
+University of Southern California,Los Angeles,CA,2,0.1984,1380,29928,0.3826,0.2308,21500,0.9117,0.018,68800,10
+University of California-Santa Cruz,Santa Cruz,CA,1,0.5991,1087,11066,0.5586,0.4459,16500,0.7267,0.057,38600,8
+Pomona College,Claremont,CA,2,0.1392,1454,22496,0.1525,0.1686,8561,0.9573,0,51000,10
+California State University-Fresno,Fresno,CA,1,0.5815,920,3990,0.3628,0.5407,14500,0.4859,0.065,38700,7
+The University of Montana,Missoula,MT,1,0.9423,1090,6877,0.5602,0.3912,15259.5,0.4708,0.102,34000,3
+Southern Oregon University,Ashland,OR,1,0.7304,1020,5643,0.4882,0.3855,18166,0.367,0.106,33700,2
+Arizona Christian University,Phoenix,AZ,2,0.6076,1045,10013,0.5183,0.328,13136.5,0.4737,0.056,29000,2
+California State University-Dominguez Hills,Carson,CA,1,0.5747,845,5563,0.4291,0.5862,14191,0.2935,0.112,40900,5
+Westmont College,Santa Barbara,CA,2,0.7016,1193,21159,0.5517,0.2092,19500,0.7577,0.051,41400,7
+Utah State University,Logan,UT,1,0.9674,1087,4989,0.3227,0.3595,8750,0.5109,0.057,38800,2
+Santa Clara University,Santa Clara,CA,2,0.5122,1294,19663,0.3726,0.1389,19500,0.8401,0.029,64000,10
+Pepperdine University,Malibu,CA,2,0.3734,1235,25896,0.4412,0.2076,25000,0.8043,0.022,61700,9
+Hope International University,Fullerton,CA,2,0.4681,951,11581,0.7576,0.4989,17250,0.4508,0.063,36800,3
+Scripps College,Claremont,CA,2,0.357,1364,28151,0.3683,0.1323,12500,0.8414,0.01,41100,9
+Eastern Oregon University,La Grande,OR,1,0.67,935,4456,0.5992,0.5105,14820,0.2325,0.084,37000,1

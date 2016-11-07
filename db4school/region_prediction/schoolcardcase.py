@@ -107,22 +107,22 @@ def data_set_split(model):
     # discrete the independent variable
     classes = [i[-1] for i in all_original_data]  # last column in the origin csv file
     classes = map(toolkit.str2num, classes)
-    if 0 in classes:
-        # binary the classification
-        classes = [int(bool(int(c))) for c in classes]
-    else:
-        from toolkit import binrange
-        slot = binrange(classes)
-        tmp_c = list()
-        for c in classes:
-            cursor = 0
-            for i in slot:
-                if c > i:
-                    cursor += 1
-                else:
-                    break
-            tmp_c.append(cursor)
-        classes = tmp_c
+    # if 0 in classes:
+    #     # binary the classification
+    #     classes = [int(bool(int(c))) for c in classes]
+    # else:
+    from toolkit import binrange
+    slot = binrange(classes)
+    tmp_c = list()
+    for c in classes:
+        cursor = 0
+        for i in slot:
+            if c > i:
+                cursor += 1
+            else:
+                break
+        tmp_c.append(cursor)
+    classes = tmp_c
 
     for l, c in zip(all_original_data, classes):
         l[-1] = c
@@ -146,6 +146,7 @@ def data_set_split(model):
 
 
 def get_predicting_data(trainfrom, testat):
+    # pdb.set_trace()
     h, content = toolkit.load_csv('db4school', trainfrom, True)
     contentT = map(list, zip(*content))
     y_train = contentT[-1]
@@ -188,6 +189,7 @@ for repeat in range(20):
     for db in dbs:
         for dbt in dbs:
             x_train, y_train, x_test, actual = get_predicting_data('lace1/'+db, 'test/'+dbt)
+            # pdb.set_trace()
             lg_clf.fit(x_train, y_train)
             predict = lg_clf.predict(x_test).tolist()
             ee = get_error_measure(actual, predict)

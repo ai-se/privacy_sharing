@@ -40,8 +40,8 @@ DRAWING prediction_report.csv
 
 # module_1
 def module1():
-    header, content = toolkit.load_csv(settings.project_path+"/db4school", "region_prediction/precision_report_copy")
-    # header, content = toolkit.load_csv(settings.project_path + "/db4school", "region_prediction/precision_report")
+    # header, content = toolkit.load_csv(settings.project_path+"/db4school", "region_prediction/precision_report_copy")
+    header, content = toolkit.load_csv(settings.project_path + "/db4school", "region_prediction/precision_report")
 
     content = map(lambda r: map(toolkit.str2num, r), content)
 
@@ -127,10 +127,10 @@ def module1():
         ax.axvspan(0, 4.5, alpha=0.3, color='gray')
         ax.axvspan(8.5, 12.5, alpha=0.3, color='gray')
 
-        ax.text(1, 60000, 'LACE1\nregression', fontsize=10)
-        ax.text(5, 60000, 'LACE1\ndecision tree', fontsize=10)
-        ax.text(9, 60000, 'LACE2\nregression', fontsize=10)
-        ax.text(13, 60000, 'LACE2\ndecision tree', fontsize=10)
+        ax.text(1, 1.2, 'LACE1\nregression', fontsize=10)
+        ax.text(5, 1.2, 'LACE1\ndecision tree', fontsize=10)
+        ax.text(9, 1.2, 'LACE2\nregression', fontsize=10)
+        ax.text(13, 1.2, 'LACE2\ndecision tree', fontsize=10)
 
         plt.setp(box['boxes'][cases.index(case)], color='red')
         plt.setp(box['boxes'][cases.index(case)+4], color='red')
@@ -138,14 +138,14 @@ def module1():
         plt.setp(box['boxes'][cases.index(case)+12], color='red')
 
         plt.xticks(range(1, 17), ['NE', 'NW', 'S', 'W']*4)
-        ax.set_ylim([0, 150000])
+        ax.set_ylim([0, 1.5])
         ax.set_title('RMSE for prediction from region data.')
         fig.savefig(case+'.png', bbox_inches='tight')
 
 
 def module2():
     print('this is the second module in this file.')
-    head, content = toolkit.load_csv(settings.project_path+'/Reports', 'PREDICTION_report_copy')
+    head, content = toolkit.load_csv(settings.project_path+'/Reports', 'PREDICTION_report')
     content = map(lambda r: map(toolkit.str2num, r), content)
 
     lg_rmse = lambda x: x[4]=='linear regression' and x[5]=='RMSE'
@@ -171,10 +171,10 @@ def module2():
 
     ax.axvspan(0, 3.5, alpha=0.3, color='gray')
 
-    ax.text(1, 60000, 'Linear regression', fontsize=10)
-    ax.text(4, 60000, 'Decision tree', fontsize=10)
+    ax.text(1, 1, 'Linear regression', fontsize=10)
+    ax.text(4, 1, 'Decision tree', fontsize=10)
 
-    ax.set_ylim([0, 150000])
+    ax.set_ylim([0, 1.5])
     ax.set_title('RMSE for predicting at the whole shoolcard set')
     fig.savefig('school.png', bbox_inches='tight')
 
@@ -183,5 +183,5 @@ print(settings.MORPH_alpha)
 
 if __name__ == '__main__':
     module1()
-    module2()
+    # module2()
 
