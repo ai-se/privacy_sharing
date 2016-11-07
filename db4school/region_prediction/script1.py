@@ -91,7 +91,7 @@ def module1():
 
         ax = fig.add_subplot(111)
         box = ax.boxplot(v)
-
+        #
         # ee = toolkit.a12s([['NE']+list(v[0]),
         #                         ['NW']+list(v[1]),
         #                          ['S']+list(v[2]),
@@ -127,10 +127,10 @@ def module1():
         ax.axvspan(0, 4.5, alpha=0.3, color='gray')
         ax.axvspan(8.5, 12.5, alpha=0.3, color='gray')
 
-        ax.text(1, 1.2, 'LACE1\nregression', fontsize=10)
-        ax.text(5, 1.2, 'LACE1\ndecision tree', fontsize=10)
-        ax.text(9, 1.2, 'LACE2\nregression', fontsize=10)
-        ax.text(13, 1.2, 'LACE2\ndecision tree', fontsize=10)
+        ax.text(1, 0.8, 'LACE1\nregression', fontsize=10)
+        ax.text(5, 0.8, 'LACE1\ndecision tree', fontsize=10)
+        ax.text(9, 0.8, 'LACE2\nregression', fontsize=10)
+        ax.text(13, 0.8, 'LACE2\ndecision tree', fontsize=10)
 
         plt.setp(box['boxes'][cases.index(case)], color='red')
         plt.setp(box['boxes'][cases.index(case)+4], color='red')
@@ -138,7 +138,7 @@ def module1():
         plt.setp(box['boxes'][cases.index(case)+12], color='red')
 
         plt.xticks(range(1, 17), ['NE', 'NW', 'S', 'W']*4)
-        ax.set_ylim([0, 1.5])
+        ax.set_ylim([0, 1.1])
         ax.set_title('RMSE for prediction from region data.')
         fig.savefig(case+'.png', bbox_inches='tight')
 
