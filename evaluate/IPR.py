@@ -1,10 +1,9 @@
 from __future__ import division
-
+from bisect import bisect_left
 import copy
 import csv
 import random
-
-from tmp import settings, toolkit
+import toolkit
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
@@ -194,23 +193,19 @@ class IPR(object):
             sen_after_index = self.after_attrs.index(sensitive_attr)
 
             bin = self.bin_ranges[sensitive_attr]
-            hist_before = [0] * (len(bin) - 1)
-            hist_after = [0] * (len(bin) - 1)
+            hist_before = [0] * (len(bin))
+            hist_after = [0] * (len(bin))
 
             for row in G_before:
                 tmp_cursor = 0
                 if row[sen_before_index] != bin[0]:
-                    while row[sen_before_index] < bin[tmp_cursor]:
-                        tmp_cursor += 1
-                    tmp_cursor -= 1
+                    tmp_cursor = bisect_left(bin, row[sen_before_index])
                 hist_before[tmp_cursor] += 1
 
             for row in G_after:
                 tmp_cursor = 0
                 if row[sen_after_index] != bin[0]:
-                    while row[sen_after_index] < bin[tmp_cursor]:
-                        tmp_cursor += 1
-                    tmp_cursor -= 1
+                    tmp_cursor = bisect_left(bin, row[sen_after_index])
                 hist_after[tmp_cursor] += 1
 
             max_hist_before_index = hist_before.index(max(hist_before))
@@ -229,36 +224,16 @@ class IPR(object):
             if self._get_breach_from_query(query):
                 ipr += 1
 
-        return int((1 - ipr / len(queries)) * 100)
-
-
-def ipr_report(model, org_folder, we_report_folders):
-    we_report_folders = toolkit.make_it_list(we_report_folders)
-    project_path = settings.project_path
-    sensitive_attributes = settings.ipr_sensitive_attrs
-
-    for ptz_folder in we_report_folders:
-        ipr = IPR(project_path + org_folder + '/' + model + '.csv',
-                  project_path + ptz_folder + '/' + model + '.csv')
-
-        ipr.set_sensitive_attributes(sensitive_attributes)
-        result = ipr.get_ipr(settings.ipr_query_size, settings.ipr_num_of_queries)
-
-        with open(project_path + 'Reports/IPR_report.csv', 'a+') as f:
-            import time
-            w = csv.writer(f, delimiter=',', lineterminator='\n')
-            w.writerow([time.strftime("%m%d%y"),
-                        time.time(),
-                        model,
-                        sensitive_attributes,
-                        org_folder,
-                        ptz_folder,
-                        result
-                        ])
+        return round((1 - ipr / len(queries)) * 100, 2)
 
 
 def demo():
-    ipr_report('school', 'DataSet', 'Lace1Out')
+    ipr = IPR('/Users/jianfeng/git/super_lace/Dataset/parkinsons.csv',
+              '/Users/jianfeng/git/super_lace/.laceout/med0115.csv'
+              )
+
+    ipr.set_sensitive_attributes(['age', 'Jitter:RAP'])
+    print(ipr.get_ipr(4, 100))
 
 if __name__ == "__main__":
     demo()

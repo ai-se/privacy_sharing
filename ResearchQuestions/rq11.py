@@ -23,39 +23,13 @@
 
 
 from __future__ import division
-import os
-import sys
-import time
+from configs import parkinson_config as config
+from evaluate.IPR import IPR
 
-# ==============
-# ATTENTION: THIS FILE MUST BE LOCATIONS IN THE ONE LEVEL SUB-FOLDER OF CURRENT PROJECT
-# ==============
-project_dir = os.path.dirname(os.path.abspath(__file__+'/..'))
+def action():
+    ipr = IPR(config.ipr['org'], config.ipr['res'])
+    ipr.set_sensitive_attributes(config.ipr['sen_attr'])
 
-# parameters
-CLIFF_percentage = 0.3
-Lace2_holder_number = 5
-MORPH_alpha = 0.15
-MORPH_beta = 0.35
+    res = ipr.get_ipr(config.ipr['ipr_query_size'], config.ipr['ipr_num_of_queries'])
 
-ds_file = project_dir + '/Trainset/parkinsons.csv'
-independent_attrs = ['age',
-                     'Jitter(%)', 'Jitter(Abs)', 'Jitter:RAP', 'Jitter:PPQ5', 'Jitter:DDP',
-                     'Shimmer', 'Shimmer(dB)', 'Shimmer:APQ3', 'Shimmer:APQ5', 'Shimmer:APQ11', 'Shimmer:DDA',
-                     'NHR', 'HNR',
-                     'RPDE', 'DFA', 'PPE']
-
-objective_attr = 'total_UPDRS'
-
-writeto = project_dir + '/.laceout'
-writeFileName = 'med' + time.strftime("%m%d")
-
-# IPR configs
-ipr = {
-    'org': project_dir + '/Dataset/parkinsons.csv',
-    'res': writeto + '/' + writeFileName + '.csv',
-    'sen_attr': ['age', 'Jitter:RAP'],
-    'ipr_query_size': 2,
-    'ipr_num_of_queries': 100,
-}
-
+    print(res)
