@@ -23,3 +23,22 @@
 
 
 from __future__ import division
+import os
+import sys
+
+project_dir = os.path.dirname(sys.modules['__main__'].__file__)
+
+# parameters
+CLIFF_percentage = 0.3
+Lace2_holder_number = 5
+MORPH_alpha = 0.15
+MORPH_beta = 0.35
+
+ds_file = project_dir + '/Trainset/parkinsons.csv'
+independent_attrs = ['age',
+                     'Jitter(%)', 'Jitter(Abs)', 'Jitter:RAP', 'Jitter:PPQ5', 'Jitter:DDP',
+                     'Shimmer', 'Shimmer(dB)', 'Shimmer:APQ3', 'Shimmer:APQ5', 'Shimmer:APQ11', 'Shimmer:DDA',
+                     'NHR', 'HNR',
+                     'RPDE', 'DFA', 'PPE']
+
+objective_attr = 'motor_UPDRS'

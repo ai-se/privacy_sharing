@@ -1,15 +1,16 @@
 from __future__ import division
+
+import csv
+import time
 from collections import OrderedDict
-from sklearn.metrics import mean_squared_error, mean_absolute_error, classification_report
+
 from sklearn import svm, tree
 from sklearn.linear_model import LinearRegression
-from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import mean_squared_error, mean_absolute_error, classification_report
 from sklearn.multiclass import OneVsRestClassifier
-import time
-import csv
-import settings
-import toolkit
-import pdb
+from sklearn.naive_bayes import GaussianNB
+
+from tmp import settings, toolkit
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"

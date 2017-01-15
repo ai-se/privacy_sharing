@@ -23,3 +23,31 @@
 
 
 from __future__ import division
+import os
+import sys
+import csv
+import random
+project_dir = os.path.dirname(sys.modules['__main__'].__file__)
+
+
+def split(name, test_ratio):
+    f = open(project_dir + '/Dataset/' + name + '.csv', 'r')
+    f_tr = open(project_dir + '/Trainset/' + name + '.csv', 'w')
+    f_te = open(project_dir + '/Testset/' + name + '.csv', 'w')
+
+    reader = csv.reader(f)
+    writeTrain = csv.writer(f_tr)
+    writeTest = csv.writer(f_te)
+
+    h = next(reader)
+    writeTrain.writerow(h)
+    writeTest.writerow(h)
+
+    for row in reader:
+        if random.random() < test_ratio:
+            writeTest.writerow(row)
+        else:
+            writeTrain.writerow(row)
+
+if __name__ == '__main__':
+    split(sys.argv[1], float(sys.argv[2]))

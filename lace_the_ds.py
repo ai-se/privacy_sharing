@@ -23,3 +23,20 @@
 
 
 from __future__ import division
+from configs import parkinson_config as config
+import csv
+import lace
+import pdb
+
+with open(config.ds_file, 'r') as f:
+    reader = csv.reader(f)
+    attr_names = next(reader)
+    ds = list()
+    for line in reader:
+        ds.append(line)
+
+inde_attrs = config.independent_attrs
+obj_attr = config.objective_attr
+
+res = lace.lace2_simulator(attr_names, ds, inde_attrs, obj_attr)
+pdb.set_trace()
