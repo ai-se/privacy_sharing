@@ -21,5 +21,22 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
+import ResearchQuestions.rq11 as rq11
+import lace_the_ds
+import tmp.debug
 
-from __future__ import division
+# runing lace_the_ds
+# lace_the_ds.action()
+
+# get research question 1 answer repeat 10 times
+i = 1
+while True:
+    # try:
+    #     rq11.action()
+    # except:
+    #     pass
+    rq11.action()
+    i += 1
+    if i > 10:
+        break
+

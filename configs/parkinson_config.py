@@ -25,8 +25,12 @@
 from __future__ import division
 import os
 import sys
+import time
 
-project_dir = os.path.dirname(sys.modules['__main__'].__file__)
+# ==============
+# ATTENTION: THIS FILE MUST BE LOCATIONS IN THE ONE LEVEL SUB-FOLDER OF CURRENT PROJECT
+# ==============
+project_dir = os.path.dirname(os.path.abspath(__file__+'/..'))
 
 # parameters
 CLIFF_percentage = 0.3
@@ -41,4 +45,17 @@ independent_attrs = ['age',
                      'NHR', 'HNR',
                      'RPDE', 'DFA', 'PPE']
 
-objective_attr = 'motor_UPDRS'
+objective_attr = 'total_UPDRS'
+
+writeto = project_dir + '/.laceout'
+writeFileName = 'med' + time.strftime("%m%d")
+
+# IPR configs
+ipr = {
+    'org': project_dir + '/Dataset/parkinsons.csv',
+    'res': writeto + '/' + writeFileName + '.csv',
+    'sen_attr': ['age', 'Jitter:RAP'],
+    'ipr_query_size': 2,
+    'ipr_num_of_queries': 100,
+}
+

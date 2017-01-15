@@ -7,7 +7,8 @@ from os import sys, path
 
 from scipy.spatial.distance import cosine
 
-from tmp import settings, toolkit
+import toolkit
+from tmp import settings
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from evaluate.Apriori.apriori import *
