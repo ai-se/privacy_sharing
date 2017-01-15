@@ -1,6 +1,8 @@
 from __future__ import division
-import bins
+
 import csv
+
+from tmp import bins
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
@@ -42,7 +44,7 @@ def binrange(data_list, enough=None, cohen=0.2, maxBins=16, minBin=4, trivial=1.
     :return: ist of bin# e.g. {a,b,c,d,e} [a,b] (b,c] (c,d] [d,e]
     """
     ranges = bins.bins(t=data_list, enough=enough, cohen=cohen,
-                       maxBins=maxBins, minBin=minBin,trivial=trivial)
+                       maxBins=maxBins, minBin=minBin, trivial=trivial)
     res = [ranges[0].lo]
     for r in ranges:
         res.append(r.up)

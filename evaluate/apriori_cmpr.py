@@ -1,12 +1,13 @@
 from __future__ import division
-import pdb
-import logging
+
 import csv
+import logging
 import time
-import toolkit
-import settings
-from scipy.spatial.distance import cosine
 from os import sys, path
+
+from scipy.spatial.distance import cosine
+
+from tmp import settings, toolkit
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from evaluate.Apriori.apriori import *
@@ -164,7 +165,7 @@ def apriori_report(model, org_folder, we_report_folder):
             pr = len(lap) / len(rules_org)
             rr = len(lap) / len(rules_ptz)
 
-        with open(settings.project_path+'/Reports/APRIORI_report.csv', 'a') as f:
+        with open(settings.project_path+ '/Reports/APRIORI_report.csv', 'a') as f:
             writer = csv.writer(f)
             writer.writerow([time.strftime("%m%d%y"), time.time(), model, ptz_folder,
                              len(items_org),
