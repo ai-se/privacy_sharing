@@ -1,17 +1,10 @@
 from __future__ import division
-
+from evaluate.Apriori.apriori import *
 import csv
 import logging
 import time
-from os import sys, path
-
 from scipy.spatial.distance import cosine
-
 import toolkit
-from tmp import settings
-
-sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-from evaluate.Apriori.apriori import *
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"

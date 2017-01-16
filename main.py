@@ -23,20 +23,17 @@
 
 import ResearchQuestions.rq11 as rq11
 import lace_the_ds
-import tmp.debug
+
+import configs.parkinson_config as config
+
 
 # runing lace_the_ds
-# lace_the_ds.action()
+lace_the_ds.action(config)
 
 # get research question 1 answer repeat 10 times
 i = 1
 while True:
-    # try:
-    #     rq11.action()
-    # except:
-    #     pass
-    rq11.action()
+    rq11.action(config)
     i += 1
     if i > 10:
         break
-

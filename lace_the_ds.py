@@ -23,12 +23,12 @@
 
 
 from __future__ import division
-from configs import parkinson_config as config
 from toolkit import write_csv
 import csv
 import lace
 
-def action():
+
+def action(config):
     with open(config.ds_file, 'r') as f:
         reader = csv.reader(f)
         attr_names = next(reader)
