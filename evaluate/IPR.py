@@ -1,9 +1,11 @@
 from __future__ import division
-from bisect import bisect_left
+
 import copy
 import csv
 import random
-import toolkit
+from bisect import bisect_left
+
+from tools import toolkit
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"

@@ -24,7 +24,6 @@
 
 from __future__ import division
 import os
-import sys
 import time
 
 # ==============
@@ -45,7 +44,7 @@ independent_attrs = ['age',
                      'NHR', 'HNR',
                      'RPDE', 'DFA', 'PPE']
 
-objective_attr = 'total_UPDRS'
+objective_attr = 'motor_UPDRS'
 
 writeto = project_dir + '/.laceout'
 writeFileName = 'med' + time.strftime("%m%d")
@@ -59,3 +58,10 @@ ipr = {
     'ipr_num_of_queries': 100,
 }
 
+apriori = {
+    'org': project_dir + '/Trainset/parkinsons.csv',
+    'res': writeto + '/' + writeFileName + '.csv',
+    'interest_attrs': independent_attrs,
+    'min_support': 0.3,
+    'min_confidence': 0.5,
+}
