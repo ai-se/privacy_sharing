@@ -27,10 +27,8 @@ from os import sys, path
 from numpy import corrcoef, absolute
 from pylab import pcolor, show, colorbar, xticks, yticks, savefig
 import matplotlib.pyplot as plt
-import matplotlib as mpl
+# import matplotlib as mpl
 import csv
-
-
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from tools import toolkit

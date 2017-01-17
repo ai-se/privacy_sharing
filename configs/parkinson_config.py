@@ -44,12 +44,12 @@ independent_attrs = ['age',
                      'NHR', 'HNR',
                      'RPDE', 'DFA', 'PPE']
 
-objective_attr = 'total_UPDRS'
+objective_attr = 'motor_UPDRS'
 
 writeto = project_dir + '/.laceout'
 writeFileName = 'med' + time.strftime("%m%d")
 
-# IPR configs
+# research question configs
 ipr = {
     'org': project_dir + '/Dataset/parkinsons.csv',
     'res': writeto + '/' + writeFileName + '.csv',
@@ -71,3 +71,13 @@ corrcoef = {
     'res': writeto + '/' + writeFileName + '.csv',
     'interest_attrs': independent_attrs,
 }
+
+
+predict = {
+    # 'train_file': writeto + '/' + writeFileName + '.csv',
+    'train_file': project_dir + '/Trainset/parkinsons.csv',
+    'test_file': project_dir + '/Testset/parkinsons.csv',
+    'predict_obj': objective_attr,
+
+}
+
