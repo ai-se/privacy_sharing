@@ -32,8 +32,8 @@ import time
 project_dir = os.path.dirname(os.path.abspath(__file__+'/..'))
 
 # parameters
-CLIFF_percentage = 0.3
-Lace2_holder_number = 5
+CLIFF_percentage = 0.5
+Lace2_holder_number = 1
 MORPH_alpha = 0.15
 MORPH_beta = 0.35
 
@@ -75,9 +75,9 @@ corrcoef = {
 
 predict = {
     # 'train_file': writeto + '/' + writeFileName + '.csv',
-    'train_file': project_dir + '/Trainset/parkinsons.csv',
+    'train_file': project_dir + '/Trainset/parkinsons.5.csv',
     'test_file': project_dir + '/Testset/parkinsons.csv',
     'predict_obj': objective_attr,
-
+    # 'predict_obj': 'motor_UPDRS'
 }
 

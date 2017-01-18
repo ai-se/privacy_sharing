@@ -23,11 +23,10 @@
 
 
 from __future__ import division
-import os
 import sys
 import csv
 import random
-project_dir = os.path.dirname(sys.modules['__main__'].__file__)
+from configs.parkinson_config import project_dir
 
 
 def split(name, test_ratio):
@@ -49,5 +48,28 @@ def split(name, test_ratio):
         else:
             writeTrain.writerow(row)
 
+
+def split5(name):
+    f = open(project_dir + '/Dataset/' + name + '.csv', 'r')
+    f_1 = open(project_dir + '/Trainset/' + name + '.1.csv', 'w')
+    f_2 = open(project_dir + '/Trainset/' + name + '.2.csv', 'w')
+    f_3 = open(project_dir + '/Trainset/' + name + '.3.csv', 'w')
+    f_4 = open(project_dir + '/Trainset/' + name + '.4.csv', 'w')
+    f_5 = open(project_dir + '/Trainset/' + name + '.5.csv', 'w')
+
+    reader = csv.reader(f)
+    writers = [csv.writer(f_1), csv.writer(f_2), csv.writer(f_3), csv.writer(f_4), csv.writer(f_5)]
+
+    h = next(reader)
+    for w in writers:
+        w.writerow(h)
+    n = [800, 1600, 2400, 3200, 45000]
+    from bisect import bisect_left
+    for i, row in enumerate(reader):
+        if random.random() > 0.2: continue
+        x = bisect_left(n, i)
+        writers[x].writerow(row)
+
 if __name__ == '__main__':
-    split(sys.argv[1], float(sys.argv[2]))
+    # split(sys.argv[1], float(sys.argv[2]))
+    split5(sys.argv[1])

@@ -25,9 +25,7 @@
 from __future__ import division
 
 import csv
-
 import lace
-
 from tools.toolkit import write_csv
 
 
@@ -42,6 +40,8 @@ def action(config):
     inde_attrs = config.independent_attrs
     obj_attr = config.objective_attr
 
-    res = lace.lace2_simulator(attr_names, ds, inde_attrs, obj_attr)
+    res = lace.lace2_simulator(attr_names, ds, inde_attrs, obj_attr, cliff_percentage=config.CLIFF_percentage,
+                               morph_alpha=config.MORPH_alpha, morph_beta=config.MORPH_beta,
+                               number_of_holder=config.Lace2_holder_number)
 
     write_csv(config.writeto, config.writeFileName, res)
