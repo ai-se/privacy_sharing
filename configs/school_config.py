@@ -39,29 +39,36 @@ Lace2_holder_number = 1
 MORPH_alpha = 0.15
 MORPH_beta = 0.35
 
-ds_file = project_dir + '/Trainset/parkinsons.csv'
-independent_attrs = ['age',
-                     'Jitter(%)', 'Jitter(Abs)', 'Jitter:RAP', 'Jitter:PPQ5', 'Jitter:DDP',
-                     'Shimmer', 'Shimmer(dB)', 'Shimmer:APQ3', 'Shimmer:APQ5', 'Shimmer:APQ11', 'Shimmer:DDA',
-                     'NHR', 'HNR',
-                     'RPDE', 'DFA', 'PPE']
+ds_file = project_dir + '/Trainset/school.csv'
+independent_attrs = [
+                    'ADM_RATE',
+                    'SAT_AVG',
+                    'TUITFTE',
+                    # 'RET_FT4',
+                    'PCTFLOAN',
+                    'PCTPELL',
+                    'DEBT_MDN',
+                    'C150_4',
+                    'CDR3',
+                    'mn_earn_wne_p7'
+                    ]
 
-objective_attr = 'DFA'
+objective_attr = 'RET_FT4'
 
 writeto = project_dir + '/.laceout'
-writeFileName = 'med' + time.strftime("%m%d")
+writeFileName = 'edu' + time.strftime("%m%d")
 
 # research question configs
 ipr = {
-    'org': project_dir + '/Dataset/parkinsons.csv',
+    'org': project_dir + '/Dataset/school.csv',
     'res': writeto + '/' + writeFileName + '.csv',
-    'sen_attr': ['age', 'Jitter:RAP'],
+    'sen_attr': ['ADM_RATE', 'PCTFLOAN', 'C150_4'],
     'ipr_query_size': 2,
     'ipr_num_of_queries': 100,
 }
 
 apriori = {
-    'org': project_dir + '/Trainset/parkinsons.csv',
+    'org': project_dir + '/Trainset/school.csv',
     'res': writeto + '/' + writeFileName + '.csv',
     'interest_attrs': independent_attrs,
     'min_support': 0.3,
@@ -69,7 +76,7 @@ apriori = {
 }
 
 corrcoef = {
-    'org': project_dir + '/Trainset/parkinsons.csv',
+    'org': project_dir + '/Trainset/school.csv',
     'res': writeto + '/' + writeFileName + '.csv',
     'interest_attrs': independent_attrs,
 }
@@ -77,7 +84,6 @@ corrcoef = {
 
 predict = {
     'train_file': writeto + '/' + writeFileName + '.csv',
-    'test_file': project_dir + '/Testset/parkinsons.csv',
-    'predict_obj': 'motor_UPDRS',
-    # 'predict_obj': 'motor_UPDRS'
+    'test_file': project_dir + '/Testset/school.csv',
+    'predict_obj': independent_attrs
 }
