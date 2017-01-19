@@ -23,10 +23,10 @@
 
 
 from __future__ import division
-from configs import parkinson_config as config
 from evaluate.IPR import IPR
 
-def action():
+
+def action(config):
     ipr = IPR(config.ipr['org'], config.ipr['res'])
     ipr.set_sensitive_attributes(config.ipr['sen_attr'])
 

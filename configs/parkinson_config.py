@@ -24,7 +24,6 @@
 
 from __future__ import division
 import os
-import sys
 import time
 
 # ==============
@@ -33,8 +32,8 @@ import time
 project_dir = os.path.dirname(os.path.abspath(__file__+'/..'))
 
 # parameters
-CLIFF_percentage = 0.3
-Lace2_holder_number = 5
+CLIFF_percentage = 0.5
+Lace2_holder_number = 1
 MORPH_alpha = 0.15
 MORPH_beta = 0.35
 
@@ -45,12 +44,12 @@ independent_attrs = ['age',
                      'NHR', 'HNR',
                      'RPDE', 'DFA', 'PPE']
 
-objective_attr = 'total_UPDRS'
+objective_attr = 'DFA'
 
 writeto = project_dir + '/.laceout'
 writeFileName = 'med' + time.strftime("%m%d")
 
-# IPR configs
+# research question configs
 ipr = {
     'org': project_dir + '/Dataset/parkinsons.csv',
     'res': writeto + '/' + writeFileName + '.csv',
@@ -59,3 +58,24 @@ ipr = {
     'ipr_num_of_queries': 100,
 }
 
+apriori = {
+    'org': project_dir + '/Trainset/parkinsons.csv',
+    'res': writeto + '/' + writeFileName + '.csv',
+    'interest_attrs': independent_attrs,
+    'min_support': 0.3,
+    'min_confidence': 0.5,
+}
+
+corrcoef = {
+    'org': project_dir + '/Trainset/parkinsons.csv',
+    'res': writeto + '/' + writeFileName + '.csv',
+    'interest_attrs': independent_attrs,
+}
+
+
+predict = {
+    'train_file': writeto + '/' + writeFileName + '.csv',
+    'test_file': project_dir + '/Testset/parkinsons.csv',
+    'predict_obj': 'motor_UPDRS',
+    # 'predict_obj': 'motor_UPDRS'
+}

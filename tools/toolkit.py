@@ -2,7 +2,7 @@ from __future__ import division
 
 import csv
 
-from tmp import bins
+from tools import bins
 
 __author__ = "Jianfeng Chen"
 __copyright__ = "Copyright (C) 2016 Jianfeng Chen"
