@@ -21,30 +21,32 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import debug
-import ResearchQuestions.rq11 as rq11
-import ResearchQuestions.rq12 as rq12
-import ResearchQuestions.rq13 as rq13
-import ResearchQuestions.rq2 as rq2
-import lace_the_ds
 
-# import configs.parkinson_config as config
-import configs.school_config as config
+from __future__ import division
+import sys
+from bdb import BdbQuit
 
-# runing lace_the_ds
-if not config.NO_NEED_TO_LACE:
-    lace_the_ds.action(config)
+sys.dont_write_btyecode = True
 
-# get research question 1 answer repeat 10 times
-# i = 1
-# while True:
-#     rq11.action(config)
-#     i += 1
-#     if i > 10:
-#         break
 
-# exploring the rq1.2
-# rq12.action(config)
+def info(type, value, tb):
+    if type is BdbQuit:
+        exit(-1)
 
-rq13.action(config)
-# rq2.action(config)
+    if type is KeyboardInterrupt:
+        exit(-1)
+
+    if hasattr(sys, 'ps1') or not sys.stderr.isatty():
+        # we are in interactive mode or we don't have a tty-like
+        # device, so we call the default hook
+        sys.__excepthook__(type, value, tb)
+    else:
+        import traceback, pdb
+        # we are NOT in interactive mode, print the exception…
+        traceback.print_exception(type, value, tb)
+        print
+        # …then start the debugger in post-mortem mode.
+        # pdb.pm() # deprecated
+        pdb.post_mortem(tb) # more “modern”
+
+sys.excepthook = info

@@ -27,7 +27,7 @@ from evaluate.IPR import IPR
 
 
 def action(config):
-    ipr = IPR(config.ipr['org'], config.ipr['res'])
+    ipr = IPR(config.ipr['org'], config.ipr['res'], config.independent_attrs)
     ipr.set_sensitive_attributes(config.ipr['sen_attr'])
 
     res = ipr.get_ipr(config.ipr['ipr_query_size'], config.ipr['ipr_num_of_queries'])

@@ -71,50 +71,46 @@ class Query(object):
 
 
 class IPR(object):
-    def __init__(self, before_db, after_db):
+    def __init__(self, before_db, after_db, independent_attrs):
         self.before_db = before_db
         self.after_db = after_db
         self.__sensitive_attrs = []
+        self.attrs = independent_attrs
 
         # load the before database
         with open(before_db, 'r') as f:
             reader = csv.reader(f)
-            self.before_attrs = next(reader)
+            before_attrs = next(reader)
             self.before_all_data = []
             for line in reader:
-                self.before_all_data.append(line)
-            self.before_all_data = [map(toolkit.str2num, row) for row in self.before_all_data]  # str to numeric
+                row = [toolkit.str2num(v) for a, v in zip(before_attrs, line) if a in independent_attrs]
+                self.before_all_data.append(row)
 
         # load the after database
         with open(after_db, 'r') as f:
             reader = csv.reader(f)
-            self.after_attrs = next(reader)
+            after_attrs = next(reader)
             self.after_all_data = []
             for line in reader:
-                self.after_all_data.append(line)
-            self.after_all_data = [map(toolkit.str2num, row) for row in self.after_all_data]  # str to numeric
+                row = [toolkit.str2num(v) for a, v in zip(after_attrs, line) if a in independent_attrs]
+                self.after_all_data.append(row)
 
         # discrete the attributes...
         # determine the bin_ranges
         self.bin_ranges = dict()
-        for attr in self.after_attrs[:-1]:
-            temp = self.before_attrs.index(attr)
-            col = [original_data_row[temp] for original_data_row in self.before_all_data]
+        for attr, col in zip(independent_attrs, zip(*self.before_all_data)):
             self.bin_ranges[attr] = toolkit.binrange(col)
 
     def set_sensitive_attributes(self, sensitive_attribute_list):
         self.__sensitive_attrs = copy.deepcopy(sensitive_attribute_list)
         for i in self.__sensitive_attrs:
-            assert i in self.after_attrs[:-1], "Attribute " + i + " does NOT exist in the database"
-
-        if self.after_attrs[-1] not in self.__sensitive_attrs:  # the class must be sensitive attribute
-            self.__sensitive_attrs.append(self.after_attrs[-1])
+            assert i in self.attrs, "Attribute " + i + " does NOT exist in the database"
 
     def _query_generator(self, query_size=2):
         # select query_size non-sensitive attributes randomly
         query_attrs = []
         while len(query_attrs) < query_size:
-            temp = random.choice(self.after_attrs)
+            temp = random.choice(self.attrs)
             if temp not in self.__sensitive_attrs + query_attrs:
                 query_attrs.append(temp)
 
@@ -126,7 +122,7 @@ class IPR(object):
         query.sampled = sampled_row
         # pdb.set_trace()
         for query_attr in query_attrs:
-            value = sampled_row[self.before_attrs.index(query_attr)]
+            value = sampled_row[self.attrs.index(query_attr)]
             binr = self.bin_ranges[query_attr]  # bin ranges for the binr
             for boundary in binr:
                 upper_bound = boundary
@@ -157,7 +153,7 @@ class IPR(object):
         """
         attrs = query.get_attrs()
         # query_target_index_before = [self.before_attrs.index(attr) for attr in attrs]
-        query_target_index_after = [self.after_attrs.index(attr) for attr in attrs]
+        query_target_index_after = [self.attrs.index(attr) for attr in attrs]
 
         # find the data that match the query in G and G'
         G_before = []
@@ -165,7 +161,7 @@ class IPR(object):
             passed = True
             for attr in attrs:
                 lower_bound, upper_bound = query[attr]
-                target_before_i = self.before_attrs.index(attr)
+                target_before_i = self.attrs.index(attr)
                 if not lower_bound < row[target_before_i] <= upper_bound:
                     passed = False
             if passed:
@@ -191,8 +187,8 @@ class IPR(object):
         assert len(self.__sensitive_attrs) > 0, "Sensitive attributes need to be set up at " + self.before_db
 
         for sensitive_attr in self.__sensitive_attrs[:-1]:
-            sen_before_index = self.before_attrs.index(sensitive_attr)
-            sen_after_index = self.after_attrs.index(sensitive_attr)
+            sen_before_index = self.attrs.index(sensitive_attr)
+            sen_after_index = self.attrs.index(sensitive_attr)
 
             bin = self.bin_ranges[sensitive_attr]
             hist_before = [0] * (len(bin))

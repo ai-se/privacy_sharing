@@ -71,5 +71,5 @@ def split5(name):
         writers[x].writerow(row)
 
 if __name__ == '__main__':
-    # split(sys.argv[1], float(sys.argv[2]))
-    split5(sys.argv[1])
+    split(sys.argv[1], float(sys.argv[2]))
+    # split5(sys.argv[1])
