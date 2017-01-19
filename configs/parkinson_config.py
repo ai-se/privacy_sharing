@@ -44,7 +44,7 @@ independent_attrs = ['age',
                      'NHR', 'HNR',
                      'RPDE', 'DFA', 'PPE']
 
-objective_attr = 'motor_UPDRS'
+objective_attr = 'DFA'
 
 writeto = project_dir + '/.laceout'
 writeFileName = 'med' + time.strftime("%m%d")
@@ -74,10 +74,8 @@ corrcoef = {
 
 
 predict = {
-    # 'train_file': writeto + '/' + writeFileName + '.csv',
-    'train_file': project_dir + '/Trainset/parkinsons.5.csv',
+    'train_file': writeto + '/' + writeFileName + '.csv',
     'test_file': project_dir + '/Testset/parkinsons.csv',
-    'predict_obj': objective_attr,
+    'predict_obj': 'motor_UPDRS',
     # 'predict_obj': 'motor_UPDRS'
 }
-
