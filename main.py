@@ -36,15 +36,15 @@ if not config.NO_NEED_TO_LACE:
     lace_the_ds.action(config)
 
 # get research question 1 answer repeat 10 times
-i = 1
-while True:
-    rq11.action(config)
-    i += 1
-    if i > 10:
-        break
+# i = 1
+# while True:
+#     rq11.action(config)
+#     i += 1
+#     if i > 10:
+#         break
 
 # exploring the rq1.2
 # rq12.action(config)
 
-# rq13.action(config)
+rq13.action(config)
 # rq2.action(config)

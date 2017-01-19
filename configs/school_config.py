@@ -71,8 +71,8 @@ apriori = {
     'org': project_dir + '/Trainset/school.csv',
     'res': writeto + '/' + writeFileName + '.csv',
     'interest_attrs': independent_attrs,
-    'min_support': 0.3,
-    'min_confidence': 0.5,
+    'min_support': 0.1,
+    'min_confidence': 0.1,
 }
 
 corrcoef = {
