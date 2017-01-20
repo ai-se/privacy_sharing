@@ -23,6 +23,7 @@
 
 
 from __future__ import division
+import sys
 import os
 import time
 
@@ -31,11 +32,11 @@ import time
 # ==============
 project_dir = os.path.dirname(os.path.abspath(__file__+'/..'))
 
-NO_NEED_TO_LACE = True
+PERFORM_LACE = False
 
 # parameters
 CLIFF_percentage = 0.5
-Lace2_holder_number = 1
+Lace2_holder_number = 5
 MORPH_alpha = 0.15
 MORPH_beta = 0.35
 
@@ -44,16 +45,16 @@ independent_attrs = [
                     'ADM_RATE',
                     'SAT_AVG',
                     'TUITFTE',
-                    # 'RET_FT4',
+                    'RET_FT4',
                     'PCTFLOAN',
                     'PCTPELL',
                     'DEBT_MDN',
                     'C150_4',
                     'CDR3',
-                    'mn_earn_wne_p7'
+                    # 'mn_earn_wne_p7'
                     ]
 
-objective_attr = 'RET_FT4'
+objective_attr = 'mn_earn_wne_p7'
 
 writeto = project_dir + '/.laceout'
 writeFileName = 'edu' + time.strftime("%m%d")
@@ -83,7 +84,8 @@ corrcoef = {
 
 
 predict = {
+    # 'train_file': project_dir + '/Trainset/school.csv',
     'train_file': writeto + '/' + writeFileName + '.csv',
     'test_file': project_dir + '/Testset/school.csv',
-    'predict_obj': independent_attrs
+    'predict_obj': 'mn_earn_wne_p7'
 }

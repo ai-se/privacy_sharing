@@ -50,7 +50,7 @@ def split(name, test_ratio):
 
 
 def split5(name):
-    f = open(project_dir + '/Dataset/' + name + '.csv', 'r')
+    f = open(project_dir + '/Trainset/' + name + '.csv', 'r')
     f_1 = open(project_dir + '/Trainset/' + name + '.1.csv', 'w')
     f_2 = open(project_dir + '/Trainset/' + name + '.2.csv', 'w')
     f_3 = open(project_dir + '/Trainset/' + name + '.3.csv', 'w')
@@ -63,10 +63,10 @@ def split5(name):
     h = next(reader)
     for w in writers:
         w.writerow(h)
-    n = [800, 1600, 2400, 3200, 45000]
+    n = [200, 400, 600, 800, 2000]
     from bisect import bisect_left
     for i, row in enumerate(reader):
-        if random.random() > 0.2: continue
+        if random.random() > 0.3: continue
         x = bisect_left(n, i)
         writers[x].writerow(row)
 

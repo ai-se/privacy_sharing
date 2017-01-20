@@ -32,7 +32,7 @@ import lace_the_ds
 import configs.school_config as config
 
 # runing lace_the_ds
-if not config.NO_NEED_TO_LACE:
+if config.PERFORM_LACE:
     lace_the_ds.action(config)
 
 # get research question 1 answer repeat 10 times
@@ -46,5 +46,5 @@ if not config.NO_NEED_TO_LACE:
 # exploring the rq1.2
 # rq12.action(config)
 
-rq13.action(config)
-# rq2.action(config)
+# rq13.action(config)
+rq2.action(config)
