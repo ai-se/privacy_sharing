@@ -45,17 +45,16 @@ independent_attrs = [
                     'ADM_RATE',
                     'SAT_AVG',
                     'TUITFTE',
-                    # 'RET_FT4',
+                    'RET_FT4',
                     'PCTFLOAN',
                     'PCTPELL',
                     'DEBT_MDN',
                     'C150_4',
                     'CDR3',
-                    'mn_earn_wne_p7'
+                    # 'mn_earn_wne_p7'
                     ]
 
-# objective_attr = 'mn_earn_wne_p7'
-objective_attr = 'RET_FT4'
+objective_attr = 'mn_earn_wne_p7'
 
 writeto = project_dir + '/.laceout'
 writeFileName = 'edu' + time.strftime("%m%d")
@@ -85,8 +84,8 @@ corrcoef = {
 
 
 predict = {
-    'train_file': project_dir + '/Trainset/school.csv',
-    # 'train_file': writeto + '/' + writeFileName + '.csv',
+    # 'train_file': project_dir + '/Trainset/school.csv',
+    'train_file': writeto + '/' + writeFileName + '.csv',
     'test_file': project_dir + '/Testset/school.csv',
-    'predict_obj': objective_attr
+    'predict_obj': 'mn_earn_wne_p7'
 }
