@@ -31,11 +31,11 @@ import time
 # ==============
 project_dir = os.path.dirname(os.path.abspath(__file__+'/..'))
 
-NO_NEED_TO_LACE = True
+PERFORM_LACE = True
 
 # parameters
-CLIFF_percentage = 0.5
-Lace2_holder_number = 1
+CLIFF_percentage = 0.3
+Lace2_holder_number = 5
 MORPH_alpha = 0.15
 MORPH_beta = 0.35
 
@@ -46,7 +46,7 @@ independent_attrs = ['age',
                      'NHR', 'HNR',
                      'RPDE', 'DFA', 'PPE']
 
-objective_attr = 'DFA'
+objective_attr = 'motor_UPDRS'
 
 writeto = project_dir + '/.laceout'
 writeFileName = 'med' + time.strftime("%m%d")
@@ -78,6 +78,6 @@ corrcoef = {
 predict = {
     'train_file': writeto + '/' + writeFileName + '.csv',
     'test_file': project_dir + '/Testset/parkinsons.csv',
-    'predict_obj': 'motor_UPDRS',
+    'predict_obj': objective_attr
     # 'predict_obj': 'motor_UPDRS'
 }
